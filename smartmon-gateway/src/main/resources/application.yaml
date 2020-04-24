@@ -1,0 +1,34 @@
+server.port: 18080
+
+spring:
+  application.name: smartmon-gateway
+  cloud.nacos.discovery.ip: 127.0.0.1
+  cloud.nacos.discovery.server-addr: 127.0.0.1:8848
+  security:
+    user:
+      name: root
+      password: root
+  cloud:
+    gateway:
+      discovery.locator:
+        enabled: true
+        lower-case-service-id: true
+      routes:
+        - id: smartmon-vhe
+          uri: lb://smartmon-vhe
+          predicates:
+          - Path=/vhe/**
+          filters:
+          - StripPrefix=1
+        - id: smartmon-core
+          uri: lb://smartmon-core
+          predicates:
+          - Path=/core/**
+          filters:
+          - StripPrefix=1
+        - id: smartmon-smartstor
+          uri: lb://smartmon-smartstor
+          predicates:
+            - Path=/smartstor/**
+          filters:
+            - StripPrefix=1

@@ -1,0 +1,22 @@
+allprojects {
+  repositories {
+    maven { url 'http://maven.aliyun.com/nexus/content/groups/public' }
+    maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+    maven { url 'https://repo.spring.io/libs-milestone' }
+    maven { url 'https://plugins.gradle.org/m2/' }
+    maven { url 'http://oss.jfrog.org/artifactory/oss-snapshot-local/' }
+    mavenLocal()
+    mavenCentral()
+    jcenter()
+  }
+}
+
+subprojects {
+  apply plugin: 'java'
+  
+  java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+  }
+}
+

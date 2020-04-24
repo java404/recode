@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      id: init-schema-001-table-metadata
+      author: xiong.jia_le
+      changes:
+        # Table metadata (
+        #   name  varchar(512),
+        #   value mediumtext
+        # )
+        - sql:
+            comment: Table storage_host
+            dbms: h2, mysql
+            splitStatements: false
+            sql: CREATE TABLE storage_host (
+              uuid VARCHAR(100) NOT NULL,
+              guid VARCHAR(100),
+              host_id VARCHAR(100),
+              hostname VARCHAR(100),
+              cluster VARCHAR(100),
+              listen_ip VARCHAR(100),
+              listen_port VARCHAR(100),
+              sys_mode INT(11),
+              trans_mode INT(11),
+              node_index VARCHAR(255),
+              node_name VARCHAR(255),
+              node_status INT(11),
+              version VARCHAR(100),
+              version_num VARCHAR(100),
+              update_time datetime DEFAULT NULL,
+              create_time datetime DEFAULT NULL,
+              constraint pk_smartmon_host primary key (uuid));

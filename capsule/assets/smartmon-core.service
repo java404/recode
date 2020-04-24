@@ -1,0 +1,12 @@
+[Unit]
+Description=SmartMon Core
+Requires=network.target smartmon-nacos.service
+After=network.target smartmon-nacos.service
+
+[Service]
+User=root
+ExecStart=/opt/smartmon/smartmon-vhe/smartmon-core-startup.sh
+WorkingDirectory=/opt/smartmon/smartmon-vhe
+
+[Install]
+WantedBy=multi-user.target

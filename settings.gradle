@@ -1,0 +1,13 @@
+include("smartmon-gateway")
+include("smartmon-core")
+include("smartmon-core-provider")
+include("smartmon-examples")
+
+include("smartmon-utilities")
+include("smartmon-taskmanager")
+include("smartmon-webtools")
+include("smartmon-cache")
+
+include("smartmon-smartstor")
+include("smartmon-smartstor-provider")
+include("smartmon-vhe")

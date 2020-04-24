@@ -1,0 +1,42 @@
+import java.text.SimpleDateFormat
+
+plugins {
+  id 'java-library'
+  id 'maven-publish'
+}
+
+final appArtifactId = 'smartmon-core-provider'
+
+jar {
+  baseName = appArtifactId
+  version = project.version
+  manifest.mainAttributes(
+    'Build-Timestamp': new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date()),
+    'Build-Revision' : versioning.info.commit,
+    'Build-Branch' : versioning.info.branch,
+    'Build-Jdk' : "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})",
+    'Build-OS' : "${System.properties['os.name']} ${System.properties['os.arch']} ${System.properties['os.version']}",
+    'Dirty-Working-Copy':  versioning.info.dirty)
+}
+
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      artifact("$buildDir/libs/smartmon-core-provider-1.0.jar")
+    }
+  }
+  repositories {
+    maven {
+      url 'http://172.24.10.157:8081/repository/smartmon/'
+      credentials {
+        username = 'admin'
+        password = 'admin123'
+      }
+    }
+  }
+}
+
+dependencies {
+  compile project(':smartmon-utilities')
+}
+

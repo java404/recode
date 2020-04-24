@@ -1,0 +1,66 @@
+import java.text.SimpleDateFormat
+
+plugins {
+  id 'application'
+  id 'org.springframework.boot'
+  id 'io.spring.dependency-management'
+  id 'maven-publish'
+}
+
+final appMainClassName = 'smartmon.smartstor.SmartMonSmartStor'
+final appArtifactId = 'smartmon-smartstor'
+
+application {
+  mainClassName = "smartmon.smartstor.SmartMonSmartStor"
+}
+
+jar {
+  baseName = appArtifactId
+  version = project.version
+  manifest.mainAttributes(
+    'Build-Timestamp': new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date()),
+    'Build-Revision': versioning.info.commit,
+    'Build-Branch': versioning.info.branch,
+    'Build-Jdk': "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})",
+    'Build-OS': "${System.properties['os.name']} ${System.properties['os.arch']} ${System.properties['os.version']}",
+    'Dirty-Working-Copy': versioning.info.dirty,
+    'Main-Class': appMainClassName)
+}
+
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      artifact("$buildDir/libs/smartmon-smartstor-1.0.jar")
+    }
+  }
+  repositories {
+    maven {
+      url 'http://172.24.10.157:8081/repository/smartmon/'
+      credentials {
+        username = 'admin'
+        password = 'admin123'
+      }
+    }
+  }
+}
+
+dependencyManagement {
+  imports {
+    mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+  }
+}
+
+dependencies {
+  compile project(':smartmon-utilities')
+  compile project(':smartmon-smartstor-provider')
+  compile project(':smartmon-taskmanager')
+  compile project(':smartmon-cache')
+  compile project(':smartmon-webtools')
+  compile project(':smartmon-cache')
+
+  compile('javax.servlet:javax.servlet-api:4.0.1')
+  compile('org.springframework.boot:spring-boot-starter-webflux')
+  compile('org.springframework.cloud:spring-cloud-starter-openfeign')
+  compile libs.springCloudServiceProvided
+  compile libs.mybatisSarter
+}

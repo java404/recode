@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="smartmon.smartstor.infra.persistence.mapper.StorageHostMapper">
+  <resultMap id="StorageHostResultMap" type="StorageHostEntity">
+    <result column="uuid" property="uuid"/>
+    <result column="guid" property="guid"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="host_id" property="hostId"/>
+    <result column="hostname" property="hostname"/>
+    <result column="listen_ip" property="listenIp"/>
+    <result column="listen_port" property="listenPort"/>
+    <result column="sys_mode" property="sysMode" typeHandler="EnumValueTypeHandler"/>
+    <result column="trans_mode" property="transMode" typeHandler="EnumValueTypeHandler"/>
+    <result column="node_index" property="nodeIndex"/>
+    <result column="node_name" property="nodeName"/>
+    <result column="node_status" property="nodeStatus" typeHandler="EnumValueTypeHandler"/>
+    <result column="cluster" property="clusterName"/>
+    <result column="version" property="version"/>
+    <result column="version_num" property="versionNum"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    uuid, guid, create_time, update_time, host_id, hostname, listen_ip, listen_port,
+    sys_mode, trans_mode, node_index, node_name, node_status, cluster, version, version_num
+  </sql>
+
+  <select id="findByUuid" resultMap="StorageHostResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM storage_host
+    WHERE uuid = #{uuid}
+  </select>
+
+  <select id="findAll" resultMap="StorageHostResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM storage_host
+  </select>
+
+  <update id="updateByGuid" parameterType="StorageHostEntity">
+    UPDATE storage_host
+    <set>
+      <if test="updateTime != null">update_time=#{updateTime},</if>
+      guid=#{guid},
+      host_id=#{hostId},
+      hostname=#{hostname},
+      listen_ip=#{listenIp},
+      listen_port=#{listenPort},
+      sys_mode=#{sysMode, typeHandler=EnumValueTypeHandler},
+      trans_mode=#{transMode, typeHandler=EnumValueTypeHandler},
+      node_index=#{nodeIndex},
+      node_name=#{nodeName},
+      node_status=#{nodeStatus, typeHandler=EnumValueTypeHandler},
+      cluster=#{clusterName},
+      version=#{version},
+      version_num=#{versionNum},
+    </set>
+    WHERE guid = #{guid}
+  </update>
+
+  <insert id="save" parameterType="StorageHostEntity">
+    INSERT INTO storage_host
+    (<include refid="Base_Column_List"/>)
+    VALUES (
+    #{uuid},
+    #{guid},
+    #{createTime},
+    #{updateTime},
+    #{hostId},
+    #{hostname},
+    #{listenIp},
+    #{listenPort},
+    #{sysMode, typeHandler=EnumValueTypeHandler},
+    #{transMode, typeHandler=EnumValueTypeHandler},
+    #{nodeIndex},
+    #{nodeName},
+    #{nodeStatus, typeHandler=EnumValueTypeHandler},
+    #{clusterName},
+    #{version},
+    #{versionNum}
+    )
+  </insert>
+  <delete id="delete" parameterType="java.lang.String">
+    DELETE FROM storage_host WHERE uuid = #{uuid,jdbcType=VARCHAR}
+  </delete>
+
+  <select id="findByServiceIp" resultMap="StorageHostResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM storage_host
+    WHERE
+    listen_ip = #{serviceIp}
+  </select>
+</mapper>

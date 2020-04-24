@@ -1,0 +1,35 @@
+# Package Files 
+*.class
+*.jar
+*.war
+*.ear
+target/
+target/classes/
+/LOG_PATH_IS_UNDEFINED/
+/log/
+/LOG_HOME_IS_UNDEFINED/
+
+# IDE files
+.classpath
+.project
+.settings
+.gradle
+.cache-main
+.idea
+
+*.iml
+*.iws
+*.ipr
+out
+build
+checkstyleidea.tmp
+
+# gradle
+/gradle/
+gradlew
+gradlew.bat
+
+# misc
+*.yaml.bak
+/logs/
+

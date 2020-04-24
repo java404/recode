@@ -1,0 +1,42 @@
+<!-- Logback configuration. See http://logback.qos.ch/manual/index.html -->
+<configuration scan="true" scanPeriod="60 seconds">
+  <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+
+  <springProperty scope="context"
+                  name="logLevel" source="smartmon.common.logger.level" defaultValue="WARN" />
+  <springProperty scope="context"
+                  name="logPath" source="smartmon.common.logger.path"
+                  defaultValue="/var/log/smartmon"/>
+  <springProperty scope="context"
+                  name="logPrefix" source="smartmon.common.logger.prefix"
+                  defaultValue="smartmon" />
+
+  <!-- CONSOLE appender -->
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} -%msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <!-- FS appender -->
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <File>${logPath}/${logPrefix}.log</File>
+    <!-- time based rolling policy -->
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${logPath}/${logPrefix}-%d{yyyyMMdd}.%i.log.gz</fileNamePattern>
+      <maxHistory>10</maxHistory>
+      <totalSizeCap>150MB</totalSizeCap>
+      <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+        <maxFileSize>30MB</maxFileSize>
+      </timeBasedFileNamingAndTriggeringPolicy>
+    </rollingPolicy>
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} -%msg%n</Pattern>
+    </layout>
+  </appender>
+
+  <root level="${logLevel}">
+    <appender-ref ref="CONSOLE" />
+    <appender-ref ref="FILE" />
+  </root>
+</configuration>

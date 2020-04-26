@@ -2,7 +2,6 @@ server.port: 15000
 
 spring:
   application.name: smartmon-core
-  cloud.nacos.discovery.ip: 127.0.0.1
   cloud.nacos.discovery.server-addr: 127.0.0.1:8848
   datasource:
     validationQuery: SELECT 1
@@ -25,4 +24,4 @@ spring:
 
 smartmon.api:
   infoName: smartmon-core
-  prefix: /api/v2
+  prefix: /core/api/v2

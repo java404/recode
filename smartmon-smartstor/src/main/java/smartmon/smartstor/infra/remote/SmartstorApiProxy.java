@@ -1,9 +1,9 @@
 package smartmon.smartstor.infra.remote;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -79,14 +79,10 @@ public class SmartstorApiProxy implements SmartstorApiService {
   }
 
   @Override
-  public List<Disk> getDisks(List<String> serviceIps) {
-    List<Disk> diskList = Lists.newArrayList();
-    for (final String serviceIp : serviceIps) {
-      final PbDataClient client = pbDataClientService.getClient(serviceIp, getSmartStorApiPort());
-      final List<Disk> disks = client.listDisks().getDisks();
-      diskList.addAll(disks);
-    }
-    return diskList;
+  public List<Disk> getDisks(String serviceIp) {
+    final PbDataClient client = pbDataClientService.getClient(serviceIp, getSmartStorApiPort());
+    List<Disk> disks = client.listDisks().getDisks();
+    return disks != null ? disks : Collections.emptyList();
   }
 
   @Override

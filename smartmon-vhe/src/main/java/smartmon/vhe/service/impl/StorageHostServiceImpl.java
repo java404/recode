@@ -1,5 +1,6 @@
 package smartmon.vhe.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -9,11 +10,16 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import smartmon.core.hosts.SmartMonHost;
+import smartmon.core.racks.vo.IdcRackAllocateVo;
+import smartmon.core.racks.vo.RackAllocationVo;
+import smartmon.smartstor.web.dto.StorageHostDto;
+import smartmon.utilities.misc.BeanConverter;
 import smartmon.vhe.exception.FeignClientException;
 import smartmon.vhe.exception.HostInitException;
 import smartmon.vhe.service.StorageHostService;
-import smartmon.vhe.service.dto.SmartmonCoreHostAddResDto;
-import smartmon.vhe.service.dto.StorageHostDto;
+import smartmon.vhe.service.dto.VheStorageHostDto;
+import smartmon.vhe.service.dto.VheStorageHostInitDto;
 import smartmon.vhe.service.feign.SmartStorFeignClient;
 import smartmon.vhe.service.feign.SmartmonCoreFeignClient;
 import smartmon.vhe.service.feign.types.SmartMonHostAddParam;
@@ -27,14 +33,52 @@ public class StorageHostServiceImpl implements StorageHostService {
   private SmartStorFeignClient smartStorFeignClient;
 
   @Override
-  public Boolean init(List<StorageHostDto> hosts) {
-    List<SmartmonCoreHostAddResDto> coreHosts = addHostToCore(hosts);
+  public Boolean init(List<VheStorageHostInitDto> hosts) {
+    List<SmartMonHost> coreHosts = addHostToCore(hosts);
     addHostToSmartStor(hosts, coreHosts);
+    addRackInfo(hosts);
     return true;
   }
 
-  private void addHostToSmartStor(List<StorageHostDto> hosts,
-                                  List<SmartmonCoreHostAddResDto> coreHosts) {
+  @Override
+  public List<VheStorageHostDto> listAll() {
+    List<VheStorageHostDto> hosts = new ArrayList<>();
+    List<StorageHostDto> smartstorHosts = smartStorFeignClient.getStorageHosts().getContent();
+    List<RackAllocationVo> racks = coreFeignClient.getRacks().getContent();
+    Map<String, RackAllocationVo> hostIdRackMap = racks
+      .stream()
+      .collect(Collectors.toMap(RackAllocationVo::getHostUuid, Function.identity(), (oldValue, newValue) -> newValue));
+    smartstorHosts.forEach(h -> {
+      VheStorageHostDto storageHostDto = BeanConverter.copy(h, VheStorageHostDto.class);
+      if (storageHostDto == null) {
+        return;
+      }
+      RackAllocationVo rackAllocationVo = hostIdRackMap.get(storageHostDto.getGuid());
+      if (rackAllocationVo != null) {
+        storageHostDto.setRackInfo(rackAllocationVo);
+      }
+      hosts.add(storageHostDto);
+    });
+    return hosts;
+  }
+
+  private void addRackInfo(List<VheStorageHostInitDto> hosts) {
+    try {
+      List<IdcRackAllocateVo> vos = new ArrayList<>();
+      hosts.forEach(h -> {
+        IdcRackAllocateVo rackInfoVo = BeanConverter.copy(h, IdcRackAllocateVo.class);
+        rackInfoVo.setHostUuid(h.getGuid());
+        vos.add(rackInfoVo);
+      });
+      coreFeignClient.addHostToRackBatch(vos);
+    } catch (FeignClientException e) {
+      log.error("Save rack info failed");
+      throw new HostInitException(e.getMessage());
+    }
+  }
+
+  private void addHostToSmartStor(List<VheStorageHostInitDto> hosts,
+                                  List<SmartMonHost> coreHosts) {
     try {
       generateHostUUid(coreHosts, hosts);
       smartStorFeignClient.saveHosts(hosts);
@@ -44,12 +88,12 @@ public class StorageHostServiceImpl implements StorageHostService {
     }
   }
 
-  private List<SmartmonCoreHostAddResDto> addHostToCore(List<StorageHostDto> hosts) {
-    List<SmartmonCoreHostAddResDto> coreHosts;
+  private List<SmartMonHost> addHostToCore(List<VheStorageHostInitDto> hosts) {
+    List<SmartMonHost> coreHosts;
     try {
       List<SmartMonHostAddParam> addParamList = hosts
         .stream()
-        .map(StorageHostDto::getHostAddParam)
+        .map(VheStorageHostInitDto::getHostAddParam)
         .collect(Collectors.toList());
       coreHosts = coreFeignClient
         .addHosts(addParamList)
@@ -64,8 +108,8 @@ public class StorageHostServiceImpl implements StorageHostService {
     return coreHosts;
   }
 
-  private void generateHostUUid(List<SmartmonCoreHostAddResDto> coreHosts,
-                                List<StorageHostDto> hosts) {
+  private void generateHostUUid(List<SmartMonHost> coreHosts,
+                                List<VheStorageHostInitDto> hosts) {
     Map<String, String> ipUuidMap = coreHosts
       .stream()
       .collect(Collectors.toMap(getGetManageIp(), getGetHostUuid()));
@@ -78,12 +122,12 @@ public class StorageHostServiceImpl implements StorageHostService {
     });
   }
 
-  private Function<SmartmonCoreHostAddResDto, String> getGetHostUuid() {
-    return SmartmonCoreHostAddResDto::getHostUuid;
+  private Function<SmartMonHost, String> getGetHostUuid() {
+    return SmartMonHost::getHostUuid;
   }
 
-  private Function<SmartmonCoreHostAddResDto, String> getGetManageIp() {
-    return SmartmonCoreHostAddResDto::getManageIp;
+  private Function<SmartMonHost, String> getGetManageIp() {
+    return SmartMonHost::getManageIp;
   }
 
 }

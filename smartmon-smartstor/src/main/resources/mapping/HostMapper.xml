@@ -38,7 +38,7 @@
     FROM storage_host
   </select>
 
-  <update id="updateByGuid" parameterType="StorageHostEntity">
+  <update id="update" parameterType="StorageHostEntity">
     UPDATE storage_host
     <set>
       <if test="updateTime != null">update_time=#{updateTime},</if>
@@ -56,7 +56,7 @@
       version=#{version},
       version_num=#{versionNum},
     </set>
-    WHERE guid = #{guid}
+    WHERE uuid = #{uuid}
   </update>
 
   <insert id="save" parameterType="StorageHostEntity">

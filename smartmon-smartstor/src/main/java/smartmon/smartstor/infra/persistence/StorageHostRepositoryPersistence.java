@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,30 +25,21 @@ public class StorageHostRepositoryPersistence implements StorageHostRepository {
   @Override
   @Transactional
   public void save(List<StorageHost> hosts) {
-    List<String> guids = getGuids();
-    hosts.forEach(host -> saveOrUpdate(guids, host));
+    hosts.forEach(this::saveOrUpdate);
   }
 
   @Override
   @Transactional
   public void save(StorageHost host) {
-    saveOrUpdate(getGuids(), host);
+    saveOrUpdate(host);
   }
 
-  private List<String> getGuids() {
-    List<StorageHostEntity> allHostEntities = hostMapper.findAll();
-    return allHostEntities
-      .stream()
-      .map(StorageHostEntity::getGuid)
-      .collect(Collectors.toList());
-  }
-
-  private void saveOrUpdate(List<String> guids, StorageHost host) {
+  private void saveOrUpdate(StorageHost host) {
     StorageHostEntity entity = new StorageHostEntity();
-    BeanUtils.copyProperties(host, entity, "uuid");
-    if (guids.contains(host.getGuid())) {
+    BeanUtils.copyProperties(host, entity);
+    if (hostMapper.findByUuid(host.getUuid()) != null) {
       entity.setUpdateTime(LocalDateTime.now());
-      hostMapper.updateByGuid(entity);
+      hostMapper.update(entity);
     } else {
       hostMapper.save(entity);
     }

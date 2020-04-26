@@ -19,6 +19,6 @@ public class SmartMonGateway {
 
   @Bean
   RouterFunction<ServerResponse> staticResourceRouter() throws MalformedURLException {
-    return RouterFunctions.resources("/ui/**", new FileUrlResource("/usr/share/nginx/html/"));
+    return RouterFunctions.resources("/ui/**", new FileUrlResource("/usr/share/nginx/html/ui/"));
   }
 }

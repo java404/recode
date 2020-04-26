@@ -3,7 +3,6 @@ server.port: 15101
 spring:
   application.name: smartmon-vhe
   cloud:
-    nacos.discovery.ip: 127.0.0.1
     nacos.discovery.server-addr: 127.0.0.1:8848
 
 ribbon.ConnectTimeout: 500000
@@ -11,4 +10,4 @@ ribbon.ReadTimeout: 500000
 
 smartmon.api:
   infoName: smartmon-vhe
-  prefix: /api/v2
+  prefix: /vhe/api/v2

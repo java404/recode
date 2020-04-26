@@ -51,6 +51,8 @@ dependencyManagement {
 }
 
 dependencies {
+  compile project(':smartmon-utilities')
+
   compile('javax.servlet:javax.servlet-api:4.0.1')
   compile('org.springframework.cloud:spring-cloud-starter-gateway')
   compile('org.springframework.boot:spring-boot-starter-webflux')

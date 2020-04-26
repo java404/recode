@@ -1,21 +1,21 @@
 package smartmon.smartstor.interfaces.web.representation;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import smartmon.smartstor.domain.gateway.repository.DiskRepository;
 import smartmon.smartstor.domain.model.Disk;
+import smartmon.smartstor.infra.cache.CachedData;
+import smartmon.smartstor.infra.cache.DataCacheManager;
 import smartmon.smartstor.interfaces.web.representation.assembler.DiskDtoAssembler;
 import smartmon.smartstor.interfaces.web.representation.dto.DiskDto;
 
 @Service
 public class DiskRepresentationService {
   @Autowired
-  private DiskRepository diskRepository;
+  private DataCacheManager dataCacheManager;
 
-  public List<DiskDto> getDisks() {
-    List<Disk> disks = diskRepository.getDisks();
+  public CachedData<DiskDto> getDisks(String serviceIp) {
+    CachedData<Disk> disks = dataCacheManager.getDisks(serviceIp);
+
     return DiskDtoAssembler.toDtos(disks);
   }
 }

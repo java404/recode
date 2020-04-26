@@ -1,9 +1,11 @@
 package smartmon.vhe.service;
 
 import java.util.List;
-import smartmon.utilities.general.SmartMonResponse;
-import smartmon.vhe.service.dto.StorageHostDto;
+import smartmon.vhe.service.dto.VheStorageHostDto;
+import smartmon.vhe.service.dto.VheStorageHostInitDto;
 
 public interface StorageHostService {
-  Boolean init(List<StorageHostDto> hostDtos);
+  Boolean init(List<VheStorageHostInitDto> hostDtos);
+
+  List<VheStorageHostDto> listAll();
 }

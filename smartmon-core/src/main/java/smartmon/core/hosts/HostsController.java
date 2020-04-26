@@ -17,7 +17,7 @@ import smartmon.utilities.general.SmartMonResponse;
 
 @Api(tags = "hosts")
 @RestController
-@RequestMapping("${smartmon.apiPrefix:/api/v2}/hosts")
+@RequestMapping("${smartmon.apiPrefix:/core/api/v2}/hosts")
 public class HostsController {
   @Autowired
   private HostsService hostsService;

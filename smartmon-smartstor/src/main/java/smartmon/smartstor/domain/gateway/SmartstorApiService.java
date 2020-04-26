@@ -16,7 +16,7 @@ public interface SmartstorApiService {
 
   StorageNode getNodeInfo(String serviceIp);
 
-  List<Disk> getDisks(List<String> serviceIps);
+  List<Disk> getDisks(String serviceIp);
 
   Disk getDiskInfo(String serviceIp, String diskName);
 

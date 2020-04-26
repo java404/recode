@@ -8,9 +8,9 @@ import java.util.List;
 @Data
 public class PbDataGroupInfo {
   @JsonProperty("initgroup_id")
-  private String id;
+  private String groupId;
   @JsonProperty("initgroup_name")
-  private String name;
+  private String groupName;
   @JsonProperty("initgroup_info")
   private String groupInfo;
   @JsonProperty("initgroup_nodes")

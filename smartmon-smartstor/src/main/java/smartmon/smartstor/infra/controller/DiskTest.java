@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import smartmon.smartstor.domain.model.Disk;
 import smartmon.smartstor.infra.remote.SmartstorApiProxy;
-import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -20,7 +19,7 @@ public class DiskTest {
   @GetMapping("disk/list")
   @ResponseBody
   public List<Disk> getDisks() {
-    return apiProxy.getDisks(Collections.singletonList("172.24.12.218"));
+    return apiProxy.getDisks("172.24.12.218");
   }
 
   @GetMapping("disk/info")

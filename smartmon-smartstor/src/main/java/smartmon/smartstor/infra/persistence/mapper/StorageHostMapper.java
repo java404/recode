@@ -10,7 +10,7 @@ public interface StorageHostMapper {
 
   void save(StorageHostEntity hostEntity);
 
-  void updateByGuid(StorageHostEntity hostEntity);
+  void update(StorageHostEntity hostEntity);
 
   void delete(String uuid);
 

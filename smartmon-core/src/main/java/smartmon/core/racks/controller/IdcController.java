@@ -21,7 +21,7 @@ import smartmon.core.racks.vo.IdcAddVo;
 import smartmon.utilities.general.SmartMonResponse;
 
 @Api(tags = "idcs")
-@RequestMapping("${smartmon.api.prefix:/api/v2}/idcs")
+@RequestMapping("${smartmon.api.prefix:/core/api/v2}/idcs")
 @RestController
 public class IdcController {
   @Autowired

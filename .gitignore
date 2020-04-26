@@ -32,4 +32,4 @@ gradlew.bat
 # misc
 *.yaml.bak
 /logs/
-
+logPath_IS_UNDEFINED

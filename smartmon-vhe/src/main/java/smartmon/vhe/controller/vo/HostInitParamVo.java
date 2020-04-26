@@ -11,4 +11,8 @@ public class HostInitParamVo {
   private String hostId;
   @ApiModelProperty(value = "serviceIp", position = 2)
   private String serviceIp;
+  @ApiModelProperty(value = "size", position = 3)
+  private Integer size;
+  @ApiModelProperty(value = "idcName", position = 3)
+  private String idcName;
 }

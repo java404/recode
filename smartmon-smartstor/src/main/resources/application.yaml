@@ -3,7 +3,6 @@ server.port: 15100
 spring:
   application.name: smartmon-smartstor
   cloud:
-    nacos.discovery.ip: 127.0.0.1
     nacos.discovery.server-addr: 127.0.0.1:8848
   batch:
     job:
@@ -12,7 +11,7 @@ spring:
   datasource:
     validationQuery: SELECT 1
     driverClassName: org.h2.Driver
-    url: jdbc:h2:file:/var/smartmon/smartstor.h2;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:file:D:/opt/database/smartstor.h2;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     user: sa
     password: sa
     type: com.zaxxer.hikari.HikariDataSource
@@ -28,7 +27,7 @@ spring:
   liquibase:
     enabled: true
     change-log: classpath:db/smartmon-smartstor-changelog.yaml
-    url: jdbc:h2:file:/var/smartmon/smartstor.h2;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:file:D:/opt/database/smartstor.h2;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     default-schema: PUBLIC
     user: sa
     password: sa
@@ -51,4 +50,4 @@ smartmon.data:
 
 smartmon.api:
   infoName: smartmon-smartstor
-  prefix: /api/v2
+  prefix: /smartstor/api/v2

@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PbDataLunConfigParam {
-  @JsonProperty("initgroup_name")
-  private String groupName;
+public class PbDataLunDelParam {
+  @JsonProperty("ignore_asmstatus")
+  private Boolean asmStatus;
+  @JsonProperty("ignore_vote")
+  private Boolean vote;
 }

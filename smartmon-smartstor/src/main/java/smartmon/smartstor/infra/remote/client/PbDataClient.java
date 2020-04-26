@@ -19,13 +19,15 @@ import smartmon.smartstor.infra.remote.types.disk.PbDataDiskInfosV30;
 import smartmon.smartstor.infra.remote.types.disk.PbDataDiskV30;
 import smartmon.smartstor.infra.remote.types.group.PbDataGroupAddNodeParam;
 import smartmon.smartstor.infra.remote.types.group.PbDataGroupAddParam;
+import smartmon.smartstor.infra.remote.types.group.PbDataGroupResponse;
 import smartmon.smartstor.infra.remote.types.group.PbDataGroupConfigParam;
-import smartmon.smartstor.infra.remote.types.group.PbDataGroupInfo;
 import smartmon.smartstor.infra.remote.types.group.PbDataGroupInfos;
 import smartmon.smartstor.infra.remote.types.lun.PbDataLunConfigParam;
 import smartmon.smartstor.infra.remote.types.lun.PbDataLunCreateParam;
-import smartmon.smartstor.infra.remote.types.lun.PbDataLunInfo;
+import smartmon.smartstor.infra.remote.types.lun.PbDataLunDelParam;
 import smartmon.smartstor.infra.remote.types.lun.PbDataLunInfos;
+import smartmon.smartstor.infra.remote.types.lun.PbDataLunResponse;
+import smartmon.smartstor.infra.remote.types.lun.PbDataLunStateParam;
 import smartmon.smartstor.infra.remote.types.node.PbDataNodeConfigParam;
 import smartmon.smartstor.infra.remote.types.node.PbDataNodeInfo;
 import smartmon.smartstor.infra.remote.types.node.PbDataNodeInfos;
@@ -151,19 +153,19 @@ public class PbDataClient {
     return this.groupManagerRequest.listGroups();
   }
 
-  public PbDataGroupInfo getGroupInfoByName(String groupName) {
+  public PbDataGroupResponse getGroupInfoByName(String groupName) {
     return this.groupManagerRequest.getGroupInfoByName(groupName);
   }
 
-  public PbDataGroupInfo getGroupInfoById(String groupId) {
+  public PbDataGroupResponse getGroupInfoById(String groupId) {
     return this.groupManagerRequest.getGroupInfoById(groupId);
   }
 
-  public PbDataResponseCode groupConfig(PbDataGroupConfigParam groupConfigParam, String groupId) {
-    return this.groupManagerRequest.groupConfig(groupConfigParam, groupId);
+  public PbDataResponseCode groupConfig(PbDataGroupConfigParam groupConfigParam, String groupName) {
+    return this.groupManagerRequest.groupConfig(groupConfigParam, groupName);
   }
 
-  public PbDataGroupInfo groupAdd(PbDataGroupAddParam groupAddParam) {
+  public PbDataGroupResponse groupAdd(PbDataGroupAddParam groupAddParam) {
     return this.groupManagerRequest.groupAdd(groupAddParam);
   }
 
@@ -183,7 +185,7 @@ public class PbDataClient {
     return this.lunManagerRequest.listLuns();
   }
 
-  public PbDataLunInfo getLunInfo(String lunName) {
+  public PbDataLunResponse getLunInfo(String lunName) {
     return this.lunManagerRequest.getLunInfo(lunName);
   }
 
@@ -192,7 +194,7 @@ public class PbDataClient {
   }
 
   public PbDataResponseCode lunDel(String lunName, Boolean asmStatus, Boolean vote) {
-    return this.lunManagerRequest.lunDel(lunName, asmStatus, vote);
+    return this.lunManagerRequest.lunDel(lunName, new PbDataLunDelParam(asmStatus, vote));
   }
 
   public PbDataResponseCode lunOnline(String lunName) {
@@ -200,7 +202,7 @@ public class PbDataClient {
   }
 
   public PbDataResponseCode lunOffline(String lunName, Boolean asmStatus) {
-    return this.lunManagerRequest.lunOffline(lunName, asmStatus);
+    return this.lunManagerRequest.lunOffline(lunName, new PbDataLunStateParam(asmStatus));
   }
 
   public PbDataResponseCode lunActive(String lunName) {
@@ -208,7 +210,7 @@ public class PbDataClient {
   }
 
   public PbDataResponseCode lunInActive(String lunName, Boolean asmStatus) {
-    return this.lunManagerRequest.lunInActive(lunName, asmStatus);
+    return this.lunManagerRequest.lunInActive(lunName, new PbDataLunStateParam(asmStatus));
   }
 
   public PbDataResponseCode lunConfig(PbDataLunConfigParam lunConfigParam, String lunName) {

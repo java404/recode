@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -34,8 +35,7 @@ public class JsonConverter {
     }
   }
 
-  public static <T> T treeToValue(JsonNode node, Class<T> valueType)
-      throws JsonProcessingException {
+  public static <T> T treeToValue(JsonNode node, Class<T> valueType) throws JsonProcessingException {
     return getMapper().treeToValue(node, valueType);
   }
 
@@ -55,5 +55,18 @@ public class JsonConverter {
       log.warn("Json process exception:", error);
       return null;
     }
+  }
+
+  public static JsonNode readTreeQuietly(String value) {
+    try {
+      return readTree(value);
+    } catch (Exception error) {
+      log.warn("Json process exception:", error);
+      return null;
+    }
+  }
+
+  public static JsonNode readTree(String value) throws JsonProcessingException {
+    return getMapper().readTree(value);
   }
 }

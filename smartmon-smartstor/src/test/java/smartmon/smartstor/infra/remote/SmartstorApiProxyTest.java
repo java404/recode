@@ -7,14 +7,26 @@ import smartmon.smartstor.infra.remote.types.PbDataApiVersion;
 import smartmon.smartstor.infra.remote.types.PbDataResponseCode;
 import smartmon.smartstor.infra.remote.types.disk.PbDataDiskInfos;
 import smartmon.smartstor.infra.remote.types.disk.PbDataDiskAddParam;
+import smartmon.smartstor.infra.remote.types.group.PbDataGroupAddNodeParam;
+import smartmon.smartstor.infra.remote.types.group.PbDataGroupAddParam;
+import smartmon.smartstor.infra.remote.types.group.PbDataGroupConfigParam;
+import smartmon.smartstor.infra.remote.types.group.PbDataGroupResponse;
+import smartmon.smartstor.infra.remote.types.group.PbDataGroupInfos;
+import smartmon.smartstor.infra.remote.types.lun.PbDataLunConfigParam;
+import smartmon.smartstor.infra.remote.types.lun.PbDataLunCreateParam;
+import smartmon.smartstor.infra.remote.types.lun.PbDataLunInfos;
+import smartmon.smartstor.infra.remote.types.lun.PbDataLunResponse;
 import smartmon.smartstor.infra.remote.types.node.PbDataNodeConfigParam;
 import smartmon.smartstor.infra.remote.types.node.PbDataNodeInfos;
 import smartmon.smartstor.infra.remote.types.node.PbDataNodeItem;
-import smartmon.utilities.misc.JsonConverter;
+import smartmon.smartstor.infra.remote.types.pool.PbDataPoolCacheConfigParam;
+import smartmon.smartstor.infra.remote.types.pool.PbDataPoolCreateParam;
+import smartmon.smartstor.infra.remote.types.pool.PbDataPoolDirtyConfigParam;
+import smartmon.smartstor.infra.remote.types.pool.PbDataPoolInfos;
+import smartmon.smartstor.infra.remote.types.pool.PbDataPoolSizeConfigParam;
+import smartmon.smartstor.infra.remote.types.pool.PbDataPoolSkipConfigParam;
+import smartmon.smartstor.infra.remote.types.pool.PbDataPoolSynClevelConfgParam;
 import smartmon.utilities.misc.TargetHost;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class SmartstorApiProxyTest {
 
@@ -94,9 +106,141 @@ public class SmartstorApiProxyTest {
   public void diskLedTest() {
     final TargetHost targetHost = TargetHost.builder("172.24.12.216", 9000).build();
     final PbDataClient client = new PbDataClient(targetHost);
-    final PbDataResponseCode pbDataResponseCode = client.diskRaidLedOnState("0:16:9");
+    final PbDataResponseCode raidLedOnState = client.diskRaidLedOnState("0:16:9");
+    System.out.println(raidLedOnState);
+    final PbDataResponseCode ledOffState = client.diskRaidLedOffState("0:16:9");
+    System.out.println(ledOffState);
+  }
+
+  @Test
+  @Ignore
+  public void groupListTest() {
+    final TargetHost targetHost = TargetHost.builder("172.24.12.216", 9000).build();
+    final PbDataClient client = new PbDataClient(targetHost);
+    final PbDataGroupInfos pbDataGroupInfos = client.listGroups();
+    System.out.println(pbDataGroupInfos);
+  }
+
+  @Test
+  @Ignore
+  public void groupOperateTest() {
+    final TargetHost targetHost = TargetHost.builder("172.24.12.216", 9000).build();
+    final PbDataClient client = new PbDataClient(targetHost);
+    final PbDataGroupResponse groupResponse = client.groupAdd(new PbDataGroupAddParam("hello", "jjj"));
+    System.out.println(groupResponse);
+    final PbDataGroupResponse groupInfoByName = client.getGroupInfoByName("hello");
+    System.out.println(groupInfoByName);
+    final PbDataResponseCode pbDataResponseCode = client.groupDel("hello");
     System.out.println(pbDataResponseCode);
-    final PbDataResponseCode pbDataResponseCode1 = client.diskRaidLedOffState("0:16:9");
-    System.out.println(pbDataResponseCode1);
+  }
+
+  @Test
+  @Ignore
+  public void groupConfigTest() {
+    final TargetHost targetHost = TargetHost.builder("172.24.12.216", 9000).build();
+    final PbDataClient client = new PbDataClient(targetHost);
+    final PbDataResponseCode pbDataResponseCode = client.groupConfig(new PbDataGroupConfigParam(null, "111"), "group01");
+    System.out.println(pbDataResponseCode);
+  }
+
+  @Test
+  @Ignore
+  public void groupNodeTest() {
+    final TargetHost targetHost = TargetHost.builder("172.24.12.216", 9000).build();
+    final PbDataClient client = new PbDataClient(targetHost);
+    final PbDataResponseCode groupAddNode = client.groupAddNode(new PbDataGroupAddNodeParam("du098", null), "group02");
+    System.out.println(groupAddNode);
+    final PbDataResponseCode groupDelNode = client.groupDelNode("group02", "du098");
+    System.out.println(groupDelNode);
+  }
+
+  @Test
+  @Ignore
+  public void lunListTest() {
+    final TargetHost targetHost = TargetHost.builder("172.24.12.216", 9000).build();
+    final PbDataClient client = new PbDataClient(targetHost);
+    final PbDataLunInfos listluns = client.listluns();
+    System.out.println(listluns);
+    final PbDataLunResponse lunInfo = client.getLunInfo("su098_lun02");
+    System.out.println(lunInfo);
+  }
+
+  @Test
+  @Ignore
+  public void lunOperateTest() {
+    final TargetHost targetHost = TargetHost.builder("172.24.12.216", 9000).build();
+    final PbDataClient client = new PbDataClient(targetHost);
+    final PbDataResponseCode lunCreate = client.lunCreate(new PbDataLunCreateParam("hd01p1", null, null, null, null));
+    System.out.println(lunCreate);
+    final PbDataResponseCode lunDel = client.lunDel("su098_lun01", null, null);
+    System.out.println(lunDel);
+  }
+
+  @Test
+  @Ignore
+  public void lunConfigTest() {
+    final TargetHost targetHost = TargetHost.builder("172.24.12.216", 9000).build();
+    final PbDataClient client = new PbDataClient(targetHost);
+    final PbDataResponseCode pbDataResponseCode = client.lunConfig(new PbDataLunConfigParam("group02"), "su098_lun01");
+    System.out.println(pbDataResponseCode);
+  }
+
+  @Test
+  @Ignore
+  public void lunLineTest() {
+    final TargetHost targetHost = TargetHost.builder("172.24.12.216", 9000).build();
+    final PbDataClient client = new PbDataClient(targetHost);
+    final PbDataResponseCode lunOnline = client.lunOnline("su098_lun01");
+    System.out.println(lunOnline);
+    final PbDataResponseCode lunOffline = client.lunOffline("su098_lun01", null);
+    System.out.println(lunOffline);
+  }
+
+  @Test
+  @Ignore
+  public void lunActiveTest() {
+    final TargetHost targetHost = TargetHost.builder("172.24.12.216", 9000).build();
+    final PbDataClient client = new PbDataClient(targetHost);
+    final PbDataResponseCode lunActive = client.lunActive("su098_lun01");
+    System.out.println(lunActive);
+    final PbDataResponseCode lunInActive = client.lunInActive("su098_lun01", null);
+    System.out.println(lunInActive);
+  }
+
+  @Test
+  @Ignore
+  public void poolListTest() {
+    final TargetHost targetHost = TargetHost.builder("172.24.12.218", 9000).build();
+    final PbDataClient client = new PbDataClient(targetHost);
+    final PbDataPoolInfos pbDataPoolInfos = client.listPools();
+    System.out.println(pbDataPoolInfos);
+  }
+
+  @Test
+  @Ignore
+  public void poolOperateTest() {
+    final TargetHost targetHost = TargetHost.builder("172.24.12.218", 9000).build();
+    final PbDataClient client = new PbDataClient(targetHost);
+    final PbDataResponseCode poolCreate = client.poolCreate(new PbDataPoolCreateParam("sd03p1", null, null, null, null));
+    System.out.println(poolCreate);
+    final PbDataResponseCode poolDel = client.poolDel("pool03");
+    System.out.println(poolDel);
+  }
+
+  @Test
+  @Ignore
+  public void poolConfigTest() {
+    final TargetHost targetHost = TargetHost.builder("172.24.12.218", 9000).build();
+    final PbDataClient client = new PbDataClient(targetHost);
+    final PbDataResponseCode poolConfigSizeUpdata = client.poolConfigSizeUpdata("pool01", new PbDataPoolSizeConfigParam(200L));
+    System.out.println(poolConfigSizeUpdata);
+    final PbDataResponseCode poolConfigCacheMode = client.poolConfigCacheMode("pool01", new PbDataPoolCacheConfigParam("through", null));
+    System.out.println(poolConfigCacheMode);
+    final PbDataResponseCode poolConfigDirtyThresh = client.poolConfigDirtyThresh("pool01", new PbDataPoolDirtyConfigParam(30, 70));
+    System.out.println(poolConfigDirtyThresh);
+    final PbDataResponseCode poolConfigSynClevel = client.poolConfigSynClevel("pool01", new PbDataPoolSynClevelConfgParam(5));
+    System.out.println(poolConfigSynClevel);
+    final PbDataResponseCode poolConfigSkip = client.poolConfigSkip("pool01", new PbDataPoolSkipConfigParam(24));
+    System.out.println(poolConfigSkip);
   }
 }

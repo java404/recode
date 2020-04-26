@@ -43,9 +43,10 @@ public class FeignConfig {
       try {
         String res = Util.toString(response.body().asReader());
         SmartMonResponse errorMessage = JsonConverter.readValueQuietly(res, SmartMonResponse.class);
-        if (errorMessage != null) {
+        if (errorMessage != null && errorMessage.getContent() != null) {
           ex =  new FeignClientException((String) errorMessage.getContent());
         } else {
+          log.warn("Feign exec failed: {}", res);
           ex =  new FeignClientException("Internal server error");
         }
       } catch (IOException e) {

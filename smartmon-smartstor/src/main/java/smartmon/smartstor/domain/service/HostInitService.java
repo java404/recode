@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +55,7 @@ public class HostInitService {
       if (storageHost == null) {
         return;
       }
+      h.setUuid(UUID.randomUUID().toString());
       h.setGuid(storageHost.getGuid());
       h.setListenIp(storageHost.getListenIp());
       toBeSavedHosts.add(h);

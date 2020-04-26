@@ -9,7 +9,7 @@ import smartmon.smartstor.interfaces.web.representation.ServerRepresentationServ
 import smartmon.utilities.general.SmartMonResponse;
 
 @RestController
-@RequestMapping("api/v2/server")
+@RequestMapping("${smartmon.api.prefix:/smartstor/api/v2}/server")
 public class ServerController {
   @Autowired
   private ServerRepresentationService serverRepresentationService;

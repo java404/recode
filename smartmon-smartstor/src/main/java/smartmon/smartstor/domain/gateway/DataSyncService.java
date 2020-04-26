@@ -9,5 +9,15 @@ public interface DataSyncService {
 
   List<StorageHost> syncHosts();
 
+  void syncDisks(List<String> serviceIps);
+
   void syncDisks(String serviceIp);
+
+  void syncPools(List<String> serviceIps);
+
+  void syncPools(String serviceIp);
+
+  void syncLuns(List<String> serviceIps);
+
+  void syncLuns(String serviceIp);
 }

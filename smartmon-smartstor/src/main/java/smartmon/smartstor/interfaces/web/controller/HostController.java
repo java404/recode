@@ -18,16 +18,16 @@ import org.springframework.web.bind.annotation.RestController;
 import smartmon.smartstor.app.HostAppService;
 import smartmon.smartstor.app.command.HostInitCommand;
 import smartmon.smartstor.interfaces.web.controller.vo.HostInitVo;
+import smartmon.smartstor.interfaces.web.controller.vo.HostVerifyVo;
 import smartmon.smartstor.interfaces.web.representation.HostRepresentationService;
 import smartmon.smartstor.interfaces.web.representation.dto.HostsScanDto;
-import smartmon.smartstor.interfaces.web.representation.vo.HostVerifyVo;
 import smartmon.taskmanager.TaskManagerService;
 import smartmon.taskmanager.types.TaskContext;
 import smartmon.utilities.general.SmartMonResponse;
 import smartmon.webtools.page.SmartMonPageParams;
 
 @Api(tags = "hosts")
-@RequestMapping("api/v2/hosts")
+@RequestMapping("${smartmon.api.prefix:/smartstor/api/v2}/hosts")
 @RestController
 public class HostController {
   @Autowired

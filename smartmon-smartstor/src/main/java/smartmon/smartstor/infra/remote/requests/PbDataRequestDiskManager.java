@@ -33,7 +33,7 @@ public interface PbDataRequestDiskManager {
   @RequestLine("DELETE /instances/disks/{disk_name}")
   PbDataResponseCode diskDel(@Param("disk_name") String diskName);
 
-  @RequestLine("PATCH /instances/disks/{ces_addr}")
+  @RequestLine("PATCH /instances/disks/{ces_addr}/led/onstate")
   PbDataResponseCode diskRaidLedOnState(@Param("ces_addr") String cesAddr);
 
   @RequestLine("PATCH /instances/disks/{ces_addr}/led/offstate")

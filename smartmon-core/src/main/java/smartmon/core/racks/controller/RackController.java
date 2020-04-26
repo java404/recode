@@ -1,10 +1,12 @@
 package smartmon.core.racks.controller;
 
+import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,10 +22,12 @@ import smartmon.core.racks.RackService;
 import smartmon.core.racks.model.RackAllocation;
 import smartmon.core.racks.vo.IdcRackAllocateVo;
 import smartmon.core.racks.vo.RackAllocateVo;
+import smartmon.core.racks.vo.RackAllocationVo;
 import smartmon.utilities.general.SmartMonResponse;
+import smartmon.utilities.misc.BeanConverter;
 
 @Api(tags = "racks")
-@RequestMapping("${smartmon.api.prefix:/api/v2}/racks")
+@RequestMapping("${smartmon.api.prefix:/core/api/v2}/racks")
 @RestController
 public class RackController {
   @Autowired
@@ -33,8 +37,13 @@ public class RackController {
 
   @ApiOperation("Get all rack allocation info")
   @GetMapping("allocated")
-  public SmartMonResponse<List<RackAllocation>> getAll() {
-    return new SmartMonResponse<>(rackMapper.findAll());
+  public SmartMonResponse getAll() {
+    List<RackAllocation> racks = rackMapper.findAll();
+    if (CollectionUtils.isEmpty(racks)) {
+      return new SmartMonResponse<>(Lists.newArrayList());
+    }
+    List<RackAllocationVo> vos = BeanConverter.copy(racks, RackAllocationVo.class);
+    return new SmartMonResponse<>(vos);
   }
 
   @ApiOperation("Add host to given rack position")

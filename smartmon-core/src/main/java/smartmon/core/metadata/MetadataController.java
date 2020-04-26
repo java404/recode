@@ -13,7 +13,7 @@ import smartmon.utilities.general.SmartMonResponse;
 
 @Api(tags = "utils")
 @RestController
-@RequestMapping("${smartmon.api.prefix:/api/v2}/metadata")
+@RequestMapping("${smartmon.api.prefix:/core/api/v2}/metadata")
 @Slf4j
 public class MetadataController {
   @Autowired

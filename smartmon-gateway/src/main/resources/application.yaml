@@ -14,21 +14,33 @@ spring:
         enabled: true
         lower-case-service-id: true
       routes:
+        - id: swagger-vhe
+          uri: lb://smartmon-vhe
+          predicates:
+            - Path=/vhe/v2/api-docs
+          filters:
+            - StripPrefix=1
         - id: smartmon-vhe
           uri: lb://smartmon-vhe
           predicates:
-          - Path=/vhe/**
+            - Path=/vhe/**
+        - id: swagger-core
+          uri: lb://smartmon-core
+          predicates:
+            - Path=/core/v2/api-docs
           filters:
-          - StripPrefix=1
+            - StripPrefix=1
         - id: smartmon-core
           uri: lb://smartmon-core
           predicates:
-          - Path=/core/**
+            - Path=/core/**
+        - id: swagger-smartstor
+          uri: lb://smartmon-smartstor
+          predicates:
+            - Path=/smartstor/v2/api-docs
           filters:
-          - StripPrefix=1
+            - StripPrefix=1
         - id: smartmon-smartstor
           uri: lb://smartmon-smartstor
           predicates:
             - Path=/smartstor/**
-          filters:
-            - StripPrefix=1

@@ -15,4 +15,14 @@ public class PbDataPoolDiskInfo {
   private String replaceDiskId;
   @JsonProperty("replace_paldisk_id")
   private String replacePalDiskId;
+  @JsonProperty("ext_dev_name")
+  private String diskDevName;
+  @JsonProperty("ext_disk_name")
+  private String diskName;
+  @JsonProperty("ext_size")
+  private Long diskSize;
+  @JsonProperty("ext_replace_dev_name")
+  private String extReplaceDevName;
+  @JsonProperty("ext_replace_disk_name")
+  private String extReplaceDiskName;
 }

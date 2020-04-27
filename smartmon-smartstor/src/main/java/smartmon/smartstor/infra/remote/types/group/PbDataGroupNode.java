@@ -2,6 +2,8 @@ package smartmon.smartstor.infra.remote.types.group;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import smartmon.smartstor.domain.model.enums.IEnum;
+import smartmon.smartstor.domain.model.enums.TransModeEnum;
 
 import java.util.List;
 
@@ -22,7 +24,11 @@ public class PbDataGroupNode {
   @JsonProperty("host_name")
   private String hostName;
   @JsonProperty("trs_type")
-  private Integer trsType;
+  private Integer transMode;
   @JsonProperty("backend_trs")
   private PbDataGroupNodeBackendTrs groupNodeBackendTrs;
+
+  public TransModeEnum getTransMode() {
+    return IEnum.getByCode(TransModeEnum.class, this.transMode);
+  }
 }

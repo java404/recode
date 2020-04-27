@@ -11,10 +11,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import smartmon.smartstor.domain.gateway.SmartstorApiService;
 import smartmon.smartstor.domain.model.ApiVersion;
 import smartmon.smartstor.domain.model.Disk;
+import smartmon.smartstor.domain.model.Group;
+import smartmon.smartstor.domain.model.Lun;
+import smartmon.smartstor.domain.model.Pool;
 import smartmon.smartstor.domain.model.StorageHost;
 import smartmon.smartstor.domain.model.StorageNode;
 import smartmon.smartstor.domain.model.enums.SysModeEnum;
@@ -24,7 +28,12 @@ import smartmon.smartstor.infra.remote.types.PbDataApiVersion;
 import smartmon.smartstor.infra.remote.types.PbDataResponseCode;
 import smartmon.smartstor.infra.remote.types.disk.PbDataDiskAddParam;
 import smartmon.smartstor.infra.remote.types.disk.PbDataDiskInfo;
+import smartmon.smartstor.infra.remote.types.group.PbDataGroupInfo;
+import smartmon.smartstor.infra.remote.types.group.PbDataGroupInfos;
+import smartmon.smartstor.infra.remote.types.lun.PbDataLunInfo;
+import smartmon.smartstor.infra.remote.types.lun.PbDataLunInfos;
 import smartmon.smartstor.infra.remote.types.node.PbDataNodeItem;
+import smartmon.smartstor.infra.remote.types.pool.PbDataPoolInfo;
 import smartmon.utilities.misc.BeanConverter;
 
 @Component
@@ -123,5 +132,45 @@ public class SmartstorApiProxy implements SmartstorApiService {
     final PbDataClient client = pbDataClientService.getClient(serviceIp, getSmartStorApiPort());
     final PbDataResponseCode pbDataResponseCode = client.diskRaidLedOnState(cesAddr);
     System.out.println(pbDataResponseCode);
+  }
+
+  @Override
+  public List<Group> getGroups(String serviceIp) {
+    final PbDataClient client = pbDataClientService.getClient(serviceIp, getSmartStorApiPort());
+    final List<PbDataGroupInfo> groupInfos = client.listGroups().getGroupInfos();
+    return BeanConverter.copy(groupInfos, Group.class);
+  }
+
+  @Override
+  public List<Pool> getPools(String serviceIp) {
+    final PbDataClient client = pbDataClientService.getClient(serviceIp, getSmartStorApiPort());
+    final List<PbDataPoolInfo> poolInfos = client.listPools().getPoolInfos();
+    List<Pool> pools = new ArrayList<>();
+    poolInfos.forEach(pbdataPoolInfo -> {
+      final Pool pool = BeanConverter.copy(pbdataPoolInfo, Pool.class);
+      if (pool != null) {
+        BeanUtils.copyProperties(pbdataPoolInfo.getDirtyThresh(), pool);
+        BeanUtils.copyProperties(pbdataPoolInfo.getExportInfo(), pool);
+        pools.add(pool);
+      }
+    });
+    return pools;
+  }
+
+  @Override
+  public List<Lun> getLuns(String serviceIp) {
+    final PbDataClient client = pbDataClientService.getClient(serviceIp, getSmartStorApiPort());
+    final List<PbDataLunInfo> lunInfos = client.listluns().getLunInfos();
+    List<Lun> luns = new ArrayList<>();
+    lunInfos.forEach(pbdataLunInfo -> {
+      final Lun lun = BeanConverter.copy(pbdataLunInfo, Lun.class);
+      if (lun != null) {
+        lun.setConfigState(pbdataLunInfo.getConfigState());
+        lun.setShowStatus(pbdataLunInfo.getShowStatus());
+        lun.setAsmStatus(pbdataLunInfo.getAsmStatus());
+        lun.setActualState(pbdataLunInfo.getActualState());
+      }
+    });
+    return null;
   }
 }

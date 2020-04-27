@@ -6,13 +6,13 @@ spring:
   datasource:
     validationQuery: SELECT 1
     driverClassName: org.h2.Driver
-    url: jdbc:h2:file:/var/smartmon/core.h2;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:file:D:/opt/database/core.h2;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     user: sa
     password: sa
   liquibase:
     enabled: true
     change-log: classpath:db/smartmon-core-changelog.yaml
-    url: jdbc:h2:file:/var/smartmon/core.h2;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:file:D:/opt/database/core.h2;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     default-schema: PUBLIC
     user: sa
     password: sa

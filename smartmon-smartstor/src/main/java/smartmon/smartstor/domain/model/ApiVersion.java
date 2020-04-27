@@ -1,5 +1,6 @@
 package smartmon.smartstor.domain.model;
 
+import java.math.BigInteger;
 import java.util.Objects;
 
 import lombok.Getter;
@@ -50,8 +51,8 @@ public class ApiVersion extends ValueObject implements Comparable<ApiVersion> {
     return (int) (Double.parseDouble(versionStr) * Math.pow(10, 5) + subVersion);
   }
 
-  public void setSubVersion(String subVersion) {
-    this.subVersion = Integer.valueOf(subVersion);
+  public void setSubVersion(BigInteger subVersion) {
+    this.subVersion = subVersion == null ? 0 : subVersion.intValue();
   }
 
   public void checkVersion() {

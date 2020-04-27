@@ -4,6 +4,9 @@ import java.util.List;
 
 import smartmon.smartstor.domain.model.ApiVersion;
 import smartmon.smartstor.domain.model.Disk;
+import smartmon.smartstor.domain.model.Group;
+import smartmon.smartstor.domain.model.Lun;
+import smartmon.smartstor.domain.model.Pool;
 import smartmon.smartstor.domain.model.StorageHost;
 import smartmon.smartstor.domain.model.StorageNode;
 
@@ -27,4 +30,10 @@ public interface SmartstorApiService {
   void diskRaidLedOnState(String serviceIp, String cesAddr);
 
   void diskRaidLedOffState(String serviceIp, String cesAddr);
+
+  List<Group> getGroups(String serviceIp);
+
+  List<Pool> getPools(String serviceIp);
+
+  List<Lun> getLuns(String serviceIp);
 }

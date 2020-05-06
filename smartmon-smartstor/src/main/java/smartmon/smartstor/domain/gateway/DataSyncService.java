@@ -20,4 +20,8 @@ public interface DataSyncService {
   void syncLuns(List<String> serviceIps);
 
   void syncLuns(String serviceIp);
+
+  void syncGroups(List<String> serviceIps);
+
+  void syncGroups(String serviceIp);
 }

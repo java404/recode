@@ -6,7 +6,14 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.ListUtils;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 public class JsonConverter {
@@ -20,6 +27,10 @@ public class JsonConverter {
 
   private static ObjectMapper getMapper() {
     return mapper;
+  }
+
+  public static JsonNode writeValue(Object value) {
+    return getMapper().valueToTree(value);
   }
 
   public static String writeValueAsString(Object value) throws JsonProcessingException {
@@ -68,5 +79,58 @@ public class JsonConverter {
 
   public static JsonNode readTree(String value) throws JsonProcessingException {
     return getMapper().readTree(value);
+  }
+
+  /** Find json node via key path (no exception). */
+  public static JsonNode findValueQuietly(JsonNode rootNode, String keyPath) {
+    try {
+      return findValue(rootNode, keyPath);
+    } catch (Exception ignore) {
+      return null;
+    }
+  }
+
+  /** Find json node via key path.
+   *  Example: { "a": { "b" : 1 } } =>  "a.b" = 1.
+   */
+  private static JsonNode findValue(JsonNode rootNode, String keyPath) {
+    if (Strings.isNullOrEmpty(keyPath)) {
+      return null;
+    }
+    final List<String> keys = ListUtils.emptyIfNull(Splitter.on(".")
+      .trimResults().splitToList(keyPath));
+    JsonNode node = rootNode;
+    for (final String key : keys) {
+      if (Strings.isNullOrEmpty(key)) {
+        return null;
+      }
+      node = node.get(key);
+      if (node == null) {
+        return null;
+      }
+    }
+    return node;
+  }
+
+  /** Parse JSON String list. */
+  public static List<String> parseStrListQuite(String list) {
+    try {
+      return parseStrList(list);
+    } catch (Exception ignore) {
+      return null;
+    }
+  }
+
+  private static List<String> parseStrList(String source) throws IOException {
+    final JsonNode list = readTree(source);
+    if (list == null || !list.isArray()) {
+      return null;
+    }
+    final List<String> values = new ArrayList<>();
+    for (int i = 0; i < list.size(); ++i) {
+      final JsonNode item = list.get(i);
+      values.add(item == null ? "" : item.asText());
+    }
+    return values;
   }
 }

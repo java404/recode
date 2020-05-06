@@ -3,20 +3,14 @@ databaseChangeLog:
       id: init-schema-001-table-metadata
       author: xiong.jia_le
       changes:
-        # Table metadata (
-        #   name  varchar(512),
-        #   value mediumtext
-        # )
         - sql:
             comment: Table metadata
-            dbms: h2, mysql
             splitStatements: false
             sql: CREATE TABLE metadata (
-              name VARCHAR(512), value MEDIUMTEXT,
+              name VARCHAR(128), value MEDIUMTEXT,
               constraint pk_metadata primary key (name));
         - sql:
             comment: Table idc
-            dbms: h2, mysql
             splitStatements: false
             sql: CREATE TABLE idc (
               id VARCHAR(100),
@@ -25,7 +19,6 @@ databaseChangeLog:
               constraint uk_idc_name unique key (name));
         - sql:
             comment: Table rack_allocation
-            dbms: h2, mysql
             splitStatements: false
             sql: CREATE TABLE rack_allocation (
               idc_id VARCHAR(100),
@@ -36,7 +29,6 @@ databaseChangeLog:
               constraint pk_rack_allocation primary key (idc_id, rack_name, rack_index));
         - sql:
             comment: Table smartmon_host
-            dbms: h2, mysql
             splitStatements: false
             sql: CREATE TABLE smartmon_host (
               host_uuid VARCHAR(100) NOT NULL,

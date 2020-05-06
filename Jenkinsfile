@@ -5,7 +5,7 @@ pipeline {
       steps {
         sh 'gradle --version'
         sh 'gradle build'
-        sh 'cd ${WORKSPACE}/capsule && make vhe-rpm-publish'
+        sh 'cd ${WORKSPACE}/capsule && make'
       }
     }
   }

@@ -1,15 +1,10 @@
 databaseChangeLog:
   - changeSet:
-      id: init-schema-001-table-metadata
+      id: init-schema-001-tables
       author: xiong.jia_le
       changes:
-        # Table metadata (
-        #   name  varchar(512),
-        #   value mediumtext
-        # )
         - sql:
             comment: Table storage_host
-            dbms: h2, mysql
             splitStatements: false
             sql: CREATE TABLE storage_host (
               uuid VARCHAR(100) NOT NULL,

@@ -2,45 +2,13 @@ server.port: 15100
 
 spring:
   application.name: smartmon-smartstor
-  cloud:
-    nacos.discovery.server-addr: 127.0.0.1:8848
-  batch:
-    job:
-      enabled: false
-    initialize-schema: ALWAYS
-  datasource:
-    validationQuery: SELECT 1
-    driverClassName: org.h2.Driver
-    url: jdbc:h2:file:D:/opt/database/smartstor.h2;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    user: sa
-    password: sa
-    type: com.zaxxer.hikari.HikariDataSource
-    hikari:
-      pool-name: HikariCP
-      minimum-idle: 5
-      maximum-pool-size: 15
-      auto-commit: true
-      idle-timeout: 30000
-      max-lifetime: 1800000
-      connection-timeout: 30000
-      connection-test-query: SELECT 1
-  liquibase:
-    enabled: true
-    change-log: classpath:db/smartmon-smartstor-changelog.yaml
-    url: jdbc:h2:file:D:/opt/database/smartstor.h2;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    default-schema: PUBLIC
-    user: sa
-    password: sa
-  h2:
-    console:
-      enabled: true
-      path: /h2
-    settings.web-allow-others: true
+  cloud.nacos.discovery.server-addr: 127.0.0.1:8848
 
 mybatis:
   mapper-locations:
   - classpath:mapping/*Mapper.xml
   type-aliases-package: smartmon.smartstor.infra.persistence.entity
+
 smartmon.data:
   sync: true
   smartstor:
@@ -51,3 +19,13 @@ smartmon.data:
 smartmon.api:
   infoName: smartmon-smartstor
   prefix: /smartstor/api/v2
+
+smartmon.datasource:
+  standalone: false
+  liquibase.changeLog: classpath:db/smartmon-smartstor-changelog.yaml
+  liquibase.debug: true
+  h2.file: /var/smartmon/smartstor.h2
+  mysql.host: 172.24.8.55
+  mysql.user: root
+  mysql.password: root
+  mysql.db: smartmon_smartstor

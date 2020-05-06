@@ -1,38 +1,53 @@
 package smartmon.smartstor.infra.cache;
 
-import java.util.List;
+import com.google.common.collect.Maps;
 
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import smartmon.cache.SmartMonCacheService;
 import smartmon.cache.SmatMonCacheItem;
 import smartmon.smartstor.domain.model.Disk;
+import smartmon.smartstor.domain.model.Lun;
+import smartmon.smartstor.domain.model.Pool;
 
 @Component
 public class DataCacheManager {
-  private static final String CACHE_KEY_PREFIX = "Smartstor";
-  private static final String DISKS_CACHE_KEY = CACHE_KEY_PREFIX + "#Disks";
-
   @Autowired
   private SmartMonCacheService smartMonCacheService;
 
-  public void saveDisks(String serviceIp, List<Disk> disks) {
-    String key = getDisksCacheKey(serviceIp);
-    smartMonCacheService.put(key, disks);
+  public <T> void save(String serviceIp, List<T> resources, Class<T> resourceType) {
+    String key = CacheKey.getCacheKey(serviceIp, resourceType);
+    smartMonCacheService.put(key, ListUtils.emptyIfNull(resources));
   }
 
-  public void saveDisksSyncError(String serviceIp, String errorMessage) {
-    String key = getDisksCacheKey(serviceIp);
+  public <T> void saveError(String serviceIp, String errorMessage, Class<T> resourceType) {
+    String key = CacheKey.getCacheKey(serviceIp, resourceType);
     smartMonCacheService.putError(key, errorMessage);
   }
 
-  public CachedData<Disk> getDisks(String serviceIp) {
-    String key = getDisksCacheKey(serviceIp);
+  public <T> CachedData<T> gets(String serviceIp, Class<T> resourceType) {
+    String key = CacheKey.getCacheKey(serviceIp, resourceType);
     SmatMonCacheItem smatMonCacheItem = smartMonCacheService.get(key);
-    return smatMonCacheItem == null ? null : new CachedData<>(smatMonCacheItem, Disk.class);
+    return smatMonCacheItem == null ? null : new CachedData<T>(smatMonCacheItem, resourceType);
   }
 
-  private String getDisksCacheKey(String serviceIp) {
-    return String.format("%s#%s", DISKS_CACHE_KEY, serviceIp);
+  private static class CacheKey {
+    private static final String CACHE_KEY_PREFIX = "Smartstor";
+    private static Map<Class<?>, String> resourceTypeKeyMap = Maps.newHashMap();
+
+    static {
+      resourceTypeKeyMap.put(Disk.class, "Disks");
+      resourceTypeKeyMap.put(Pool.class, "Pools");
+      resourceTypeKeyMap.put(Lun.class, "Luns");
+    }
+
+    static <T> String getCacheKey(String serviceIp, Class<T> resourceType) {
+      String resourceKey = resourceTypeKeyMap.get(resourceType);
+      return String.format("%s#%s#%s", CACHE_KEY_PREFIX, resourceKey, serviceIp);
+    }
   }
 }

@@ -1,13 +1,13 @@
 package smartmon.smartstor.infra.remote.types.lun;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import lombok.Data;
-import smartmon.smartstor.domain.model.Lun;
+import lombok.Getter;
+import lombok.Setter;
 import smartmon.smartstor.domain.model.enums.IEnum;
 import smartmon.smartstor.domain.model.enums.LunExtStateEnum;
 
-@Data
+@Getter
+@Setter
 public class PbDataLunInfo {
   @JsonProperty("lun_name")
   private String lunName;

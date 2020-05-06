@@ -22,6 +22,7 @@ import smartmon.smartstor.interfaces.web.representation.DiskRepresentationServic
 import smartmon.smartstor.interfaces.web.representation.dto.DiskDto;
 import smartmon.taskmanager.TaskManagerService;
 import smartmon.taskmanager.types.TaskContext;
+import smartmon.taskmanager.types.TaskGroup;
 import smartmon.utilities.general.SmartMonResponse;
 
 @Api(tags = "disks")
@@ -37,23 +38,25 @@ public class DiskController {
 
   @ApiOperation("Get disks")
   @GetMapping
-  public SmartMonResponse getDisks(@RequestParam("ServiceIp") String serviceIp) {
+  public SmartMonResponse<CachedData<DiskDto>> getDisks(@RequestParam("ServiceIp") String serviceIp) {
     return new SmartMonResponse<>(diskRepresentationService.getDisks(serviceIp));
   }
 
   @ApiOperation("Add disk")
   @PostMapping
-  public TaskContext addDisk(@RequestBody DiskAddVo vo) {
+  public SmartMonResponse<TaskGroup> addDisk(@RequestBody DiskAddVo vo) {
     DiskAddCommand command = new DiskAddCommand();
     BeanUtils.copyProperties(vo, command);
-    return taskManagerService.invokeTask("AddDisk", () -> diskAppService.addDisk(command));
+    final TaskGroup taskGroup = taskManagerService.invokeTask("AddDisk", () -> diskAppService.addDisk(command));
+    return new SmartMonResponse<>(taskGroup);
   }
 
   @ApiOperation("Del disk")
   @DeleteMapping
-  public TaskContext delDisk(@RequestBody DiskDelVo vo) {
-    DiskDelCommand command = new DiskDelCommand();
+  public SmartMonResponse<TaskGroup> delDisk(@RequestBody DiskDelVo vo) {
+    final DiskDelCommand command = new DiskDelCommand();
     BeanUtils.copyProperties(vo, command);
-    return taskManagerService.invokeTask("DelDisk", () -> diskAppService.delDisk(command));
+    final TaskGroup taskGroup = taskManagerService.invokeTask("DelDisk", () -> diskAppService.delDisk(command));
+    return new SmartMonResponse<>(taskGroup);
   }
 }

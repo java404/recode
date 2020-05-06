@@ -8,11 +8,12 @@ import java.util.List;
 import java.util.Map;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import smartmon.smartstor.domain.gateway.SmartstorApiService;
 import smartmon.smartstor.domain.model.ApiVersion;
 import smartmon.smartstor.domain.model.Disk;
@@ -28,12 +29,16 @@ import smartmon.smartstor.infra.remote.types.PbDataApiVersion;
 import smartmon.smartstor.infra.remote.types.PbDataResponseCode;
 import smartmon.smartstor.infra.remote.types.disk.PbDataDiskAddParam;
 import smartmon.smartstor.infra.remote.types.disk.PbDataDiskInfo;
-import smartmon.smartstor.infra.remote.types.group.PbDataGroupInfo;
+import smartmon.smartstor.infra.remote.types.disk.PbDataDiskInfos;
 import smartmon.smartstor.infra.remote.types.group.PbDataGroupInfos;
+import smartmon.smartstor.infra.remote.types.lun.PbDataAsmDiskInfo;
 import smartmon.smartstor.infra.remote.types.lun.PbDataLunInfo;
+import smartmon.smartstor.infra.remote.types.lun.PbDataLunInfoBackendRes;
 import smartmon.smartstor.infra.remote.types.lun.PbDataLunInfos;
+import smartmon.smartstor.infra.remote.types.node.PbDataNodeInfos;
 import smartmon.smartstor.infra.remote.types.node.PbDataNodeItem;
 import smartmon.smartstor.infra.remote.types.pool.PbDataPoolInfo;
+import smartmon.smartstor.infra.remote.types.pool.PbDataPoolInfos;
 import smartmon.utilities.misc.BeanConverter;
 
 @Component
@@ -42,7 +47,7 @@ public class SmartstorApiProxy implements SmartstorApiService {
   @Autowired
   private PbDataClientService pbDataClientService;
 
-  @Value("${smartmon.smartstor.apiConnectTimeout:9000}")
+  @Value("${smartmon.smartstor.port:9000}")
   private int smartStorApiPort = 9000;
 
   private int getSmartStorApiPort() {
@@ -59,8 +64,11 @@ public class SmartstorApiProxy implements SmartstorApiService {
   @Override
   public List<StorageNode> getNodes(String serviceIp) {
     final PbDataClient client = pbDataClientService.getClient(serviceIp, getSmartStorApiPort());
-    final List<PbDataNodeItem> pbDataNodeInfos = client.listNodes().getNodeInfos();
-    return BeanConverter.copy(pbDataNodeInfos, StorageNode.class);
+    final PbDataNodeInfos pbDataNodeInfos = client.listNodes();
+    if (pbDataNodeInfos != null) {
+      return ListUtils.emptyIfNull(BeanConverter.copy(pbDataNodeInfos.getNodeInfos(), StorageNode.class));
+    }
+    return Collections.emptyList();
   }
 
   @Override
@@ -90,8 +98,11 @@ public class SmartstorApiProxy implements SmartstorApiService {
   @Override
   public List<Disk> getDisks(String serviceIp) {
     final PbDataClient client = pbDataClientService.getClient(serviceIp, getSmartStorApiPort());
-    List<Disk> disks = client.listDisks().getDisks();
-    return disks != null ? disks : Collections.emptyList();
+    final PbDataDiskInfos pbDataDiskInfos = client.listDisks();
+    if (pbDataDiskInfos != null) {
+      return ListUtils.emptyIfNull(pbDataDiskInfos.getDisks());
+    }
+    return Collections.emptyList();
   }
 
   @Override
@@ -137,40 +148,81 @@ public class SmartstorApiProxy implements SmartstorApiService {
   @Override
   public List<Group> getGroups(String serviceIp) {
     final PbDataClient client = pbDataClientService.getClient(serviceIp, getSmartStorApiPort());
-    final List<PbDataGroupInfo> groupInfos = client.listGroups().getGroupInfos();
-    return BeanConverter.copy(groupInfos, Group.class);
+    final PbDataGroupInfos pbDataGroupInfos = client.listGroups();
+    if (pbDataGroupInfos != null) {
+      return ListUtils.emptyIfNull(BeanConverter.copy(pbDataGroupInfos.getGroupInfos(), Group.class));
+    }
+    return Collections.emptyList();
   }
 
   @Override
   public List<Pool> getPools(String serviceIp) {
     final PbDataClient client = pbDataClientService.getClient(serviceIp, getSmartStorApiPort());
-    final List<PbDataPoolInfo> poolInfos = client.listPools().getPoolInfos();
+    final PbDataPoolInfos pbDataPoolInfos = client.listPools();
+    if (pbDataPoolInfos != null) {
+      return convertPools(pbDataPoolInfos.getPoolInfos());
+    }
+    return Collections.emptyList();
+  }
+
+  private List<Pool> convertPools(List<PbDataPoolInfo> poolInfos) {
+    if (CollectionUtils.isEmpty(poolInfos)) {
+      return Collections.emptyList();
+    }
     List<Pool> pools = new ArrayList<>();
-    poolInfos.forEach(pbdataPoolInfo -> {
+    for (PbDataPoolInfo pbdataPoolInfo : poolInfos) {
       final Pool pool = BeanConverter.copy(pbdataPoolInfo, Pool.class);
       if (pool != null) {
-        BeanUtils.copyProperties(pbdataPoolInfo.getDirtyThresh(), pool);
-        BeanUtils.copyProperties(pbdataPoolInfo.getExportInfo(), pool);
+        if (pbdataPoolInfo.getDirtyThresh() != null) {
+          BeanUtils.copyProperties(pbdataPoolInfo.getDirtyThresh(), pool);
+        }
+        if (pbdataPoolInfo.getExportInfo() != null) {
+          BeanUtils.copyProperties(pbdataPoolInfo.getExportInfo(), pool);
+        }
         pools.add(pool);
       }
-    });
+    }
     return pools;
   }
 
   @Override
   public List<Lun> getLuns(String serviceIp) {
     final PbDataClient client = pbDataClientService.getClient(serviceIp, getSmartStorApiPort());
-    final List<PbDataLunInfo> lunInfos = client.listluns().getLunInfos();
+    final PbDataLunInfos lunInfos = client.listluns();
+    if (lunInfos != null) {
+      return convertLuns(lunInfos.getLunInfos());
+    }
+    return Collections.emptyList();
+  }
+
+  private List<Lun> convertLuns(List<PbDataLunInfo> lunInfos) {
+    if (CollectionUtils.isEmpty(lunInfos)) {
+      return Collections.emptyList();
+    }
     List<Lun> luns = new ArrayList<>();
-    lunInfos.forEach(pbdataLunInfo -> {
+    for (PbDataLunInfo pbdataLunInfo : lunInfos) {
       final Lun lun = BeanConverter.copy(pbdataLunInfo, Lun.class);
       if (lun != null) {
         lun.setConfigState(pbdataLunInfo.getConfigState());
         lun.setShowStatus(pbdataLunInfo.getShowStatus());
         lun.setAsmStatus(pbdataLunInfo.getAsmStatus());
         lun.setActualState(pbdataLunInfo.getActualState());
+        final PbDataLunInfoBackendRes lunInfoBackendRes = pbdataLunInfo.getLunInfoBackendRes();
+        if (lunInfoBackendRes != null) {
+          lun.setExtDataDiskName(lunInfoBackendRes.getDataDiskName());
+          if (lunInfoBackendRes.getPalCacheLiBr() != null) {
+            lun.setExtCacheDevNames(lunInfoBackendRes.getPalCacheLiBr().getCacheDevName());
+            lun.setExtCacheDiskName(lunInfoBackendRes.getPalCacheLiBr().getCacheDiskName());
+            lun.setExtCacheSize(lunInfoBackendRes.getPalCacheLiBr().getCacheSize());
+          }
+        }
+        final PbDataAsmDiskInfo asmDiskInfo = pbdataLunInfo.getAsmDiskInfo();
+        if (asmDiskInfo != null) {
+          lun.setLastHeartbeatTime(asmDiskInfo.getLastHeartbeatTime());
+        }
+        luns.add(lun);
       }
-    });
-    return null;
+    }
+    return luns;
   }
 }

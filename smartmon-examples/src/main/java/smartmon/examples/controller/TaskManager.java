@@ -2,7 +2,6 @@ package smartmon.examples.controller;
 
 import io.swagger.annotations.Api;
 import java.util.List;
-
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import smartmon.taskmanager.TaskManagerService;
 import smartmon.taskmanager.types.TaskContext;
+import smartmon.taskmanager.types.TaskGroup;
 import smartmon.utilities.general.SmartMonResponse;
 
 @Api(tags = "tasks")
@@ -30,7 +30,7 @@ public class TaskManager {
   }
 
   @Data
-  public class Details {
+  public static class Details {
     private String data1 = "data1";
     private int data2 = 100;
   }
@@ -42,13 +42,15 @@ public class TaskManager {
 
   @GetMapping("create2")
   public SmartMonResponse<String> create2() {
-    final TaskContext taskContext = taskManagerService.createTask("example2");
-    taskManagerService.invokeTask(taskContext, () -> taskJob(taskContext));
+    taskManagerService.invokeTask("example", () -> {
+      final TaskContext taskContext = TaskContext.getCurrentContext();
+      taskJob(taskContext);
+    });
     return SmartMonResponse.OK;
   }
 
-  @GetMapping("all")
-  public List<TaskContext> getAll() {
-    return taskManagerService.getAll();
+  @GetMapping("all-group")
+  public List<TaskGroup> getAllGroups() {
+    return taskManagerService.getAllTaskGroups();
   }
 }

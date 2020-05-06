@@ -33,7 +33,7 @@ public class SmartstorApiProxyTest {
   @Test
   @Ignore
   public void versionTest() {
-    final TargetHost targetHost = TargetHost.builder("172.24.12.2166", 9000).build();
+    final TargetHost targetHost = TargetHost.builder("172.24.12.216", 9000).build();
     final PbDataClient client = new PbDataClient(targetHost);
     final PbDataApiVersion version = client.getApiVersionInfo();
     System.out.println(version);

@@ -3,25 +3,17 @@ server.port: 15000
 spring:
   application.name: smartmon-core
   cloud.nacos.discovery.server-addr: 127.0.0.1:8848
-  datasource:
-    validationQuery: SELECT 1
-    driverClassName: org.h2.Driver
-    url: jdbc:h2:file:D:/opt/database/core.h2;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    user: sa
-    password: sa
-  liquibase:
-    enabled: true
-    change-log: classpath:db/smartmon-core-changelog.yaml
-    url: jdbc:h2:file:D:/opt/database/core.h2;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    default-schema: PUBLIC
-    user: sa
-    password: sa
-  h2:
-    console:
-      enabled: true
-      path: /h2
-    settings.web-allow-others: true
 
 smartmon.api:
   infoName: smartmon-core
   prefix: /core/api/v2
+
+smartmon.datasource:
+  standalone: false
+  liquibase.changeLog: classpath:db/smartmon-core-changelog.yaml
+  liquibase.debug: true
+  h2.file: /var/smartmon/core.h2
+  mysql.host: 172.24.8.55
+  mysql.user: root
+  mysql.password: root
+  mysql.db: smartmon_core

@@ -2,12 +2,10 @@ package smartmon.smartstor.interfaces.web.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,8 +19,10 @@ import smartmon.smartstor.interfaces.web.controller.vo.HostInitVo;
 import smartmon.smartstor.interfaces.web.controller.vo.HostVerifyVo;
 import smartmon.smartstor.interfaces.web.representation.HostRepresentationService;
 import smartmon.smartstor.interfaces.web.representation.dto.HostsScanDto;
+import smartmon.smartstor.interfaces.web.representation.dto.StorageHostDto;
 import smartmon.taskmanager.TaskManagerService;
 import smartmon.taskmanager.types.TaskContext;
+import smartmon.taskmanager.types.TaskGroup;
 import smartmon.utilities.general.SmartMonResponse;
 import smartmon.webtools.page.SmartMonPageParams;
 
@@ -39,24 +39,25 @@ public class HostController {
 
   @GetMapping
   @SmartMonPageParams
-  public SmartMonResponse getHosts() {
+  public SmartMonResponse<List<StorageHostDto>> getHosts() {
     return new SmartMonResponse<>(hostRepresentationService.getStorageHosts());
   }
 
   @GetMapping("scan")
-  public SmartMonResponse scanHosts(@RequestParam("serviceIps") String serviceIps) {
+  public SmartMonResponse<TaskGroup> scanHosts(@RequestParam("serviceIps") String serviceIps) {
     Set<String> ips = Arrays.stream(serviceIps.split(",")).collect(Collectors.toSet());
-    TaskContext taskContext = taskManagerService.createTask("ScanHosts");
-    Runnable runnable = () -> {
-      List<HostsScanDto> hostsScanDtos = hostRepresentationService.scanHosts(ips);
-      taskContext.setDetail(hostsScanDtos);
-    };
-    taskManagerService.invokeTask(taskContext, runnable);
-    return new SmartMonResponse<>(taskContext);
+
+    final TaskGroup taskGroup = taskManagerService.createTask("ScanHosts", () -> {
+      final TaskContext currentContext = TaskContext.getCurrentContext();
+      final List<HostsScanDto> hostsScanDtos = hostRepresentationService.scanHosts(ips);
+      currentContext.setDetail(hostsScanDtos);
+    });
+    taskManagerService.invokeTaskGroup(taskGroup);
+    return new SmartMonResponse<>(taskGroup);
   }
 
   @ApiOperation("Verify host config")
-  @PostMapping("/verify")
+  @PostMapping("verify")
   public SmartMonResponse<String> apiVerify(@RequestBody HostVerifyVo vo) {
     hostAppService.verifyHost(vo.toHostVerifyCommand());
     return SmartMonResponse.OK;

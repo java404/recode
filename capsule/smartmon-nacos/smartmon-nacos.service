@@ -1,0 +1,12 @@
+[Unit]
+Description=SmartMon NaCoS
+Requires=network.target
+After=network.target
+
+[Service]
+User=root
+ExecStart=/opt/smartmon/smartmon-nacos/bin/smartmon-nacos-startup.sh
+WorkingDirectory=/opt/smartmon/smartmon-nacos
+
+[Install]
+WantedBy=multi-user.target

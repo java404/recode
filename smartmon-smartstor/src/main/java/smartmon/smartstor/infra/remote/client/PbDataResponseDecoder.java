@@ -8,9 +8,10 @@ import feign.jackson.JacksonDecoder;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import lombok.extern.slf4j.Slf4j;
-import smartmon.smartstor.infra.remote.exception.PbDataExceptionBadResponse;
-import smartmon.smartstor.infra.remote.exception.PbDataExceptionInvalidResponse;
-import smartmon.smartstor.infra.remote.exception.PbDataExceptionNoResponse;
+import smartmon.smartstor.infra.remote.exception.PbDataBadResponseException;
+import smartmon.smartstor.infra.remote.exception.PbDataInvalidResponseException;
+import smartmon.smartstor.infra.remote.exception.PbDataNoBodyException;
+import smartmon.smartstor.infra.remote.exception.PbDataNoResponseException;
 import smartmon.smartstor.infra.remote.types.PbDataResponseCode;
 import smartmon.utilities.misc.JsonConverter;
 import smartmon.utilities.remote.RemoteApiCoder;
@@ -28,12 +29,12 @@ public class PbDataResponseDecoder implements Decoder {
     final JsonNode result = (JsonNode) decoder.decode(response, JsonNode.class);
     if (result == null) {
       log.error("PbData response decoder error ({})", type.getTypeName());
-      throw new PbDataExceptionNoResponse();
+      throw new PbDataNoResponseException();
     }
     final PbDataResponseCode rc = JsonConverter.treeToValue(result.get("rc"), PbDataResponseCode.class);
     if (rc == null) {
       log.error("PbData response decoder error ({}), no rc", type.getTypeName());
-      throw new PbDataExceptionInvalidResponse();
+      throw new PbDataInvalidResponseException();
     }
 
     if (type.equals(PbDataResponseCode.class)) {
@@ -42,20 +43,19 @@ public class PbDataResponseDecoder implements Decoder {
 
     if (!rc.isOk()) {
       log.error("PbData response decoder error ({}), rc {}", type.getTypeName(), rc.toString());
-      throw new PbDataExceptionBadResponse(rc);
+      throw new PbDataBadResponseException(rc);
     }
 
     final JsonNode body = result.get("body");
     if (body == null || body.isEmpty()) {
-      log.error("PbData response decoder error ({}), no content", type.getTypeName());
-      throw new PbDataExceptionNoResponse();
+      throw new PbDataNoBodyException();
     }
     try {
       final JsonNode firstFiled = body.fields().next().getValue();
       return JsonConverter.treeToValue(firstFiled, (Class<?>) type);
     } catch (Exception error) {
       log.error("PbData response parse error:", error);
-      throw new PbDataExceptionInvalidResponse();
+      throw new PbDataInvalidResponseException();
     }
   }
 }

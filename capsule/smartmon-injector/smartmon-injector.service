@@ -1,0 +1,12 @@
+[Unit]
+Description=SmartMon Injector
+Requires=network.target
+After=network.target
+
+[Service]
+User=root
+ExecStart=/opt/smartmon/smartmon-injector/smartmon-injector-startup.sh
+WorkingDirectory=/opt/smartmon/smartmon-injector
+
+[Install]
+WantedBy=multi-user.target

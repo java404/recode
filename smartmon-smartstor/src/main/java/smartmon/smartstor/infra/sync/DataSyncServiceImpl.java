@@ -28,6 +28,9 @@ import smartmon.smartstor.domain.gateway.SmartstorApiService;
 import smartmon.smartstor.domain.gateway.repository.StorageHostRepository;
 import smartmon.smartstor.domain.model.ApiVersion;
 import smartmon.smartstor.domain.model.Disk;
+import smartmon.smartstor.domain.model.Group;
+import smartmon.smartstor.domain.model.Lun;
+import smartmon.smartstor.domain.model.Pool;
 import smartmon.smartstor.domain.model.StorageHost;
 import smartmon.smartstor.infra.cache.DataCacheManager;
 
@@ -208,6 +211,7 @@ public class DataSyncServiceImpl implements DataSyncService {
     futures.add(executorService.submit(() -> syncDisks(iosServiceIps)));
     futures.add(executorService.submit(() -> syncPools(iosServiceIps)));
     futures.add(executorService.submit(() -> syncLuns(iosServiceIps)));
+    futures.add(executorService.submit(() -> syncGroups(iosServiceIps)));
     waitComplete(futures);
   }
 
@@ -233,10 +237,10 @@ public class DataSyncServiceImpl implements DataSyncService {
     try {
       log.info("Sync disks of host [{}]", serviceIp);
       List<Disk> disks = smartstorApiService.getDisks(serviceIp);
-      dataCacheManager.saveDisks(serviceIp, disks);
+      dataCacheManager.save(serviceIp, disks, Disk.class);
     } catch (Exception e) {
       log.error(String.format("Sync disks of host [%s] failed:", serviceIp), e);
-      dataCacheManager.saveDisksSyncError(serviceIp, e.getMessage());
+      dataCacheManager.saveError(serviceIp, e.getMessage(), Disk.class);
     }
   }
 
@@ -249,7 +253,14 @@ public class DataSyncServiceImpl implements DataSyncService {
 
   @Override
   public void syncPools(String serviceIp) {
-    log.info("Sync pools of host [{}]", serviceIp);
+    try {
+      log.info("Sync pools of host [{}]", serviceIp);
+      List<Pool> pools = smartstorApiService.getPools(serviceIp);
+      dataCacheManager.save(serviceIp, pools, Pool.class);
+    } catch (Exception e) {
+      log.error(String.format("Sync pools of host [%s] failed:", serviceIp), e);
+      dataCacheManager.saveError(serviceIp, e.getMessage(), Pool.class);
+    }
   }
 
   @Override
@@ -261,7 +272,33 @@ public class DataSyncServiceImpl implements DataSyncService {
 
   @Override
   public void syncLuns(String serviceIp) {
-    log.info("Sync luns of host [{}]", serviceIp);
+    try {
+      log.info("Sync luns of host [{}]", serviceIp);
+      List<Lun> luns = smartstorApiService.getLuns(serviceIp);
+      dataCacheManager.save(serviceIp, luns, Lun.class);
+    } catch (Exception e) {
+      log.error(String.format("Sync luns of host [%s] failed:", serviceIp), e);
+      dataCacheManager.saveError(serviceIp, e.getMessage(), Lun.class);
+    }
+  }
+
+  @Override
+  public void syncGroups(List<String> serviceIps) {
+    for (String serviceIp : serviceIps) {
+      syncGroups(serviceIp);
+    }
+  }
+
+  @Override
+  public void syncGroups(String serviceIp) {
+    try {
+      log.info("Sync groups of host [{}]", serviceIp);
+      List<Group> groups = smartstorApiService.getGroups(serviceIp);
+      dataCacheManager.save(serviceIp, groups, Group.class);
+    } catch (Exception e) {
+      log.error(String.format("Sync groups of host [%s] failed:", serviceIp), e);
+      dataCacheManager.saveError(serviceIp, e.getMessage(), Group.class);
+    }
   }
 
   private boolean isIp(String ip) {

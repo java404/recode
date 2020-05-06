@@ -1,2 +1,19 @@
 server.port: 18080
-smartmon.api.infoName: smartmon-examples
+
+spring:
+  application.name: smartmon-examples
+  cloud.nacos.discovery.server-addr: 127.0.0.1:8848
+
+smartmon.api:
+  infoName: smartmon-examples
+  prefix: /api/v2/examples
+
+smartmon.datasource:
+  standalone: true
+  liquibase.changeLog: classpath:db/smartmon-example-changelog.yaml
+  liquibase.debug: true
+  h2.file: /var/smartmon/smartmon-example.h2
+  mysql.host: 172.24.8.55
+  mysql.user: root
+  mysql.password: root
+  mysql.db: smartmon_example

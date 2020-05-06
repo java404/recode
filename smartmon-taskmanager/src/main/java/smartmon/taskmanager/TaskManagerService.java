@@ -1,16 +1,24 @@
 package smartmon.taskmanager;
 
 import java.util.List;
-import smartmon.taskmanager.types.TaskContext;
+import smartmon.taskmanager.types.TaskDescription;
+import smartmon.taskmanager.types.TaskGroup;
 
 public interface TaskManagerService {
-  TaskContext createTask(String name);
+  TaskGroup createTaskGroup(String name, List<TaskDescription> tasks);
 
-  void invokeTask(TaskContext context, Runnable... steps);
+  void invokeTaskGroup(TaskGroup taskGroup);
 
-  TaskContext invokeTask(String name, Runnable... steps);
+  TaskGroup createTask(String name, TaskDescription task);
 
-  List<TaskContext> getAll();
+  TaskGroup createTask(String name, Runnable step);
 
-  TaskContext findById(Long taskId);
+
+  TaskGroup invokeTask(String name, Runnable... steps);
+
+  TaskGroup invokeTask(String name, Runnable step);
+
+  TaskGroup findTaskGroupById(Long id);
+
+  List<TaskGroup> getAllTaskGroups();
 }

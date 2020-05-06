@@ -54,8 +54,12 @@ dependencyManagement {
 dependencies {
   compile project(':smartmon-utilities')
   compile project(':smartmon-webtools')
+  compile project(':smartmon-webdata')
   compile project(':smartmon-taskmanager')
   compile project(':smartmon-cache')
+
   compile('org.springframework.boot:spring-boot-starter-webflux')
   compile('org.springframework.cloud:spring-cloud-context')
+
+  compile libs.springCloudServiceProvided
 }

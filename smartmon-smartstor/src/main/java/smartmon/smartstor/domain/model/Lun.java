@@ -14,13 +14,13 @@ public class Lun extends Entity {
   private String extCacheDiskName;
   private Boolean actualState;
   private String lunId;
-  private String extScsiid;
+  private String extScsiId;
   private String extDataActualState;
   private String extSize;
   private String extCacheActualStates;
-  private Integer extPalcacheCacheModel;
+  private Integer extPalCacheCacheModel;
   private String extNodeName;
-  private String extPalcacheId;
+  private String extPalCacheId;
   private String extDataDevName;
   private Long extCacheSize;
   private Integer lunType;
@@ -37,7 +37,7 @@ public class Lun extends Entity {
   private String exportT10DevId;
   private String exportThreadsNum;
   private String exportThreadsPoolType;
-  private Integer exportIOError;
+  private Integer exportIoError;
   private Integer exportLastErrno;
   private String exportFilename;
   private Long exportSizeMb;

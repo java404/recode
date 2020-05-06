@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: init-schema-001-table-example
+      author: xiong.jia_le
+      changes:
+        - sql:
+            comment: Table metadata
+            dbms: h2, mysql, mariadb
+            splitStatements: false
+            sql: CREATE TABLE test_sample (
+              name VARCHAR(128), value MEDIUMTEXT,
+              constraint pk_test_sample primary key (name));

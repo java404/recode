@@ -54,12 +54,11 @@ dependencyManagement {
 dependencies {
   compile project(':smartmon-utilities')
   compile project(':smartmon-webtools')
+  compile project(':smartmon-webdata')
   compile project(':smartmon-taskmanager')
   compile project(':smartmon-core-provider')
 
   compile('javax.servlet:javax.servlet-api:4.0.1')
   compile('org.springframework.boot:spring-boot-starter-webflux')
-
   compile libs.springCloudServiceProvided
-  compile libs.mybatisSarter
 }

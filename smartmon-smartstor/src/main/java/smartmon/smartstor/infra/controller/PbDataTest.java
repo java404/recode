@@ -3,6 +3,7 @@ package smartmon.smartstor.infra.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import smartmon.smartstor.domain.model.Disk;
@@ -40,12 +41,20 @@ public class PbDataTest {
   @GetMapping("pool/list")
   @ResponseBody
   public List<Pool> getPools() {
-    return apiProxy.getPools("172.24.12.218");
+    return apiProxy.getPools("172.24.12.216");
   }
+
+
 
   @GetMapping("lun/list")
   @ResponseBody
   public List<Lun> getLuns() {
-    return apiProxy.getLuns("172.4.12.218");
+    return apiProxy.getLuns("172.24.12.218");
+  }
+
+  @PostMapping("disk")
+  @ResponseBody
+  public void diskAddTest() {
+    apiProxy.addDisk("172.24.12.216", "4545", 2, "hdd");
   }
 }

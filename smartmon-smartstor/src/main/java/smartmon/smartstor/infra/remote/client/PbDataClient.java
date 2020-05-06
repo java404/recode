@@ -1,8 +1,11 @@
 package smartmon.smartstor.infra.remote.client;
 
 import feign.Client;
+import feign.codec.DecodeException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import smartmon.smartstor.infra.remote.exception.PbDataDecodeException;
+import smartmon.smartstor.infra.remote.exception.PbDataNoBodyException;
 import smartmon.smartstor.infra.remote.requests.PbDataRequestDiskManager;
 import smartmon.smartstor.infra.remote.requests.PbDataRequestGroupManager;
 import smartmon.smartstor.infra.remote.requests.PbDataRequestLunManager;
@@ -19,9 +22,9 @@ import smartmon.smartstor.infra.remote.types.disk.PbDataDiskInfosV30;
 import smartmon.smartstor.infra.remote.types.disk.PbDataDiskV30;
 import smartmon.smartstor.infra.remote.types.group.PbDataGroupAddNodeParam;
 import smartmon.smartstor.infra.remote.types.group.PbDataGroupAddParam;
-import smartmon.smartstor.infra.remote.types.group.PbDataGroupResponse;
 import smartmon.smartstor.infra.remote.types.group.PbDataGroupConfigParam;
 import smartmon.smartstor.infra.remote.types.group.PbDataGroupInfos;
+import smartmon.smartstor.infra.remote.types.group.PbDataGroupResponse;
 import smartmon.smartstor.infra.remote.types.lun.PbDataLunConfigParam;
 import smartmon.smartstor.infra.remote.types.lun.PbDataLunCreateParam;
 import smartmon.smartstor.infra.remote.types.lun.PbDataLunDelParam;
@@ -100,8 +103,17 @@ public class PbDataClient {
     return this.apiVersionInfo;
   }
 
+  /** list node. */
   public PbDataNodeInfos listNodes() {
-    return this.nodeManagerRequest.listNodes();
+    try {
+      return this.nodeManagerRequest.listNodes();
+    } catch (DecodeException err) {
+      final Throwable cause = err.getCause();
+      if (cause != null && cause.getClass().equals(PbDataNoBodyException.class)) {
+        return null;
+      }
+      throw new PbDataDecodeException(err.getMessage());
+    }
   }
 
   public PbDataNodeItem getNodeInfo() {
@@ -115,10 +127,18 @@ public class PbDataClient {
 
   /** pbdata list disks. */
   public PbDataDiskInfos listDisks() {
-    if (apiVersionInfo.isApiVer30()) {
-      return PbDataDiskInfosV30.adjust(diskManagerRequest.listDisksV30());
+    try {
+      if (apiVersionInfo.isApiVer30()) {
+        return PbDataDiskInfosV30.adjust(diskManagerRequest.listDisksV30());
+      }
+      return diskManagerRequest.listDisks();
+    } catch (DecodeException err) {
+      final Throwable cause = err.getCause();
+      if (cause != null && cause.getClass().equals(PbDataNoBodyException.class)) {
+        return null;
+      }
+      throw new PbDataDecodeException(err.getMessage());
     }
-    return diskManagerRequest.listDisks();
   }
 
   /** pbdata get diskinfo. */
@@ -149,8 +169,17 @@ public class PbDataClient {
     return this.diskManagerRequest.diskRaidLedOffState(cesAddr);
   }
 
+  /** list group. */
   public PbDataGroupInfos listGroups() {
-    return this.groupManagerRequest.listGroups();
+    try {
+      return this.groupManagerRequest.listGroups();
+    } catch (DecodeException err) {
+      final Throwable cause = err.getCause();
+      if (cause != null && cause.getClass().equals(PbDataNoBodyException.class)) {
+        return null;
+      }
+      throw new PbDataDecodeException(err.getMessage());
+    }
   }
 
   public PbDataGroupResponse getGroupInfoByName(String groupName) {
@@ -181,8 +210,17 @@ public class PbDataClient {
     return this.groupManagerRequest.groupDelNode(groupName, nodeName);
   }
 
+  /** list lun. */
   public PbDataLunInfos listluns() {
-    return this.lunManagerRequest.listLuns();
+    try {
+      return this.lunManagerRequest.listLuns();
+    } catch (DecodeException err) {
+      final Throwable cause = err.getCause();
+      if (cause != null && cause.getClass().equals(PbDataNoBodyException.class)) {
+        return null;
+      }
+      throw new PbDataDecodeException(err.getMessage());
+    }
   }
 
   public PbDataLunResponse getLunInfo(String lunName) {
@@ -217,8 +255,17 @@ public class PbDataClient {
     return this.lunManagerRequest.lunConfig(lunConfigParam, lunName);
   }
 
+  /** list pool. */
   public PbDataPoolInfos listPools() {
-    return this.poolManagerRequest.listPools();
+    try {
+      return this.poolManagerRequest.listPools();
+    } catch (DecodeException err) {
+      final Throwable cause = err.getCause();
+      if (cause != null && cause.getClass().equals(PbDataNoBodyException.class)) {
+        return null;
+      }
+      throw new PbDataDecodeException(err.getMessage());
+    }
   }
 
   public PbDataResponseCode poolCreate(PbDataPoolCreateParam poolCreateParam) {

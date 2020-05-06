@@ -14,7 +14,7 @@ public class DiskRepresentationService {
   private DataCacheManager dataCacheManager;
 
   public CachedData<DiskDto> getDisks(String serviceIp) {
-    CachedData<Disk> disks = dataCacheManager.getDisks(serviceIp);
+    CachedData<Disk> disks = dataCacheManager.gets(serviceIp, Disk.class);
     return DiskDtoAssembler.toDtos(disks);
   }
 }

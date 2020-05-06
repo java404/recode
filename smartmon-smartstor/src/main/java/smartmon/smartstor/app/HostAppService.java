@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import smartmon.smartstor.app.command.HostInitCommand;
 import smartmon.smartstor.app.command.HostVerifyCommand;
 import smartmon.smartstor.domain.service.HostInitService;
-import smartmon.utilities.general.SmartMonResponse;
 
 @Service
 @Slf4j

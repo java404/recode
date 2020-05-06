@@ -1,0 +1,11 @@
+server.port: 1989
+
+spring:
+  application.name: smartmon-injector
+
+logging.config: classpath:logback-smartmon.xml
+
+smartmon.api:
+  infoName: smartmon-injector
+  prefix: /api/v2/injector
+

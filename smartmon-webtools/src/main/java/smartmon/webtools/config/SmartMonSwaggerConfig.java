@@ -1,17 +1,13 @@
 package smartmon.webtools.config;
 
 import com.google.common.base.Strings;
-import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.server.RequestPredicates;
-import org.springframework.web.reactive.function.server.RouterFunction;
-import org.springframework.web.reactive.function.server.RouterFunctions;
-import org.springframework.web.reactive.function.server.ServerResponse;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.ParameterBuilder;
 import springfox.documentation.builders.PathSelectors;
@@ -63,6 +59,7 @@ public class SmartMonSwaggerConfig {
   @Bean
   Docket createRestApi() {
     return new Docket(DocumentationType.SWAGGER_2)
+      .ignoredParameterTypes(ServerHttpRequest.class)
       .apiInfo(makeApiInfo(apiInfoName, apiInfoVer)).select()
       .apis(RequestHandlerSelectors.any())
       .paths(makePaths(apiPrefix)).build()

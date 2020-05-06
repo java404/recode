@@ -9,4 +9,6 @@ public class SmartStorErrno {
   public static final int API_VERSION_NOT_FOUND = BEGIN_NUM + 4;
   public static final int API_VERSION_UNSUPPORTED = BEGIN_NUM + 5;
   public static final int STORAGE_HOST_VERIFY_FAILED = BEGIN_NUM + 6;
+  public static final int PBDATA_NO_BODY = BEGIN_NUM + 7;
+  public static final int PBDATA_DECODE = BEGIN_NUM + 8;
 }

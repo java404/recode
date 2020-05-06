@@ -2,6 +2,7 @@ package smartmon.smartstor.infra.remote.types.pool;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class PbDataPoolExportInfo {
   @JsonProperty("max_size")
   private Long exportMaxSize;
   @JsonProperty("dev_name")
-  private List<String> exportDevName;
+  private List<String> exportDevNames;
   private Long exportExtent;
   private Long exportBucket;
   private Long exportSippet;
@@ -50,5 +51,9 @@ public class PbDataPoolExportInfo {
 
   public Double getExportPUpperThresh() {
     return this.exportPUpperThresh != null ? this.exportPUpperThresh.doubleValue() : null;
+  }
+
+  public String getExportDevNames() {
+    return StringUtils.join(this.exportDevNames, ",");
   }
 }

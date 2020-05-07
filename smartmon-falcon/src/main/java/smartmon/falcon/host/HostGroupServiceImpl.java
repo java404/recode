@@ -12,6 +12,9 @@ import smartmon.falcon.remote.client.FalconClientService;
 import smartmon.falcon.remote.config.FalconApiConfig;
 import smartmon.falcon.remote.types.host.FalconHost;
 import smartmon.falcon.remote.types.host.FalconHostGroup;
+import smartmon.falcon.remote.types.host.FalconHostGroupCreateParam;
+import smartmon.falcon.remote.types.host.FalconHostGroupQueryParam;
+import smartmon.falcon.remote.types.host.FalconHostGroupUpdateParam;
 import smartmon.falcon.remote.types.host.FalconHosts;
 import smartmon.utilities.misc.BeanConverter;
 
@@ -38,7 +41,7 @@ public class HostGroupServiceImpl implements HostGroupService {
       groupRegex = ".";
     }
     // TODO: call GET method api/v1/hostgroup?q={groupRegex}
-    final List<FalconHostGroup> falconHostGroups = client.listHostGroupsByGroupRegex(groupRegex);
+    final List<FalconHostGroup> falconHostGroups = client.listHostGroupsByGroupRegex(new FalconHostGroupQueryParam(groupRegex));
     return ListUtils.emptyIfNull(BeanConverter.copy(falconHostGroups, HostGroup.class));
   }
 
@@ -46,7 +49,7 @@ public class HostGroupServiceImpl implements HostGroupService {
   public HostGroup createHostGroup(String name, String note) {
     final FalconClient falconClient = getFalconClient();
     // TODO: call POST method api/v1/hostgroup
-    final FalconHostGroup hostGroup = falconClient.createHostGroup(name, note);
+    final FalconHostGroup hostGroup = falconClient.createHostGroup(new FalconHostGroupCreateParam(name, note));
     return BeanConverter.copy(hostGroup, HostGroup.class);
   }
 
@@ -54,7 +57,7 @@ public class HostGroupServiceImpl implements HostGroupService {
   public void updateHostGroup(Integer id, String name, String note) {
     final FalconClient falconClient = getFalconClient();
     // TODO: call PUT method api/v1/hostgroup
-    falconClient.updateHostGroup(id, name, note);
+    falconClient.updateHostGroup(new FalconHostGroupUpdateParam(id, name, note));
   }
 
   @Override

@@ -6,6 +6,7 @@ import feign.QueryMap;
 import feign.RequestLine;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import smartmon.falcon.remote.types.FalconResponseData;
 import smartmon.falcon.remote.types.host.FalconHostGroup;
 import smartmon.falcon.remote.types.host.FalconHostGroupCreateParam;
@@ -14,6 +15,7 @@ import smartmon.falcon.remote.types.host.FalconHostGroupUpdateParam;
 import smartmon.falcon.remote.types.host.FalconHosts;
 
 import java.util.List;
+import java.util.Set;
 
 public interface FalconRequestHostGroupManager {
   @RequestLine("GET /hostgroup")
@@ -41,6 +43,6 @@ public interface FalconRequestHostGroupManager {
 
   @RequestLine("PATCH /hostgroup/{groupId}/host")
   @Headers({"Content-Type: application/json"})
-  FalconResponseData addHostToHostGroup(@Param("groupId") Integer groupId);
+  FalconResponseData hostToHostGroupOpt(@RequestBody Set<String> hosts, @Param("groupId") Integer groupId);
 
 }

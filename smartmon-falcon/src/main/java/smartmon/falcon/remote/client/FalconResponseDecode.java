@@ -5,10 +5,8 @@ import feign.Response;
 import feign.codec.Decoder;
 import feign.jackson.JacksonDecoder;
 import lombok.extern.slf4j.Slf4j;
-import smartmon.falcon.remote.exception.FalconExceptionBadResponse;
-import smartmon.falcon.remote.exception.FalconExceptionInvalidResponse;
+import smartmon.falcon.remote.exception.FalconBadResponseException;
 import smartmon.falcon.remote.types.FalconResponseData;
-import smartmon.utilities.misc.JsonConverter;
 import smartmon.utilities.remote.RemoteApiCoder;
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -28,7 +26,7 @@ public class FalconResponseDecode implements Decoder {
       if (responseData.getCode() == 0) {
         return responseData;
       } else {
-        throw new FalconExceptionBadResponse(responseData.getErrorMessage());
+        throw new FalconBadResponseException(responseData.getErrorMessage());
       }
     }
     return decoder.decode(response, type);

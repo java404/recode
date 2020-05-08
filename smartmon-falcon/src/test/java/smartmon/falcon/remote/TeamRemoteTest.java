@@ -13,7 +13,7 @@ public class TeamRemoteTest {
   @Test
   @Ignore
   public void listTeamsTest() {
-    final TargetHost targetHost = TargetHost.builder("172.24.8.132", 8080).build();
+    final TargetHost targetHost = TargetHost.builder("172.24.8.55", 8080).build();
     final FalconClient falconClient = new FalconClient(targetHost);
     final List<FalconTeamInfo> falconTeamInfos = falconClient.listTeams();
     for (FalconTeamInfo falconTeamInfo : falconTeamInfos) {

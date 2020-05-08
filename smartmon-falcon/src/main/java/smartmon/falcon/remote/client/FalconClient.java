@@ -4,6 +4,7 @@ import feign.Client;
 import java.util.List;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import smartmon.falcon.remote.request.FalconRequestEndpointManager;
 import smartmon.falcon.remote.request.FalconRequestGraphManager;
 import smartmon.falcon.remote.request.FalconRequestHostGroupManager;
@@ -170,6 +171,9 @@ public class FalconClient {
   }
 
   public List<FalconGraphRecord> getGraphHistory(FalconGraphHistoryQueryParam queryParam) {
+    if (CollectionUtils.isEmpty(queryParam.getCounters())) {
+
+    }
     return this.graphManagerRequest.getGraphHistory(queryParam);
   }
 

@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface FalconRequestStrategyManager {
   @RequestLine("GET /strategy")
-  @Headers({"Content-Type: application/json"})
+  @Headers({"Content-Type: application/json", "ApiToken: { \"name\":\"root\" , \"sig\":\"default-token-used-in-server-side\"}"})
   List<FalconStrategy> getStrategiesByTemplateId(@QueryMap FalconStrategyQueryParam queryParam);
 
 

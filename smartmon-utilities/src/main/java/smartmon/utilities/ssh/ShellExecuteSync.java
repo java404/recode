@@ -17,13 +17,13 @@ public class ShellExecuteSync extends ShellExecute {
     setExecuteEvent(resultBuffer::append);
   }
 
-  public String invoke(String command) throws JSchException, IOException {
+  public ShellResult invoke(String command) throws JSchException, IOException {
     return invoke(command, ShellSession.DEFAULT_CONNECT_TIMEOUT, ShellSession.DEFAULT_SO_TIMEOUT);
   }
 
-  public String invoke(String command, int connTimeout, int soTimeout) throws JSchException, IOException {
+  public ShellResult invoke(String command, int connTimeout, int soTimeout) throws JSchException, IOException {
     resultBuffer.setLength(0);
-    run(command, connTimeout, soTimeout);
-    return resultBuffer.toString();
+    int code = run(command, connTimeout, soTimeout);
+    return new ShellResult(code, resultBuffer.toString());
   }
 }

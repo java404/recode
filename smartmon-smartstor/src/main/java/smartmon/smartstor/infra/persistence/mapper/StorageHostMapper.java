@@ -15,4 +15,6 @@ public interface StorageHostMapper {
   void delete(String uuid);
 
   StorageHostEntity findByServiceIp(String serviceIp);
+
+  StorageHostEntity findByGuid(String guid);
 }

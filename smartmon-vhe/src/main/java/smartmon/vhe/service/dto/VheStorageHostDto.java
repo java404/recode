@@ -26,6 +26,7 @@ public class VheStorageHostDto {
   private Integer size;
   private String rackName;
   private Integer rackIndex;
+  private String idcName;
 
   public void setRackInfo(RackAllocationVo rackAllocationVo) {
     this.rackName = rackAllocationVo.getRackName();

@@ -15,7 +15,7 @@ public class ShellExecuteSyncTest {
     final ShellExecuteSync exec = new ShellExecuteSync(host);
 
     try {
-      final String result = exec.invoke("ls ~/");
+      final ShellResult result = exec.invoke("ls ~/");
       System.out.println(result);
     } catch (JSchException | IOException err) {
       err.printStackTrace();

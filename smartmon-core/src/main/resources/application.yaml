@@ -17,3 +17,8 @@ smartmon.datasource:
   mysql.user: root
   mysql.password: root
   mysql.db: smartmon_core
+
+smartmon.repo:
+  filename: smartmon.repo
+  id: SMARTMON-REPO
+  baseUrl: http://172.24.8.121:8000/repo/

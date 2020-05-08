@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import smartmon.core.hosts.SmartMonHost;
+import smartmon.core.idc.vo.IdcVo;
 import smartmon.core.racks.vo.IdcRackAllocateVo;
 import smartmon.core.racks.vo.RackAllocationVo;
 import smartmon.utilities.general.SmartMonResponse;
@@ -23,4 +24,7 @@ public interface SmartmonCoreFeignClient {
 
   @GetMapping("/racks/allocated")
   SmartMonResponse<List<RackAllocationVo>> getRacks();
+
+  @GetMapping("/idcs")
+  SmartMonResponse<List<IdcVo>> getIdcs();
 }

@@ -19,30 +19,31 @@ import java.util.Set;
 
 public interface FalconRequestHostGroupManager {
   @RequestLine("GET /hostgroup")
+  @Headers({"Content-Type: application/json", "ApiToken: { \"name\":\"root\" , \"sig\":\"default-token-used-in-server-side\"}"})
   List<FalconHostGroup> listHostGroups();
 
   @RequestLine("GET /hostgroup")
-  @Headers({"Content-Type: application/json"})
+  @Headers({"Content-Type: application/json", "ApiToken: { \"name\":\"root\" , \"sig\":\"default-token-used-in-server-side\"}"})
   List<FalconHostGroup> listHostGroupsByGroupRegex(@QueryMap FalconHostGroupQueryParam queryParam);
 
   @RequestLine("POST /hostgroup")
-  @Headers({"Content-Type: application/json"})
+  @Headers({"Content-Type: application/json", "ApiToken: { \"name\":\"root\" , \"sig\":\"default-token-used-in-server-side\"}"})
   FalconHostGroup createHostGroup(@RequestBody FalconHostGroupCreateParam hostGroupCreateParam);
 
   @RequestLine("PUT /hostgroup")
-  @Headers({"Content-Type: application/json"})
+  @Headers({"Content-Type: application/json", "ApiToken: { \"name\":\"root\" , \"sig\":\"default-token-used-in-server-side\"}"})
   FalconResponseData updataHostGroup(@RequestBody FalconHostGroupUpdateParam hostGroupUpdateParam);
 
   @RequestLine("DELETE /hostgroup/{id}")
-  @Headers({"Content-Type: application/json"})
+  @Headers({"Content-Type: application/json", "ApiToken: { \"name\":\"root\" , \"sig\":\"default-token-used-in-server-side\"}"})
   FalconResponseData delHostGroup(@Param("id") Integer id);
 
   @RequestLine("GET /hostgroup/{groupId}")
-  @Headers({"Content-Type: application/json"})
+  @Headers({"Content-Type: application/json", "ApiToken: { \"name\":\"root\" , \"sig\":\"default-token-used-in-server-side\"}"})
   FalconHosts getHostsByGroupId(@Param("groupId") Integer groupId);
 
   @RequestLine("PATCH /hostgroup/{groupId}/host")
-  @Headers({"Content-Type: application/json"})
+  @Headers({"Content-Type: application/json", "ApiToken: { \"name\":\"root\" , \"sig\":\"default-token-used-in-server-side\"}"})
   FalconResponseData hostToHostGroupOpt(@RequestBody Set<String> hosts, @Param("groupId") Integer groupId);
 
 }

@@ -55,6 +55,9 @@ public class HostInitService {
       if (storageHost == null) {
         return;
       }
+      if (storageHostRepository.findByGuid(storageHost.getGuid()) != null) {
+        throw new HostInitException("Exists same host");
+      }
       h.setUuid(UUID.randomUUID().toString());
       h.setGuid(storageHost.getGuid());
       h.setListenIp(storageHost.getListenIp());

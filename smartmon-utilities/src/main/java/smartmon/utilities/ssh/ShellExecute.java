@@ -43,7 +43,7 @@ public class ShellExecute {
     run(command, ShellSession.DEFAULT_CONNECT_TIMEOUT, ShellSession.DEFAULT_SO_TIMEOUT);
   }
 
-  public void run(String command, int connTimeout, int soTimeout) throws JSchException, IOException {
+  public int run(String command, int connTimeout, int soTimeout) throws JSchException, IOException {
     if (Strings.isNullOrEmpty(command)) {
       log.error("Empty shell command");
       throw new JSchException("Invalid shell command");
@@ -60,6 +60,7 @@ public class ShellExecute {
       final InputStream inputStream = channelExec.getInputStream();
       channelExec.connect(connTimeout);
       readOutput(channelExec, inputStream);
+      return channelExec.getExitStatus();
     } catch (JSchException | IOException err) {
       log.error("cannot exec command {}", command, err);
       throw err;

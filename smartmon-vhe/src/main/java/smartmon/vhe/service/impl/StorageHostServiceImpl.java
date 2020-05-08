@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import smartmon.core.hosts.SmartMonHost;
+import smartmon.core.idc.vo.IdcVo;
 import smartmon.core.racks.vo.IdcRackAllocateVo;
 import smartmon.core.racks.vo.RackAllocationVo;
 import smartmon.smartstor.web.dto.StorageHostDto;
@@ -48,6 +49,10 @@ public class StorageHostServiceImpl implements StorageHostService {
     Map<String, RackAllocationVo> hostIdRackMap = racks
       .stream()
       .collect(Collectors.toMap(RackAllocationVo::getHostUuid, Function.identity(), (oldValue, newValue) -> newValue));
+    List<IdcVo> idcVos = coreFeignClient.getIdcs().getContent();
+    Map<String, String> idcMap = idcVos
+      .stream()
+      .collect(Collectors.toMap(IdcVo::getId, IdcVo::getName, (oldValue, newValue) -> newValue));
     smartstorHosts.forEach(h -> {
       VheStorageHostDto storageHostDto = BeanConverter.copy(h, VheStorageHostDto.class);
       if (storageHostDto == null) {
@@ -57,6 +62,8 @@ public class StorageHostServiceImpl implements StorageHostService {
       if (rackAllocationVo != null) {
         storageHostDto.setRackInfo(rackAllocationVo);
       }
+      String idcName = idcMap.get(storageHostDto.getIdcId());
+      storageHostDto.setIdcName(idcName);
       hosts.add(storageHostDto);
     });
     return hosts;
@@ -80,7 +87,7 @@ public class StorageHostServiceImpl implements StorageHostService {
   private void addHostToSmartStor(List<VheStorageHostInitDto> hosts,
                                   List<SmartMonHost> coreHosts) {
     try {
-      generateHostUUid(coreHosts, hosts);
+      generateHostGuid(coreHosts, hosts);
       smartStorFeignClient.saveHosts(hosts);
     } catch (FeignClientException e) {
       log.error("Add host to smartstor failed", e);
@@ -108,11 +115,11 @@ public class StorageHostServiceImpl implements StorageHostService {
     return coreHosts;
   }
 
-  private void generateHostUUid(List<SmartMonHost> coreHosts,
+  private void generateHostGuid(List<SmartMonHost> coreHosts,
                                 List<VheStorageHostInitDto> hosts) {
     Map<String, String> ipUuidMap = coreHosts
       .stream()
-      .collect(Collectors.toMap(getGetManageIp(), getGetHostUuid()));
+      .collect(Collectors.toMap(getManageIp(), getHostUuid()));
     hosts.forEach(host -> {
       String uuid = ipUuidMap.get(host.getListenIp());
       if (StringUtils.isBlank(uuid)) {
@@ -122,11 +129,11 @@ public class StorageHostServiceImpl implements StorageHostService {
     });
   }
 
-  private Function<SmartMonHost, String> getGetHostUuid() {
+  private Function<SmartMonHost, String> getHostUuid() {
     return SmartMonHost::getHostUuid;
   }
 
-  private Function<SmartMonHost, String> getGetManageIp() {
+  private Function<SmartMonHost, String> getManageIp() {
     return SmartMonHost::getManageIp;
   }
 

@@ -25,7 +25,7 @@ public class HostGroupServiceImpl implements HostGroupService {
   @Autowired
   private FalconApiConfig falconApiConfig;
 
-  public FalconClient getFalconClient() {
+  private FalconClient getFalconClient() {
     return falconClientService.getClient(falconApiConfig.getAddress(), falconApiConfig.getRequestPort());
   }
 

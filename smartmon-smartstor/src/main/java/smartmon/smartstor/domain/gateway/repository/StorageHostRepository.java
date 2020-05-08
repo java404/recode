@@ -16,4 +16,6 @@ public interface StorageHostRepository {
   List<String> getIosServiceIps();
 
   StorageHost findByServiceIp(String serviceIp);
+
+  StorageHost findByGuid(String guid);
 }

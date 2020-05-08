@@ -16,10 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import smartmon.smartstor.app.HostAppService;
 import smartmon.smartstor.app.command.HostInitCommand;
 import smartmon.smartstor.interfaces.web.controller.vo.HostInitVo;
-import smartmon.smartstor.interfaces.web.controller.vo.HostVerifyVo;
 import smartmon.smartstor.interfaces.web.representation.HostRepresentationService;
 import smartmon.smartstor.interfaces.web.representation.dto.HostsScanDto;
-import smartmon.smartstor.interfaces.web.representation.dto.StorageHostDto;
 import smartmon.taskmanager.TaskManagerService;
 import smartmon.taskmanager.types.TaskContext;
 import smartmon.taskmanager.types.TaskGroup;
@@ -39,7 +37,7 @@ public class HostController {
 
   @GetMapping
   @SmartMonPageParams
-  public SmartMonResponse<List<StorageHostDto>> getHosts() {
+  public SmartMonResponse getHosts() {
     return new SmartMonResponse<>(hostRepresentationService.getStorageHosts());
   }
 
@@ -54,13 +52,6 @@ public class HostController {
     });
     taskManagerService.invokeTaskGroup(taskGroup);
     return new SmartMonResponse<>(taskGroup);
-  }
-
-  @ApiOperation("Verify host config")
-  @PostMapping("verify")
-  public SmartMonResponse<String> apiVerify(@RequestBody HostVerifyVo vo) {
-    hostAppService.verifyHost(vo.toHostVerifyCommand());
-    return SmartMonResponse.OK;
   }
 
   @ApiOperation("Init hosts")

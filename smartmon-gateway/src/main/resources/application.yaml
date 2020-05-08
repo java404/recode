@@ -1,9 +1,8 @@
 server.port: 18080
 
 spring:
-  application.name: smartmon-gateway
-  cloud.nacos.discovery.ip: 127.0.0.1
-  cloud.nacos.discovery.server-addr: 127.0.0.1:8848
+  application.name: smartmon-gateway-test
+  cloud.nacos.discovery.server-addr: 172.24.8.55:8848
   security:
     user:
       name: root
@@ -14,33 +13,19 @@ spring:
         enabled: true
         lower-case-service-id: true
       routes:
-        - id: swagger-vhe
-          uri: lb://smartmon-vhe
-          predicates:
-            - Path=/vhe/v2/api-docs
-          filters:
-            - StripPrefix=1
         - id: smartmon-vhe
           uri: lb://smartmon-vhe
           predicates:
             - Path=/vhe/**
-        - id: swagger-core
-          uri: lb://smartmon-core
-          predicates:
-            - Path=/core/v2/api-docs
-          filters:
-            - StripPrefix=1
         - id: smartmon-core
           uri: lb://smartmon-core
           predicates:
             - Path=/core/**
-        - id: swagger-smartstor
-          uri: lb://smartmon-smartstor
-          predicates:
-            - Path=/smartstor/v2/api-docs
-          filters:
-            - StripPrefix=1
         - id: smartmon-smartstor
           uri: lb://smartmon-smartstor
           predicates:
             - Path=/smartstor/**
+        - id: smartmon-falcon
+          uri: lb://smartmon-falcon
+          predicates:
+            - Path=/falcon/**

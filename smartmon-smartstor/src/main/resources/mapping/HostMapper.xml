@@ -92,4 +92,11 @@
     WHERE
     listen_ip = #{serviceIp}
   </select>
+
+  <select id="findByGuid" resultMap="StorageHostResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM storage_host
+    WHERE guid = #{guid}
+  </select>
 </mapper>

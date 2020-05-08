@@ -10,6 +10,6 @@ smartmon.api:
 
 smartmon:
   falcon:
-    address: 172.24.8.132
+    address: 172.24.8.55
     requestPort: 8080
     pushPort: 1988

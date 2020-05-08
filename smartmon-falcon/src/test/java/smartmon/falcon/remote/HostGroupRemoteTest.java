@@ -18,7 +18,7 @@ public class HostGroupRemoteTest {
   @Ignore
   @Test
   public void hostGroupListTest() {
-    final TargetHost targetHost = TargetHost.builder("172.24.8.132", 8080).build();
+    final TargetHost targetHost = TargetHost.builder("172.24.8.55", 8080).build();
     final FalconClient falconClient = new FalconClient(targetHost);
     final List<FalconHostGroup> falconHostGroups = falconClient.listHostGroups();
     System.out.println(falconHostGroups);
@@ -29,7 +29,7 @@ public class HostGroupRemoteTest {
   public void hostGroupListByGroupRegexTest() {
     final TargetHost targetHost = TargetHost.builder("172.24.8.132", 8080).build();
     final FalconClient falconClient = new FalconClient(targetHost);
-    final List<FalconHostGroup> falconHostGroups = falconClient.listHostGroupsByGroupRegex("phegdata");
+    final List<FalconHostGroup> falconHostGroups = falconClient.listHostGroupsByGroupRegex(new FalconHostGroupQueryParam("phegdata"));
     System.out.println(falconHostGroups);
   }
 
@@ -38,7 +38,7 @@ public class HostGroupRemoteTest {
   public void hostGroupAddTest() {
     final TargetHost targetHost = TargetHost.builder("172.24.8.132", 8080).build();
     final FalconClient falconClient = new FalconClient(targetHost);
-    final FalconHostGroup hostGroup = falconClient.createHostGroup("uz1iff", "777");
+    final FalconHostGroup hostGroup = falconClient.createHostGroup(new FalconHostGroupCreateParam("uz1iff", "777"));
     System.out.println(hostGroup);
   }
 
@@ -47,7 +47,7 @@ public class HostGroupRemoteTest {
   public void hostGroupUpdataTest() {
     final TargetHost targetHost = TargetHost.builder("172.24.8.132", 8080).build();
     final FalconClient falconClient = new FalconClient(targetHost);
-    final FalconResponseData falconResponseData = falconClient.updateHostGroup(34,"sdfhy","666");
+    final FalconResponseData falconResponseData = falconClient.updateHostGroup(new FalconHostGroupUpdateParam(34,"sdfhy","666"));
     System.out.println(falconResponseData);
   }
 

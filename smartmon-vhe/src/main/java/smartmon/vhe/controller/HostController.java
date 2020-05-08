@@ -1,7 +1,10 @@
 package smartmon.vhe.controller;
 
+import io.swagger.annotations.Api;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,7 +18,9 @@ import smartmon.vhe.service.StorageHostService;
 import smartmon.vhe.service.dto.VheStorageHostDto;
 import smartmon.vhe.service.dto.VheStorageHostInitDto;
 import smartmon.vhe.service.feign.SmartStorFeignClient;
+import smartmon.webtools.page.SmartMonPageResponseBuilder;
 
+@Api(tags = "hosts")
 @RestController
 @RequestMapping("${smartmon.api.prefix:/vhe/api/v2}/hosts")
 public class HostController {
@@ -34,7 +39,7 @@ public class HostController {
   }
 
   @GetMapping
-  public SmartMonResponse<List<VheStorageHostDto>> getAll() {
-    return new SmartMonResponse<>(hostService.listAll());
+  public SmartMonResponse getAll(ServerHttpRequest request) {
+    return new SmartMonPageResponseBuilder<VheStorageHostDto>(hostService.listAll(), request, "listenIp").build();
   }
 }

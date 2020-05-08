@@ -16,6 +16,7 @@ import smartmon.smartstor.domain.gateway.repository.StorageHostRepository;
 import smartmon.smartstor.domain.model.StorageHost;
 import smartmon.smartstor.infra.persistence.entity.StorageHostEntity;
 import smartmon.smartstor.infra.persistence.mapper.StorageHostMapper;
+import smartmon.utilities.misc.BeanConverter;
 
 @Component
 public class StorageHostRepositoryPersistence implements StorageHostRepository {
@@ -79,5 +80,10 @@ public class StorageHostRepositoryPersistence implements StorageHostRepository {
     StorageHost host = new StorageHost();
     BeanUtils.copyProperties(entity, host);
     return host;
+  }
+
+  @Override
+  public StorageHost findByGuid(String guid) {
+    return BeanConverter.copy(hostMapper.findByGuid(guid), StorageHost.class);
   }
 }

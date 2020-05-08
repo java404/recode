@@ -8,4 +8,6 @@ public class SmartMonErrno {
   public static final int RACK_RENAME_NOT_ALLOWED = BEGIN_NUM + 3;
   public static final int RACK_POSITION_NOT_AVAILABLE = BEGIN_NUM + 4;
   public static final int HOST_ALREADY_IN_RACK = BEGIN_NUM + 5;
+
+  public static final int SSH_COMMAND_ERROR = BEGIN_NUM + 100;
 }

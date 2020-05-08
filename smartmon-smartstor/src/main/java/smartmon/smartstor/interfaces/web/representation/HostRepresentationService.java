@@ -19,9 +19,9 @@ import smartmon.smartstor.domain.model.ApiVersion;
 import smartmon.smartstor.domain.model.StorageHost;
 import smartmon.smartstor.domain.model.StorageNode;
 import smartmon.smartstor.domain.model.enums.SysModeEnum;
-import smartmon.smartstor.interfaces.web.representation.assembler.StorageHostDtoAssembler;
 import smartmon.smartstor.interfaces.web.representation.dto.HostsScanDto;
-import smartmon.smartstor.interfaces.web.representation.dto.StorageHostDto;
+import smartmon.smartstor.web.dto.StorageHostDto;
+import smartmon.utilities.misc.BeanConverter;
 
 @Slf4j
 @Service
@@ -33,7 +33,18 @@ public class HostRepresentationService {
 
   public List<StorageHostDto> getStorageHosts() {
     List<StorageHost> storageHosts = storageHostRepository.getAll();
-    return StorageHostDtoAssembler.toDtoList(storageHosts);
+    List<StorageHostDto> dtos = new ArrayList<>();
+    storageHosts.forEach(h -> {
+      StorageHostDto hostDto = BeanConverter.copy(h, StorageHostDto.class);
+      if (hostDto == null) {
+        return;
+      }
+      hostDto.setSysModeDesc(h.getSysMode() != null ? h.getSysMode().getName() : "");
+      hostDto.setNodeStatusDesc(h.getNodeStatus() != null ? h.getNodeStatus().getName() : "");
+      hostDto.setTransModeDesc(h.getTransMode() != null ? h.getTransMode().getName() : "");
+      dtos.add(hostDto);
+    });
+    return dtos;
   }
 
   public List<HostsScanDto> scanHosts(Set<String> serviceIps) {

@@ -35,7 +35,10 @@ public class SmartMonDataSource {
   @Value("${smartmon.datasource.mysql.password:smartmon123}")
   private String mysqlPassword;
 
-  @Value("${smartmon.datasource.h2.file:/var/smartmon/smartmon.h2}")
+  @Value("${smartmon.datasource.h2.path:/var/smartmon}")
+  private String h2DataPath;
+
+  @Value("${smartmon.datasource.h2.file:smartmon.h2}")
   private String h2DataFile;
 
   @Value("${smartmon.datasource.h2.user:smartmon}")
@@ -83,8 +86,10 @@ public class SmartMonDataSource {
   }
 
   private String makeH2Url() {
-    log.info("Make jdbc url for h2 ({})", Strings.nullToEmpty(h2DataFile));
-    return String.format("jdbc:h2:file:%s;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE", h2DataFile);
+    final String dataFile = String.format("%s/%s",
+      Strings.nullToEmpty(h2DataPath), Strings.nullToEmpty(h2DataFile));
+    log.info("Make jdbc url for h2 ({})", dataFile);
+    return String.format("jdbc:h2:file:%s;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE", dataFile);
   }
 
   private DataSource makeStandaloneDataSource() {

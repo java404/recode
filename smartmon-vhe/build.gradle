@@ -51,9 +51,16 @@ dependencyManagement {
   }
 }
 
+processResources {
+  from("${rootProject.projectDir}/config/db/") {
+    into 'db/'
+  }
+}
+
 dependencies {
   compile project(':smartmon-utilities')
   compile project(':smartmon-webtools')
+  compile project(':smartmon-webdata')
   compile project(':smartmon-core-provider')
   compile project(':smartmon-smartstor-provider')
   compile project(':smartmon-taskmanager')

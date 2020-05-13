@@ -39,8 +39,8 @@ public class ShellExecute {
     this.session = new ShellSession(session);
   }
 
-  public void run(String command) throws JSchException, IOException {
-    run(command, ShellSession.DEFAULT_CONNECT_TIMEOUT, ShellSession.DEFAULT_SO_TIMEOUT);
+  public int run(String command) throws JSchException, IOException {
+    return run(command, ShellSession.DEFAULT_CONNECT_TIMEOUT, ShellSession.DEFAULT_SO_TIMEOUT);
   }
 
   public int run(String command, int connTimeout, int soTimeout) throws JSchException, IOException {

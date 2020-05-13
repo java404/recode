@@ -9,10 +9,14 @@ import lombok.Data;
 public class HostInitParamVo {
   @ApiModelProperty(value = "hostId", position = 1)
   private String hostId;
-  @ApiModelProperty(value = "serviceIp", position = 2)
+  @ApiModelProperty(value = "serviceIp", required = true, position = 2)
   private String serviceIp;
-  @ApiModelProperty(value = "size", position = 3)
+  @ApiModelProperty(value = "system username", required = true, position = 3)
+  private String sysUsername;
+  @ApiModelProperty(value = "system password", required = true, position = 4)
+  private String sysPassword;
+  @ApiModelProperty(value = "size", required = true, position = 5)
   private Integer size;
-  @ApiModelProperty(value = "idcName", position = 3)
+  @ApiModelProperty(value = "idcName", required = true, position = 6)
   private String idcName;
 }

@@ -10,4 +10,5 @@ public class SmartMonErrno {
   public static final int HOST_ALREADY_IN_RACK = BEGIN_NUM + 5;
 
   public static final int SSH_COMMAND_ERROR = BEGIN_NUM + 100;
+  public static final int SSH_COPY_FILE_ERROR = BEGIN_NUM + 101;
 }

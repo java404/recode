@@ -3,6 +3,7 @@ server.port: 18080
 spring:
   application.name: smartmon-gateway-test
   cloud.nacos.discovery.server-addr: 172.24.8.55:8848
+  jackson.serialization.write-dates-as-timestamps: true
   security:
     user:
       name: root

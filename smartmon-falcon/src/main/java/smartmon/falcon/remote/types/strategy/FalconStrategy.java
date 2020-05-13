@@ -2,6 +2,7 @@ package smartmon.falcon.remote.types.strategy;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import smartmon.falcon.strategy.model.PauseEnum;
 
 @Data
 public class FalconStrategy {
@@ -22,5 +23,5 @@ public class FalconStrategy {
   private String runEnd;
   @JsonProperty("tpl_id")
   private Long templateId;
-  private Integer pause;
+  private PauseEnum pause;
 }

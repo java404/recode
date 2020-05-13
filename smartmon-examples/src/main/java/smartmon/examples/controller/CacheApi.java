@@ -16,7 +16,7 @@ import smartmon.cache.SmatMonCacheItem;
 @Slf4j
 public class CacheApi {
   @Autowired
-  private SmartMonCacheService cacheService;
+  private SmartMonCacheService smartMonCacheService;
 
   @Data
   static class TestItem {
@@ -26,9 +26,8 @@ public class CacheApi {
   @GetMapping
   public void createCache() {
     final TestItem item = new TestItem();
-    cacheService.put("item", item);
-
-    final SmatMonCacheItem cacheItem = cacheService.get("item");
+    smartMonCacheService.put("item", item);
+    final SmatMonCacheItem cacheItem = smartMonCacheService.get("item");
     log.debug("Item {}", cacheItem.getData(TestItem.class).getData());
   }
 }

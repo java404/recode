@@ -1,29 +1,36 @@
 package smartmon.taskmanager.types;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import java.util.Date;
 import java.util.List;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.ToString;
 
-@Getter
+@Data
+@ToString
 public class TaskGroup {
   public static final String STATUS_PENDING = "pending";
   public static final String STATUS_RUNNING = "running";
   public static final String STATUS_COMPLETED = "completed";
 
-  private final Long taskGroupId;
-  private final String name;
-  private final String service;
 
-  private final List<TaskContext> tasks;
+  private Long taskGroupId;
+  private String name;
+  private String service;
 
-  @Setter
+  private Date createTime = new Date();
+  private Date completeTime = new Date();
   private String status = STATUS_PENDING;
-
-  @Setter
   private boolean taskError = false;
 
-  public TaskGroup(Long taskGroupId, String service, String name, List<TaskContext> tasks) {
-    this.taskGroupId = taskGroupId;
+  @ToString.Exclude
+  private List<TaskContext> tasks;
+
+  public TaskGroup() {
+    /* NOP */
+  }
+
+  public TaskGroup(String service, String name, List<TaskContext> tasks) {
     this.name = name;
     this.service = service;
     this.tasks = tasks;

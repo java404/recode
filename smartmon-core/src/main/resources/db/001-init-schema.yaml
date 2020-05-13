@@ -33,4 +33,7 @@ databaseChangeLog:
             sql: CREATE TABLE smartmon_host (
               host_uuid VARCHAR(100) NOT NULL,
               manage_ip VARCHAR(100) NOT NULL,
+              sys_username VARCHAR(100) NOT NULL,
+              sys_password VARCHAR(100) NOT NULL,
+              ssh_port int(11),
               constraint pk_smartmon_host primary key (host_uuid));

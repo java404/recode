@@ -5,15 +5,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.ListUtils;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.ListUtils;
 
 @Slf4j
 public class JsonConverter {

@@ -25,7 +25,7 @@ export JAVA="$JAVA_HOME/bin/java"
 export BASE_DIR=`cd $(dirname $0)/..; pwd`
 export DEFAULT_SEARCH_LOCATIONS="classpath:/,classpath:/config/,file:./,file:./config/"
 
-JAVA_OPT="${JAVA_OPT} -Xms512m -Xmx512m"
+JAVA_OPT="${JAVA_OPT} -Xms256m -Xmx512m"
 
 mkdir -pv /var/smartmon/
 echo "$JAVA ${JAVA_OPT}"

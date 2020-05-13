@@ -16,6 +16,6 @@ public class FalconTeamUpdateParam {
   private Integer id;
   private String resume;
   private String name;
-  private List<FalconUser> users;
+  private List<Integer> users;
 
 }

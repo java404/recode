@@ -1,12 +1,14 @@
 package smartmon.falcon.remote.request;
 
+import feign.HeaderMap;
 import feign.Headers;
 import feign.Param;
 import feign.QueryMap;
 import feign.RequestLine;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import smartmon.falcon.remote.types.FalconResponseData;
 import smartmon.falcon.remote.types.host.FalconHostGroup;
 import smartmon.falcon.remote.types.host.FalconHostGroupCreateParam;
@@ -14,36 +16,34 @@ import smartmon.falcon.remote.types.host.FalconHostGroupQueryParam;
 import smartmon.falcon.remote.types.host.FalconHostGroupUpdateParam;
 import smartmon.falcon.remote.types.host.FalconHosts;
 
-import java.util.List;
-import java.util.Set;
 
+@Headers({"Content-Type: application/json"})
 public interface FalconRequestHostGroupManager {
   @RequestLine("GET /hostgroup")
-  @Headers({"Content-Type: application/json", "ApiToken: { \"name\":\"root\" , \"sig\":\"default-token-used-in-server-side\"}"})
-  List<FalconHostGroup> listHostGroups();
+  List<FalconHostGroup> listHostGroups(@HeaderMap Map<String, String> map);
 
   @RequestLine("GET /hostgroup")
-  @Headers({"Content-Type: application/json", "ApiToken: { \"name\":\"root\" , \"sig\":\"default-token-used-in-server-side\"}"})
-  List<FalconHostGroup> listHostGroupsByGroupRegex(@QueryMap FalconHostGroupQueryParam queryParam);
+  List<FalconHostGroup> listHostGroupsByGroupRegex(@QueryMap FalconHostGroupQueryParam queryParam,
+                                                   @HeaderMap Map<String, String> falconApiToken);
 
   @RequestLine("POST /hostgroup")
-  @Headers({"Content-Type: application/json", "ApiToken: { \"name\":\"root\" , \"sig\":\"default-token-used-in-server-side\"}"})
-  FalconHostGroup createHostGroup(@RequestBody FalconHostGroupCreateParam hostGroupCreateParam);
+  FalconHostGroup createHostGroup(@RequestBody FalconHostGroupCreateParam hostGroupCreateParam,
+                                  @HeaderMap Map<String, String> falconApiToken);
 
   @RequestLine("PUT /hostgroup")
-  @Headers({"Content-Type: application/json", "ApiToken: { \"name\":\"root\" , \"sig\":\"default-token-used-in-server-side\"}"})
-  FalconResponseData updataHostGroup(@RequestBody FalconHostGroupUpdateParam hostGroupUpdateParam);
+  FalconResponseData updataHostGroup(@RequestBody FalconHostGroupUpdateParam hostGroupUpdateParam,
+                                     @HeaderMap Map<String, String> falconApiToken);
 
   @RequestLine("DELETE /hostgroup/{id}")
-  @Headers({"Content-Type: application/json", "ApiToken: { \"name\":\"root\" , \"sig\":\"default-token-used-in-server-side\"}"})
-  FalconResponseData delHostGroup(@Param("id") Integer id);
+  FalconResponseData delHostGroup(@Param("id") Integer id,
+                                  @HeaderMap Map<String, String> falconApiToken);
 
   @RequestLine("GET /hostgroup/{groupId}")
-  @Headers({"Content-Type: application/json", "ApiToken: { \"name\":\"root\" , \"sig\":\"default-token-used-in-server-side\"}"})
-  FalconHosts getHostsByGroupId(@Param("groupId") Integer groupId);
+  FalconHosts getHostsByGroupId(@Param("groupId") Integer groupId,
+                                @HeaderMap Map<String, String> falconApiToken);
 
   @RequestLine("PATCH /hostgroup/{groupId}/host")
-  @Headers({"Content-Type: application/json", "ApiToken: { \"name\":\"root\" , \"sig\":\"default-token-used-in-server-side\"}"})
-  FalconResponseData hostToHostGroupOpt(@RequestBody Set<String> hosts, @Param("groupId") Integer groupId);
-
+  FalconResponseData hostToHostGroupOpt(@RequestBody Set<String> hosts,
+                                        @Param("groupId") Integer groupId,
+                                        @HeaderMap Map<String, String> falconApiToken);
 }

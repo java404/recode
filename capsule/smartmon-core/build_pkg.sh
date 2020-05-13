@@ -4,6 +4,7 @@ _base_dir=`cd "$(dirname "$0")"; pwd`
 _misc_dir=${_base_dir}/../misc
 _repo_root=${_base_dir}/../../
 _build_root=${_base_dir}/../../build/
+_core_resource_root=${_base_dir}/../../smartmon-core/src/main/resources
 
 . ${_misc_dir}/rpm_settings.sh
 
@@ -17,6 +18,9 @@ cp -v ${_base_dir}/smartmon-core-startup.sh ${_pkg_dir}/
 cp -v ${_base_dir}/smartmon-core.service ${_pkg_dir}/conf/
 cp -v ${_base_dir}/smartmon-core-init.* ${_pkg_dir}/conf/
 cp -v ${_base_dir}/smartmon-core-clean.* ${_pkg_dir}/conf/
+
+mkdir -pv ${_pkg_dir}/scripts
+cp -rv ${_core_resource_root}/scripts/* ${_pkg_dir}/scripts
 
 # creating the output tar.gz
 rm -rvf ${_output_dir}/smartmon-core-${_pkg_ver}.tar.gz

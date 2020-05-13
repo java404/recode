@@ -2,11 +2,22 @@ server.port: 15101
 
 spring:
   application.name: smartmon-vhe
-  cloud:
-    nacos.discovery.server-addr: 127.0.0.1:8848
+  cloud.nacos.discovery.server-addr: 127.0.0.1:8848
+  jackson.serialization.write-dates-as-timestamps: true
 
 ribbon.ConnectTimeout: 500000
 ribbon.ReadTimeout: 500000
+
+smartmon.datasource:
+  standalone: false
+  liquibase.changeLog: classpath:db/smartmon-vhe-changelog.yaml
+  liquibase.debug: true
+  h2.path: /var/smartmon
+  h2.file: vhe.h2
+  mysql.host: 127.0.0.1
+  mysql.user: root
+  mysql.password: root
+  mysql.db: smartmon_vhe
 
 smartmon.api:
   infoName: smartmon-vhe

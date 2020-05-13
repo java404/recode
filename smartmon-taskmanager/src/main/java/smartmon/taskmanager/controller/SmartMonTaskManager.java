@@ -1,5 +1,6 @@
 package smartmon.taskmanager.controller;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import smartmon.taskmanager.types.TaskGroup;
 import smartmon.utilities.general.SmartMonResponse;
 
 
+@Api(tags = "Task Manager")
 @RestController
 @RequestMapping("${smartmon.api.prefix}/tasks")
 @Slf4j

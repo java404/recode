@@ -7,7 +7,7 @@ import lombok.Data;
 public class FalconTemplate {
   private Integer id;
   @JsonProperty("tpl_name")
-  private String tplName;
+  private String templateName;
   @JsonProperty("parent_id")
   private Integer parentId;
   @JsonProperty("create_user")

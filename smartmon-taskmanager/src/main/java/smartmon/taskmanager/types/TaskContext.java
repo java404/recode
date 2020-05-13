@@ -1,12 +1,14 @@
 package smartmon.taskmanager.types;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import java.util.Date;
 import java.util.List;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.ToString;
 import smartmon.utilities.misc.JsonConverter;
 
-
+@Data
+@ToString
 public class TaskContext {
   private static final ThreadLocal<TaskContext> currentContext = new ThreadLocal<TaskContext>();
 
@@ -14,48 +16,39 @@ public class TaskContext {
   public static final String STATUS_RUNNING = "running";
   public static final String STATUS_COMPLETED = "completed";
 
-  @Getter
-  private final Long taskId;
+  private Long taskId;
+  private Long taskGroupId;
+  private String option;
 
-  @Getter
-  private final Long taskGroupId;
+  @ToString.Exclude
+  private List<TaskStep> steps;
 
-  @Getter
-  private final String name;
+  @ToString.Exclude
+  private TaskStep currentStep;
 
-  @Getter
-  private final TaskOption option;
-
-  @Getter
-  @JsonIgnore
-  private final List<TaskStep> steps;
-
-  @Getter
-  @Setter
+  private Date createTime = new Date();
+  private Date completeTime = new Date();
   private String status = STATUS_PENDING;
 
-  @Setter
-  @Getter
-  private Object detail;
-
-  @Getter
-  @Setter
   private boolean success = true;
-
-  @Getter
-  @Setter
+  private Object detail;
+  private String detailContent;
   private String error;
 
-  public TaskContext(Long taskId, Long taskGroupId, String name, TaskDescription description) {
-    this.taskId = taskId;
+  private int totalSteps = 0;
+  private int completedSteps = 0;
+
+  public TaskContext() {
+    /* NOP */
+  }
+
+  public TaskContext(Long taskGroupId, TaskDescription description) {
     this.taskGroupId = taskGroupId;
-    this.name = name;
-    this.option = description.getOption();
+    this.option = description.getOption().dump();
     this.steps = description.getSteps();
   }
 
   public void setTaskError(Exception error) {
-    // TODO detail error mesages
     setError(error.toString());
   }
 
@@ -69,14 +62,16 @@ public class TaskContext {
 
   public static TaskOption getCurrentTaskOption() {
     final TaskContext context = getCurrentContext();
-    return context == null ? null : context.getOption();
+    return TaskOption.make(context == null ? null : context.getOption());
   }
 
   public static <T> T getCurrentTaskOption(Class<T> valueType) {
     final TaskOption option = getCurrentTaskOption();
-    if (option == null || option.getData() == null) {
-      return null;
-    }
-    return JsonConverter.treeToValueQuietly(option.getData(), valueType);
+    return (option == null || option.getData() == null)
+      ? null : JsonConverter.treeToValueQuietly(option.getData(), valueType);
+  }
+
+  public void flush() {
+    detailContent = JsonConverter.writeValueAsStringQuietly(detail);
   }
 }

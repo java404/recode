@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import smartmon.core.racks.RackMapper;
+import smartmon.core.mapper.RackMapper;
 import smartmon.core.racks.RackService;
 import smartmon.core.racks.model.RackAllocation;
 import smartmon.core.racks.vo.IdcRackAllocateVo;

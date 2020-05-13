@@ -23,7 +23,7 @@ fi
 export JAVA_HOME
 export JAVA="$JAVA_HOME/bin/java"
 
-JAVA_OPT="${JAVA_OPT} -Xms512m -Xmx512m"
+JAVA_OPT="${JAVA_OPT} -Xms256m -Xmx512m"
 
 SMARTMON_LOG_DIR=/var/log/smartmon
 SMARTMON_DB_DIR=/var/smartmon

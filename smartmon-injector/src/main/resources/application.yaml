@@ -2,6 +2,7 @@ server.port: 1989
 
 spring:
   application.name: smartmon-injector
+  jackson.serialization.write-dates-as-timestamps: true
 
 logging.config: classpath:logback-smartmon.xml
 

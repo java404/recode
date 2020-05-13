@@ -1,7 +1,16 @@
 package smartmon.falcon.user;
 
-public interface UserService {
-  void createUser(String name, String cnName, String email);
+import java.util.List;
+import smartmon.falcon.user.command.UserCreateCommand;
+import smartmon.falcon.user.command.UserUpdateCommand;
 
-  void updateUser(Integer id, String cnName, String email);
+
+public interface UserService {
+  List<User> getUserList();
+
+  void createUser(UserCreateCommand createCommand);
+
+  void updateUser(UserUpdateCommand updateCommand);
+
+  void deleteUser(Integer id);
 }

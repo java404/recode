@@ -1,15 +1,17 @@
 package smartmon.falcon.remote.request;
 
+import feign.HeaderMap;
 import feign.Headers;
 import feign.QueryMap;
 import feign.RequestLine;
+import java.util.List;
+import java.util.Map;
 import smartmon.falcon.remote.types.endpoint.FalconEndpoint;
 import smartmon.falcon.remote.types.endpoint.FalconEndpointQueryParam;
 
-import java.util.List;
-
+@Headers({"Content-Type: application/json"})
 public interface FalconRequestEndpointManager {
   @RequestLine("GET /graph/endpoint")
-  @Headers({"Content-Type: application/json", "ApiToken: { \"name\":\"root\" , \"sig\":\"default-token-used-in-server-side\"}"})
-  List<FalconEndpoint> listEndpoints(@QueryMap FalconEndpointQueryParam queryParam);
+  List<FalconEndpoint> listEndpoints(@QueryMap FalconEndpointQueryParam queryParam,
+                                     @HeaderMap Map<String, String> falconApiToken);
 }

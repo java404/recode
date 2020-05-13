@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import smartmon.core.racks.IdcMapper;
+import smartmon.core.mapper.IdcMapper;
 import smartmon.core.racks.RackService;
 import smartmon.core.racks.model.Idc;
 import smartmon.core.racks.vo.IdcAddVo;

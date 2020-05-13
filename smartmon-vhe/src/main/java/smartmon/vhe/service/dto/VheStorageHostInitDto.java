@@ -13,6 +13,8 @@ public class VheStorageHostInitDto {
   private String guid;
   private String hostId;
   private String listenIp;
+  private String sysUsername;
+  private String sysPassword;
   private Integer size;
   private String idcName;
 
@@ -43,6 +45,8 @@ public class VheStorageHostInitDto {
   public static SmartMonHostAddParam getHostAddParam(VheStorageHostInitDto vheStorageHostInitDto) {
     SmartMonHostAddParam param = new SmartMonHostAddParam();
     param.setManageIp(vheStorageHostInitDto.getListenIp());
+    param.setSysUsername(vheStorageHostInitDto.getSysUsername());
+    param.setSysPassword(vheStorageHostInitDto.getSysPassword());
     return param;
   }
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import smartmon.core.mapper.MetadataMapper;
 import smartmon.core.metadata.MetadataService;
 import smartmon.core.metadata.types.Metadata;
 

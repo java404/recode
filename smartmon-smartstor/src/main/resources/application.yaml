@@ -3,6 +3,7 @@ server.port: 15100
 spring:
   application.name: smartmon-smartstor
   cloud.nacos.discovery.server-addr: 127.0.0.1:8848
+  jackson.serialization.write-dates-as-timestamps: true
 
 mybatis:
   mapper-locations:
@@ -24,7 +25,8 @@ smartmon.datasource:
   standalone: false
   liquibase.changeLog: classpath:db/smartmon-smartstor-changelog.yaml
   liquibase.debug: true
-  h2.file: /var/smartmon/smartstor.h2
+  h2.path: /var/smartmon
+  h2.file: smartstor.h2
   mysql.host: 172.24.8.55
   mysql.user: root
   mysql.password: root

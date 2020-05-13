@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FalconTeamCreateParam {
   @JsonProperty("team_name")
-  private String name;
+  private String teamName;
   private String resume;
 }

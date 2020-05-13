@@ -13,7 +13,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableAsync
 @EnableDiscoveryClient
 @EnableFeignClients
-@MapperScan("smartmon.smartstor.infra.persistence.mapper")
+@MapperScan(basePackages = {"smartmon.smartstor.infra.persistence.mapper",
+  "smartmon.taskmanager.mapper"})
 public class SmartMonSmartStor {
   public static void main(String[] args) {
     SpringApplication.run(SmartMonSmartStor.class, args);

@@ -2,6 +2,7 @@ package smartmon.falcon.remote.types;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import smartmon.utilities.general.SmartMonResponse;
 
 @Data
 public class FalconResponseData {

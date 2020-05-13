@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FalconUserUpdateParam {
   @JsonProperty("user_id")
-  private String id;
+  private Integer id;
   @JsonProperty("cnname")
   private String cnName;
   private String email;

@@ -8,8 +8,22 @@ smartmon.api:
   infoName: smartmon-falcon
   prefix: /api/v2/falcon
 
+smartmon.datasource:
+  standalone: false
+  liquibase.changeLog: classpath:db/smartmon-falcon-changelog.yaml
+  liquibase.debug: true
+  h2.path: /var/smartmon
+  h2.file: falcon.h2
+  mysql.host: 172.24.8.132
+  mysql.user: root
+  mysql.password: root
+  mysql.db: smartmon_falcon
+
 smartmon:
   falcon:
-    address: 172.24.8.55
+    address: 172.24.12.218
     requestPort: 8080
     pushPort: 1988
+    name: root
+    session: default-token-used-in-server-side
+    businessHost: pbdata-aggregator

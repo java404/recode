@@ -50,6 +50,12 @@ dependencyManagement {
   }
 }
 
+processResources {
+  from("${rootProject.projectDir}/config/db/") {
+    into 'db/'
+  }
+}
+
 dependencies {
   compile project(':smartmon-utilities')
   compile project(':smartmon-smartstor-provider')

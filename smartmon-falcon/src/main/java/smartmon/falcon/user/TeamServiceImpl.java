@@ -1,47 +1,104 @@
 package smartmon.falcon.user;
 
-import com.google.common.collect.Lists;
-
+import java.util.ArrayList;
 import java.util.List;
-
+import java.util.stream.Collectors;
+import org.apache.commons.collections4.ListUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import smartmon.falcon.remote.client.FalconClient;
+import smartmon.falcon.remote.config.FalconApiComponent;
+import smartmon.falcon.remote.types.team.FalconTeam;
+import smartmon.falcon.remote.types.team.FalconTeamCreateParam;
+import smartmon.falcon.remote.types.team.FalconTeamInfo;
+import smartmon.falcon.remote.types.team.FalconTeamUpdateParam;
+import smartmon.falcon.remote.types.team.FalconTeamUserInfo;
+import smartmon.falcon.remote.types.user.FalconUser;
+import smartmon.falcon.user.command.TeamCreateCommand;
+import smartmon.falcon.user.command.TeamUpdateCommand;
+import smartmon.utilities.misc.BeanConverter;
 
 @Service
 public class TeamServiceImpl implements TeamService {
+
+  @Autowired
+  private FalconApiComponent falconApiComponent;
+
   @Override
   public List<Team> getTeams() {
-    // TODO: call GET method api/v1/team
-    return Lists.newArrayList();
+    final FalconClient falconClient = falconApiComponent.getFalconClient();
+    final List<FalconTeamInfo> falconTeamInfos = falconClient.listTeams(falconApiComponent.getApiToken());
+    final List<FalconTeam> falconTeams = falconTeamInfos.stream()
+      .map(FalconTeamInfo::getTeam).collect(Collectors.toList());
+    return ListUtils.emptyIfNull(BeanConverter.copy(falconTeams, Team.class));
   }
 
   @Override
-  public void createTeam(String name, String resume) {
-    // TODO: call POST method api/v1/team
+  public void createTeam(TeamCreateCommand createCommand) {
+    final FalconClient falconClient = falconApiComponent.getFalconClient();
+    final FalconTeamCreateParam teamCreateParam = BeanConverter.copy(createCommand, FalconTeamCreateParam.class);
+    falconClient.createTeam(teamCreateParam, falconApiComponent.getApiToken());
   }
 
   @Override
-  public void updateTeam(Integer id, String resume) {
-    // TODO: call PUT method api/v1/team
+  public void updateTeam(TeamUpdateCommand updateCommand) {
+    final FalconClient falconClient = falconApiComponent.getFalconClient();
+    final FalconTeamUserInfo teamUserInfo = falconClient.getTeamUserInfoByTeamId(
+      updateCommand.getId(), falconApiComponent.getApiToken());
+    final FalconTeamUpdateParam teamUpdateParam = BeanConverter.copy(updateCommand, FalconTeamUpdateParam.class);
+    teamUpdateParam.setName(teamUserInfo.getName());
+    teamUpdateParam.setUsers(teamUserInfo.getUsers().stream().map(FalconUser::getId).collect(Collectors.toList()));
+    falconClient.updateTeam(teamUpdateParam, falconApiComponent.getApiToken());
   }
 
   @Override
   public void deleteTeam(Integer id) {
-    // TODO: call DELETE method api/v1/team/{id}
+    final FalconClient falconClient = falconApiComponent.getFalconClient();
+    falconClient.deleteTeam(id, falconApiComponent.getApiToken());
   }
 
   @Override
   public List<User> getUsersByTeamId(Integer teamId) {
-    // TODO: call GET method api/v1/team/t/{teamId}, and parse the values of key 'users'
-    return Lists.newArrayList();
+    final FalconClient falconClient = falconApiComponent.getFalconClient();
+    final List<FalconUser> falconUsers = falconClient.getUsersByTeamId(teamId, falconApiComponent.getApiToken());
+    return ListUtils.emptyIfNull(BeanConverter.copy(falconUsers, User.class));
   }
 
   @Override
   public void addUserToTeam(Integer teamId, Integer userId) {
-    // TODO: call PUT method api/v1/team
+    final FalconClient falconClient = falconApiComponent.getFalconClient();
+    final FalconTeamUserInfo teamUserInfo = falconClient.getTeamUserInfoByTeamId(
+      teamId, falconApiComponent.getApiToken());
+    final List<FalconUser> users = teamUserInfo.getUsers();
+    List<Integer> userIds = new ArrayList<>();
+    for (FalconUser user : users) {
+      userIds.add(user.getId());
+    }
+    userIds.add(userId);
+    FalconTeamUpdateParam teamUpdateParam = new FalconTeamUpdateParam();
+    teamUpdateParam.setId(teamId);
+    teamUpdateParam.setName(teamUserInfo.getName());
+    teamUpdateParam.setResume(teamUserInfo.getResume());
+    teamUpdateParam.setUsers(userIds);
+    falconClient.updateTeam(teamUpdateParam, falconApiComponent.getApiToken());
   }
 
   @Override
   public void removeUserFromTeam(Integer teamId, Integer userId) {
-    // TODO: call PUT method api/v1/team
+    final FalconClient falconClient = falconApiComponent.getFalconClient();
+    final FalconTeamUserInfo teamUserInfo = falconClient.getTeamUserInfoByTeamId(
+      teamId, falconApiComponent.getApiToken());
+    final List<FalconUser> users = teamUserInfo.getUsers();
+    List<Integer> userIds = new ArrayList<>();
+    for (FalconUser user : users) {
+      userIds.add(user.getId());
+    }
+    userIds.remove(userId);
+    FalconTeamUpdateParam teamUpdateParam = new FalconTeamUpdateParam();
+    teamUpdateParam.setId(teamId);
+    teamUpdateParam.setName(teamUserInfo.getName());
+    teamUpdateParam.setResume(teamUserInfo.getResume());
+    teamUpdateParam.setUsers(userIds);
+    falconClient.updateTeam(teamUpdateParam, falconApiComponent.getApiToken());
   }
 }

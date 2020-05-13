@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import smartmon.core.hosts.HostsService;
 import smartmon.core.hosts.types.HostAddCommand;
 import smartmon.core.hosts.types.SmartMonHost;
+import smartmon.core.mapper.SmartMonHostMapper;
 
 @Service
 public class HostsServiceImpl implements HostsService {
@@ -35,6 +36,8 @@ public class HostsServiceImpl implements HostsService {
     SmartMonHost smartMonHost = new SmartMonHost();
     smartMonHost.setHostUuid(getExistedHostUuid(smartMonHosts, hostAddCommand));
     smartMonHost.setManageIp(hostAddCommand.getManageIp());
+    smartMonHost.setSysUsername(hostAddCommand.getSysUsername());
+    smartMonHost.setSysPassword(hostAddCommand.getSysPassword());
     return smartMonHost;
   }
 

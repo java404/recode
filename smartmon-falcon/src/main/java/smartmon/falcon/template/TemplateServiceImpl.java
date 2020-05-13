@@ -1,13 +1,32 @@
 package smartmon.falcon.template;
 
 import com.google.common.collect.Lists;
-
+import com.google.common.collect.Sets;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
-
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import smartmon.falcon.remote.client.FalconClient;
+import smartmon.falcon.remote.config.FalconApiComponent;
+import smartmon.falcon.remote.types.FalconResponseData;
+import smartmon.falcon.remote.types.template.FalconAction;
+import smartmon.falcon.remote.types.template.FalconActionUpdateParam;
+import smartmon.falcon.strategy.model.Strategy;
+import smartmon.falcon.user.Team;
+import smartmon.utilities.misc.BeanConverter;
 
 @Service
 public class TemplateServiceImpl implements TemplateService {
+
+  @Autowired
+  private FalconApiComponent falconApiComponent;
+
   @Override
   public List<HostGroupTemplate> getHostGroupTemplates() {
     // TODO: need to add new Falcon API
@@ -16,23 +35,75 @@ public class TemplateServiceImpl implements TemplateService {
 
   @Override
   public List<Template> getTemplatesByGroupId(Integer groupId) {
-    // TODO: call GET method api/v1/hostgroup/{groupId}/template, and parse the values of key 'templates'
-    return Lists.newArrayList();
+    return CollectionUtils.emptyIfNull(falconApiComponent.getFalconClient()
+      .getTemplatesByGroupId(groupId,
+        falconApiComponent.getApiToken())
+      .getTemplates()).stream()
+      .map(falconTemplate -> BeanConverter.copy(falconTemplate,
+        Template.class)).collect(Collectors.toList());
+
   }
 
   @Override
-  public void bindTeamAndTemplate(Integer templateId, Integer teamId) {
-    // TODO: call PUT method api/v1/template/action
+  public FalconResponseData bindTeamAndTemplate(Integer templateId, String teamName) {
+    final FalconClient falconClient = falconApiComponent.getFalconClient();
+    final Map<String, String> token = falconApiComponent.getApiToken();
+    FalconAction action = falconClient.getTemplateInfoById(templateId,
+        token).getAction();
+    Set<String> teamSet = action == null ? Sets.newHashSet() :
+        new HashSet(Arrays.asList(StringUtils
+        .split(action.getUic(), ",")));
+    teamSet.add(teamName);
+    action.setUic(StringUtils.join(teamSet, ","));
+    return falconClient.updateTemplateAction(BeanConverter.copy(action,
+        FalconActionUpdateParam.class), token);
   }
 
   @Override
-  public void unbindTeamAndTemplate(Integer templateId, Integer teamId) {
-    // TODO: call PUT method api/v1/template/action
+  public FalconResponseData unbindTeamAndTemplate(Integer templateId, String teamName) {
+    final FalconClient falconClient = falconApiComponent.getFalconClient();
+    final Map<String, String> token = falconApiComponent.getApiToken();
+    FalconAction action = falconClient.getTemplateInfoById(templateId,
+        token).getAction();
+    List<String> teamList = action == null ? Lists.newArrayList() :
+        Lists.newArrayList(StringUtils
+        .split(action.getUic(), ","));
+    if (teamList.contains(teamName)) {
+      teamList.remove(teamName);
+    }
+    action.setUic(StringUtils.join(teamList, ","));
+    return falconClient.updateTemplateAction(BeanConverter.copy(action,
+        FalconActionUpdateParam.class), token);
   }
 
   @Override
-  public List<String> getTeamNamesByTemplateId(Integer templateId) {
-    // TODO: call GET method api/v1/template/{templateId}
-    return Lists.newArrayList();
+  public List<Strategy> getStrategiesByTemplateId(Integer templateId) {
+    return CollectionUtils.emptyIfNull(falconApiComponent.getFalconClient()
+      .getTemplateInfoById(templateId, falconApiComponent.getApiToken()).getStrategies())
+      .stream()
+      .map(s -> BeanConverter.copy(s, Strategy.class))
+      .collect(Collectors.toList());
+  }
+
+  @Override
+  public List<Team> getTeamsByTemplateId(Integer templateId) {
+    final FalconClient falconClient = falconApiComponent.getFalconClient();
+    final Map<String, String> token = falconApiComponent.getApiToken();
+    final List<String> actionUicList = Arrays.asList(StringUtils
+        .split(falconClient.getTemplateInfoById(templateId, token)
+        .getAction().getUic(), ","));
+    return CollectionUtils.emptyIfNull(falconClient.listTeams(token)).stream()
+      .map(teamInfo -> teamInfo.getTeam())
+      .filter(team -> actionUicList.contains(team.getName()))
+      .map(team -> BeanConverter.copy(team, Team.class))
+      .collect(Collectors.toList());
+  }
+
+  @Override
+  public List<Template> listTemplate() {
+    return CollectionUtils.emptyIfNull(falconApiComponent.getFalconClient()
+      .listTemplates(falconApiComponent.getApiToken()).getTemplates())
+      .stream().map(f -> BeanConverter.copy(f.getTemplate(), Template.class))
+      .collect(Collectors.toList());
   }
 }

@@ -32,7 +32,7 @@ public class GraphRemoteTest {
     queryParam.setStartTime(1588262400L);
     queryParam.setMergerType("AVERAGE");
     queryParam.setStep(60);
-    final List<FalconGraphRecord> graphHistory = falconClient.getGraphHistory(queryParam);
+    final List<FalconGraphRecord> graphHistory = falconClient.getGraphHistory(queryParam, null);
     for (FalconGraphRecord falconGraphRecord : graphHistory) {
       System.out.println(falconGraphRecord);
     }

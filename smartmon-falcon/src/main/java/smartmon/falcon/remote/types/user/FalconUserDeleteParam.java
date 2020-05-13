@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FalconUserDeleteParam {
   @JsonProperty("user_id")
-  private String userId;
+  private Integer userId;
 }

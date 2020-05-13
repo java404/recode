@@ -16,6 +16,11 @@ ext {
       "com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery:2.2.0.RELEASE",
       "com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-config:2.2.0.RELEASE"
     ],
+    mybatisProvided: [
+      'org.mybatis.spring.boot:mybatis-spring-boot-starter:1.3.1',
+      'tk.mybatis:mapper-spring-boot-starter:2.0.3',
+      'tk.mybatis:mapper:4.0.3',
+    ],
     mybatisSarter: [
       'org.mybatis.spring.boot:mybatis-spring-boot-starter:1.3.1',
       'tk.mybatis:mapper-spring-boot-starter:2.0.3',

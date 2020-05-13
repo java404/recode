@@ -4,12 +4,12 @@ import feign.FeignException;
 import feign.Response;
 import feign.codec.Decoder;
 import feign.jackson.JacksonDecoder;
+import java.io.IOException;
+import java.lang.reflect.Type;
 import lombok.extern.slf4j.Slf4j;
 import smartmon.falcon.remote.exception.FalconBadResponseException;
 import smartmon.falcon.remote.types.FalconResponseData;
 import smartmon.utilities.remote.RemoteApiCoder;
-import java.io.IOException;
-import java.lang.reflect.Type;
 
 @Slf4j
 public class FalconResponseDecode implements Decoder {

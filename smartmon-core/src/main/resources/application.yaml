@@ -3,6 +3,7 @@ server.port: 15000
 spring:
   application.name: smartmon-core
   cloud.nacos.discovery.server-addr: 127.0.0.1:8848
+  jackson.serialization.write-dates-as-timestamps: true
 
 smartmon.api:
   infoName: smartmon-core
@@ -12,8 +13,9 @@ smartmon.datasource:
   standalone: false
   liquibase.changeLog: classpath:db/smartmon-core-changelog.yaml
   liquibase.debug: true
-  h2.file: /var/smartmon/core.h2
-  mysql.host: 172.24.8.55
+  h2.path: /var/smartmon
+  h2.file: core.h2
+  mysql.host: 127.0.0.1
   mysql.user: root
   mysql.password: root
   mysql.db: smartmon_core
@@ -22,3 +24,6 @@ smartmon.repo:
   filename: smartmon.repo
   id: SMARTMON-REPO
   baseUrl: http://172.24.8.121:8000/repo/
+
+smartmon.batch:
+  targetFolder: /tmp/smartmon

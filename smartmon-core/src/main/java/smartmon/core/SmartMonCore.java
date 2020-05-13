@@ -1,5 +1,6 @@
 package smartmon.core;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -10,6 +11,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableDiscoveryClient
 @EnableAsync
 @ComponentScan(basePackages = {"smartmon"})
+@MapperScan(basePackages = {"smartmon.taskmanager.mapper", "smartmon.core.mapper"})
 public class SmartMonCore {
   public static void main(String[] args) {
     SpringApplication.run(SmartMonCore.class, args);

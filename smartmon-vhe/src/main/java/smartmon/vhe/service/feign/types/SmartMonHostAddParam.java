@@ -5,4 +5,6 @@ import lombok.Data;
 @Data
 public class SmartMonHostAddParam {
   private String manageIp;
+  private String sysUsername;
+  private String sysPassword;
 }

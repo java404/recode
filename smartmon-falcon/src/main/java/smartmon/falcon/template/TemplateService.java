@@ -1,5 +1,11 @@
 package smartmon.falcon.template;
 
+import smartmon.falcon.remote.types.FalconResponseData;
+import smartmon.falcon.remote.types.template.FalconAction;
+import smartmon.falcon.remote.types.template.FalconTemplates;
+import smartmon.falcon.strategy.model.Strategy;
+import smartmon.falcon.user.Team;
+
 import java.util.List;
 
 public interface TemplateService {
@@ -7,9 +13,14 @@ public interface TemplateService {
 
   List<Template> getTemplatesByGroupId(Integer groupId);
 
-  void bindTeamAndTemplate(Integer templateId, Integer teamId);
+  FalconResponseData bindTeamAndTemplate(Integer templateId, String teamName);
 
-  void unbindTeamAndTemplate(Integer templateId, Integer teamId);
+  FalconResponseData unbindTeamAndTemplate(Integer templateId, String teamId);
 
-  List<String> getTeamNamesByTemplateId(Integer templateId);
+  List<Strategy> getStrategiesByTemplateId(Integer templateId);
+
+  List<Team> getTeamsByTemplateId(Integer templateId);
+
+  List<Template> listTemplate();
+
 }

@@ -3,13 +3,26 @@ server.port: 15301
 spring:
   application.name: smartmon-falcon
   cloud.nacos.discovery.server-addr: 127.0.0.1:8848
+  jackson.serialization.write-dates-as-timestamps: true
 
 smartmon.api:
   infoName: smartmon-falcon
-  prefix: /api/v2/falcon
+  prefix: /falcon/api/v2
 
-smartmon:
-  falcon:
-    address: 127.0.0.1
-    requestPort: 8080
-    pushPort: 1988
+smartmon.datasource:
+  standalone: false
+  liquibase.changeLog: classpath:db/smartmon-falcon-changelog.yaml
+  liquibase.debug: true
+  h2.path: /var/smartmon
+  h2.file: falcon.h2
+  mysql.host: 127.0.0.1
+  mysql.user: root
+  mysql.password: root
+  mysql.db: smartmon_falcon
+
+smartmon.falcon:
+  address: 127.0.0.1
+  requestPort: 8080
+  pushPort: 1988
+  name: root
+  session: default-token-used-in-server-side

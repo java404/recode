@@ -2,9 +2,10 @@ package smartmon.falcon.remote.client;
 
 import feign.Client;
 import java.util.List;
+import java.util.Map;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
+import smartmon.falcon.remote.request.FalconRequestAlarmManager;
 import smartmon.falcon.remote.request.FalconRequestEndpointManager;
 import smartmon.falcon.remote.request.FalconRequestGraphManager;
 import smartmon.falcon.remote.request.FalconRequestHostGroupManager;
@@ -13,6 +14,14 @@ import smartmon.falcon.remote.request.FalconRequestTeamManager;
 import smartmon.falcon.remote.request.FalconRequestTemplateManager;
 import smartmon.falcon.remote.request.FalconRequestUserManager;
 import smartmon.falcon.remote.types.FalconResponseData;
+import smartmon.falcon.remote.types.alarm.FalconEventCaseDeleteParam;
+import smartmon.falcon.remote.types.alarm.FalconEventCases;
+import smartmon.falcon.remote.types.alarm.FalconEventCasesQueryParam;
+import smartmon.falcon.remote.types.alarm.FalconEventNoteHandleParam;
+import smartmon.falcon.remote.types.alarm.FalconEventNoteQueryParam;
+import smartmon.falcon.remote.types.alarm.FalconEventNotes;
+import smartmon.falcon.remote.types.alarm.FalconEvents;
+import smartmon.falcon.remote.types.alarm.FalconEventsQueryParam;
 import smartmon.falcon.remote.types.endpoint.FalconEndpoint;
 import smartmon.falcon.remote.types.endpoint.FalconEndpointQueryParam;
 import smartmon.falcon.remote.types.graph.FalconEndpointCounter;
@@ -27,10 +36,14 @@ import smartmon.falcon.remote.types.host.FalconHostGroupUpdateParam;
 import smartmon.falcon.remote.types.host.FalconHosts;
 import smartmon.falcon.remote.types.strategy.FalconStrategy;
 import smartmon.falcon.remote.types.strategy.FalconStrategyQueryParam;
+import smartmon.falcon.remote.types.strategy.FalconStrategyUpdateParam;
 import smartmon.falcon.remote.types.team.FalconTeamCreateParam;
 import smartmon.falcon.remote.types.team.FalconTeamInfo;
 import smartmon.falcon.remote.types.team.FalconTeamUpdateParam;
+import smartmon.falcon.remote.types.team.FalconTeamUserInfo;
+import smartmon.falcon.remote.types.template.FalconActionUpdateParam;
 import smartmon.falcon.remote.types.template.FalconHostGroupTemplate;
+import smartmon.falcon.remote.types.template.FalconTemplateInfo;
 import smartmon.falcon.remote.types.template.FalconTemplates;
 import smartmon.falcon.remote.types.user.FalconUser;
 import smartmon.falcon.remote.types.user.FalconUserCreateParam;
@@ -50,6 +63,7 @@ public class FalconClient {
   private final FalconRequestTemplateManager templateManagerRequest;
   private final FalconRequestStrategyManager strategyManagerRequest;
   private final FalconRequestGraphManager graphManagerRequest;
+  private final FalconRequestAlarmManager alarmManagerRequest;
 
   public FalconClient(TargetHost targetHost) {
     this(targetHost, null);
@@ -81,105 +95,162 @@ public class FalconClient {
     this.graphManagerRequest = new RemoteApiBuilder(targetHost)
       .withClient(client).withDecoder(new FalconResponseDecode())
       .withApiPrefix("/api/v1").build(FalconRequestGraphManager.class);
+    this.alarmManagerRequest = new RemoteApiBuilder(targetHost)
+      .withClient(client).withDecoder(new FalconResponseDecode())
+      .withApiPrefix("/api/v1").build(FalconRequestAlarmManager.class);
 
   }
 
-  public List<FalconHostGroup> listHostGroups() {
-    return this.hostGroupManagerRequest.listHostGroups();
+  public List<FalconHostGroup> listHostGroups(Map<String, String> apiToken) {
+    return this.hostGroupManagerRequest.listHostGroups(apiToken);
   }
 
-  public List<FalconHostGroup> listHostGroupsByGroupRegex(FalconHostGroupQueryParam queryParam) {
-    return this.hostGroupManagerRequest.listHostGroupsByGroupRegex(queryParam);
+  public List<FalconHostGroup> listHostGroupsByGroupRegex(FalconHostGroupQueryParam queryParam,
+                                                          Map<String, String> falconApiToken) {
+    return this.hostGroupManagerRequest.listHostGroupsByGroupRegex(queryParam, falconApiToken);
   }
 
-  public FalconHostGroup createHostGroup(FalconHostGroupCreateParam createParam) {
-    return this.hostGroupManagerRequest.createHostGroup(createParam);
+  public FalconHostGroup createHostGroup(FalconHostGroupCreateParam createParam, Map<String, String> falconApiToken) {
+    return this.hostGroupManagerRequest.createHostGroup(createParam, falconApiToken);
   }
 
-  public FalconResponseData updateHostGroup(FalconHostGroupUpdateParam updateParam) {
-    return this.hostGroupManagerRequest.updataHostGroup(updateParam);
+  public FalconResponseData updateHostGroup(FalconHostGroupUpdateParam updateParam,
+                                            Map<String, String> falconApiToken) {
+    return this.hostGroupManagerRequest.updataHostGroup(updateParam, falconApiToken);
   }
 
-  public FalconResponseData delHostGroup(Integer id) {
-    return this.hostGroupManagerRequest.delHostGroup(id);
+  public FalconResponseData delHostGroup(Integer id, Map<String, String> falconApiToken) {
+    return this.hostGroupManagerRequest.delHostGroup(id, falconApiToken);
   }
 
-  public FalconHosts getHostsByGroupId(Integer groupId) {
-    return this.hostGroupManagerRequest.getHostsByGroupId(groupId);
-  }
-
-
-  public List<FalconEndpoint> listEndpoints(FalconEndpointQueryParam queryParam) {
-    return this.endPointManagerRequest.listEndpoints(queryParam);
+  public FalconHosts getHostsByGroupId(Integer groupId, Map<String, String> falconApiToken) {
+    return this.hostGroupManagerRequest.getHostsByGroupId(groupId, falconApiToken);
   }
 
 
-  public List<FalconTeamInfo> listTeams() {
-    return this.teamManagerRequest.listTeams();
-  }
-
-  public FalconResponseData createTeam(FalconTeamCreateParam createParam) {
-    return this.teamManagerRequest.createTeam(createParam);
-  }
-
-  public FalconResponseData updateTeam(FalconTeamUpdateParam updateParam) {
-    return this.teamManagerRequest.updateTeam(updateParam);
-  }
-
-  public FalconResponseData deleteTeam(Integer id) {
-    return this.teamManagerRequest.deleteTeam(id);
-  }
-
-  public List<FalconUser> getUserByTeamId(Integer teamId) {
-    final FalconTeamInfo teamInfoByTeamId = this.teamManagerRequest.getTeamInfoByTeamId(teamId);
-    return teamInfoByTeamId != null ? teamInfoByTeamId.getUsers() : null;
-  }
-
-  public List<FalconUser> listUsers() {
-    return this.userManagerRequest.listUsers();
-  }
-
-  public FalconResponseData createUser(FalconUserCreateParam createParam) {
-    return this.userManagerRequest.createUser(createParam);
-  }
-
-  public FalconResponseData updateUser(FalconUserUpdateParam updateParam) {
-    return this.userManagerRequest.updateUser(updateParam);
-  }
-
-  public FalconResponseData deleteUser(FalconUserDeleteParam deleteParam) {
-    return this.userManagerRequest.deleteUser(deleteParam);
+  public List<FalconEndpoint> listEndpoints(FalconEndpointQueryParam queryParam, Map<String, String> falconApiToken) {
+    return this.endPointManagerRequest.listEndpoints(queryParam, falconApiToken);
   }
 
 
-  public FalconTemplates listTemplates() {
-    return this.templateManagerRequest.listTemplates();
+  public List<FalconTeamInfo> listTeams(Map<String, String> falconApiToken) {
+    return this.teamManagerRequest.listTeams(falconApiToken);
   }
 
-  public FalconHostGroupTemplate getTemplatesByGroupId(Integer groupId) {
-    return this.templateManagerRequest.getTemplatesByGroupId(groupId);
+  public FalconResponseData createTeam(FalconTeamCreateParam createParam, Map<String, String> falconApiToken) {
+    return this.teamManagerRequest.createTeam(createParam, falconApiToken);
   }
 
-
-  public List<FalconStrategy> getStrategiesByTemplateId(FalconStrategyQueryParam queryParam) {
-    return this.strategyManagerRequest.getStrategiesByTemplateId(queryParam);
+  public FalconResponseData updateTeam(FalconTeamUpdateParam updateParam, Map<String, String> falconApiToken) {
+    return this.teamManagerRequest.updateTeam(updateParam, falconApiToken);
   }
 
-
-  public List<FalconEndpointCounter> getEndpointCounters(FalconEndpointCounterQueryParam queryParam) {
-    return this.graphManagerRequest.getEndpointCounters(queryParam);
+  public FalconResponseData deleteTeam(Integer id, Map<String, String> falconApiToken) {
+    return this.teamManagerRequest.deleteTeam(id, falconApiToken);
   }
 
-  public List<FalconGraphRecord> getGraphHistory(FalconGraphHistoryQueryParam queryParam) {
-    if (CollectionUtils.isEmpty(queryParam.getCounters())) {
-
-    }
-    return this.graphManagerRequest.getGraphHistory(queryParam);
+  public List<FalconUser> getUsersByTeamId(Integer teamId, Map<String, String> falconApiToken) {
+    final FalconTeamUserInfo teamUserInfo = this.teamManagerRequest.getTeamInfoByTeamId(teamId, falconApiToken);
+    return teamUserInfo != null ? teamUserInfo.getUsers() : null;
   }
 
-  public List<FalconGraphRecord> getGraphLastPoint(FalconGraphLastPointQueryParam queryParam) {
-    return this.graphManagerRequest.getGraphLastPoint(queryParam);
+  public FalconTeamUserInfo getTeamUserInfoByTeamId(Integer teamId, Map<String, String> falconApiToken) {
+    return this.teamManagerRequest.getTeamInfoByTeamId(teamId, falconApiToken);
   }
 
 
+  public List<FalconUser> listUsers(Map<String, String> falconApiToken) {
+    return this.userManagerRequest.listUsers(falconApiToken);
+  }
+
+  public FalconResponseData createUser(FalconUserCreateParam createParam, Map<String, String> falconApiToken) {
+    return this.userManagerRequest.createUser(createParam, falconApiToken);
+  }
+
+  public FalconResponseData updateUser(FalconUserUpdateParam updateParam, Map<String, String> falconApiToken) {
+    return this.userManagerRequest.updateUser(updateParam, falconApiToken);
+  }
+
+  public FalconResponseData deleteUser(FalconUserDeleteParam deleteParam, Map<String, String> falconApiToken) {
+    return this.userManagerRequest.deleteUser(deleteParam, falconApiToken);
+  }
+
+
+  public FalconTemplates listTemplates(Map<String, String> falconApiToken) {
+    return this.templateManagerRequest.listTemplates(falconApiToken);
+  }
+
+  public FalconResponseData updateTemplateAction(FalconActionUpdateParam action, Map<String, String> falconApiToken) {
+    return this.templateManagerRequest.updateTemplateAction(action, falconApiToken);
+  }
+
+  public FalconHostGroupTemplate getTemplatesByGroupId(Integer groupId, Map<String, String> falconApiToken) {
+    return this.templateManagerRequest.getTemplatesByGroupId(groupId, falconApiToken);
+  }
+
+  public FalconTemplateInfo getTemplateInfoById(Integer templateId, Map<String, String> falconApiToken) {
+    return this.templateManagerRequest.getTemplateInfoById(templateId, falconApiToken);
+  }
+
+
+  public List<FalconStrategy> getStrategiesByTemplateId(FalconStrategyQueryParam queryParam,
+                                                        Map<String, String> falconApiToken) {
+    return this.strategyManagerRequest.getStrategiesByTemplateId(queryParam, falconApiToken);
+  }
+
+  public FalconResponseData updateStrategy(FalconStrategyUpdateParam updateParam,
+                                           Map<String, String> falconApiToken) {
+    return this.strategyManagerRequest.updateStrategy(updateParam,falconApiToken);
+  }
+
+  public FalconStrategy getStrategyById(Integer strategyId,
+                                                        Map<String, String> falconApiToken) {
+    return this.strategyManagerRequest.getStrategyById(strategyId, falconApiToken);
+  }
+
+  public List<FalconEndpointCounter> getEndpointCounters(FalconEndpointCounterQueryParam queryParam,
+                                                         Map<String, String> falconApiToken) {
+    return this.graphManagerRequest.getEndpointCounters(queryParam, falconApiToken);
+  }
+
+  public List<FalconGraphRecord> getGraphHistory(FalconGraphHistoryQueryParam queryParam,
+                                                 Map<String, String> falconApiToken) {
+    return this.graphManagerRequest.getGraphHistory(queryParam, falconApiToken);
+  }
+
+  public List<FalconGraphRecord> getGraphLastPoint(FalconGraphLastPointQueryParam queryParam,
+                                                   Map<String, String> falconApiToken) {
+    return this.graphManagerRequest.getGraphLastPoint(queryParam, falconApiToken);
+  }
+
+
+  public FalconEventCases listEventCases(FalconEventCasesQueryParam eventCaseQueryParam,
+                                         Map<String, String> falconApiToken) {
+    return this.alarmManagerRequest.listEventCases(eventCaseQueryParam, falconApiToken);
+  }
+
+  public FalconEvents listEvents(FalconEventsQueryParam eventsQueryParam,
+                                 Map<String, String> falconApiToken) {
+    return this.alarmManagerRequest.listEvents(eventsQueryParam, falconApiToken);
+  }
+
+  public FalconResponseData deleteEventCase(String eventId,
+                                            Map<String, String> falconApiToken) {
+    return this.alarmManagerRequest.deleteEventCase(eventId, falconApiToken);
+  }
+
+  public FalconResponseData batchDeleteEventCase(FalconEventCaseDeleteParam eventCaseDeleteParam,
+                                                 Map<String, String> falconApiToken) {
+    return this.alarmManagerRequest.batchDeleteEventCase(eventCaseDeleteParam, falconApiToken);
+  }
+
+  public FalconEventNotes listEventNotesById(FalconEventNoteQueryParam eventNoteQueryParam,
+                                             Map<String, String> falconApiToken) {
+    return this.alarmManagerRequest.listEventNoteById(eventNoteQueryParam, falconApiToken);
+  }
+
+  public FalconResponseData createEventNote(FalconEventNoteHandleParam eventNoteHandleParam,
+                                            Map<String, String> falconApiToken) {
+    return this.alarmManagerRequest.createEventNote(eventNoteHandleParam, falconApiToken);
+  }
 }

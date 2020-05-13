@@ -58,5 +58,4 @@ dependencies {
   compile('javax.servlet:javax.servlet-api:4.0.1')
   compile('org.springframework.boot:spring-boot-starter-webflux')
   compile('org.springframework.cloud:spring-cloud-context')
-  compile libs.mybatisSarter
 }

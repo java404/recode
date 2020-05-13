@@ -1,17 +1,33 @@
 package smartmon.falcon.remote.request;
 
+import feign.HeaderMap;
 import feign.Headers;
-import feign.QueryMap;
+import feign.Param;
 import feign.RequestLine;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.web.bind.annotation.RequestBody;
+import smartmon.falcon.remote.types.FalconResponseData;
 import smartmon.falcon.remote.types.strategy.FalconStrategy;
 import smartmon.falcon.remote.types.strategy.FalconStrategyQueryParam;
+import smartmon.falcon.remote.types.strategy.FalconStrategyUpdateParam;
 
-import java.util.List;
-
+@Headers({"Content-Type: application/json"})
 public interface FalconRequestStrategyManager {
   @RequestLine("GET /strategy")
-  @Headers({"Content-Type: application/json", "ApiToken: { \"name\":\"root\" , \"sig\":\"default-token-used-in-server-side\"}"})
-  List<FalconStrategy> getStrategiesByTemplateId(@QueryMap FalconStrategyQueryParam queryParam);
+  @Headers({"Content-Type: application/json"})
+  List<FalconStrategy> getStrategiesByTemplateId(@RequestBody FalconStrategyQueryParam queryParam,
+                                                 @HeaderMap Map<String, String> falconApiToken);
 
+  @RequestLine("GET /strategy/{strategyId}")
+  @Headers({"Content-Type: application/json"})
+  FalconStrategy getStrategyById(@Param("strategyId") Integer strategyId,
+                                               @HeaderMap Map<String, String> falconApiToken);
+
+  @RequestLine("PUT /strategy")
+  @Headers({"Content-Type: application/json"})
+  FalconResponseData updateStrategy(@RequestBody FalconStrategyUpdateParam updateParam,
+                                    @HeaderMap Map<String, String> falconApiToken);
 
 }

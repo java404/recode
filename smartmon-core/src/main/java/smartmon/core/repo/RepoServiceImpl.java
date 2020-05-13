@@ -1,5 +1,7 @@
 package smartmon.core.repo;
 
+import com.google.common.base.Strings;
+
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -68,7 +70,9 @@ public class RepoServiceImpl implements RepoService {
   }
 
   private String getRepoBaseUrl(String suffix) {
-    return repoConfig.repoBaseUrl + suffix;
+    String url = Strings.nullToEmpty(repoConfig.repoBaseUrl);
+    url = url.endsWith("/") ? url : url + "/";
+    return url + suffix;
   }
 
   private void generateRepoConfig(TargetHost targetHost, String repoBaseUrl) {

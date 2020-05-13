@@ -13,4 +13,7 @@ public class FalconApiConfig {
   private String address;
   private Integer requestPort;
   private String pushPort;
+  private String name;
+  private String session;
+  private String businessHost;
 }

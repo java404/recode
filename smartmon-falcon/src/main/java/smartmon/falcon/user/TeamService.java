@@ -1,13 +1,15 @@
 package smartmon.falcon.user;
 
 import java.util.List;
+import smartmon.falcon.user.command.TeamCreateCommand;
+import smartmon.falcon.user.command.TeamUpdateCommand;
 
 public interface TeamService {
   List<Team> getTeams();
 
-  void createTeam(String name, String resume);
+  void createTeam(TeamCreateCommand teamCrateCommand);
 
-  void updateTeam(Integer id, String resume);
+  void updateTeam(TeamUpdateCommand teamUpdateCommand);
 
   void deleteTeam(Integer id);
 

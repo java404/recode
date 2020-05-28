@@ -11,6 +11,7 @@ import smartmon.falcon.remote.types.graph.FalconEndpointCounter;
 import smartmon.falcon.remote.types.graph.FalconEndpointCounterQueryParam;
 import smartmon.falcon.remote.types.graph.FalconGraphHistoryQueryParam;
 import smartmon.falcon.remote.types.graph.FalconGraphLastPointQueryParam;
+import smartmon.falcon.remote.types.graph.FalconGraphLastRecord;
 import smartmon.falcon.remote.types.graph.FalconGraphRecord;
 
 
@@ -24,7 +25,7 @@ public interface FalconRequestGraphManager {
   List<FalconGraphRecord> getGraphHistory(@RequestBody FalconGraphHistoryQueryParam queryParam,
                                           @HeaderMap Map<String, String> falconApiToken);
 
-  @RequestLine("GET /graph/lastpoint")
-  List<FalconGraphRecord> getGraphLastPoint(@RequestBody FalconGraphLastPointQueryParam queryParam,
-                                            @HeaderMap Map<String, String> falconApiToken);
+  @RequestLine("POST /graph/lastpoint")
+  List<FalconGraphLastRecord> getGraphLastPoint(@RequestBody List<FalconGraphLastPointQueryParam> queryParam,
+                                                @HeaderMap Map<String, String> falconApiToken);
 }

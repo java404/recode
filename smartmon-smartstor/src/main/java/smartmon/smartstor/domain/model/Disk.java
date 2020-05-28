@@ -5,6 +5,9 @@ import lombok.EqualsAndHashCode;
 import smartmon.smartstor.domain.model.enums.DiskTypeEnum;
 import smartmon.smartstor.domain.share.Entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class Disk extends Entity {
@@ -23,6 +26,6 @@ public class Disk extends Entity {
   private String nvmeHealth;
   private String nvmeMediaStatus;
   private String headerUuid;
-  private String raidInfo;
-  private String diskParts;
+  private RaidDiskInfo raidInfo;
+  private List<DiskPart> diskParts = new ArrayList<>();
 }

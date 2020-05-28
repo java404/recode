@@ -22,7 +22,6 @@ import smartmon.core.racks.model.Idc;
 import smartmon.core.racks.model.Rack;
 import smartmon.core.racks.model.RackAllocation;
 import smartmon.core.racks.model.RackPosition;
-import smartmon.core.racks.vo.IdcRackAllocateVo;
 
 @Service
 public class RackService {
@@ -46,7 +45,7 @@ public class RackService {
     Rack rack = Rack.create(idcId, rackName, rackAllocationList);
     if (!rack.positionAvailable(rackIndex, size)) {
       throw new RackPositionUnavailableException(
-        String.format("Rack:[%s] postion:[%s] is unavailable", rackName, rackIndex));
+        String.format("Rack:[%s] position:[%s] is unavailable", rackName, rackIndex));
     }
     RackAllocation rackAllocation = new RackAllocation(idcId, rackName, rackIndex, hostUuid, size);
     rackMapper.save(rackAllocation);
@@ -63,19 +62,8 @@ public class RackService {
     rackMapper.delete(idcId, rackName, rackIndex);
   }
 
-  @Transactional(rollbackFor = Exception.class)
-  public void addHostToAvailableRackBatch(List<IdcRackAllocateVo> vos) {
-    for (IdcRackAllocateVo vo : vos) {
-      addHostToAvailableRack(vo.getHostUuid(), vo.getSize(), vo.getIdcName());
-    }
-  }
-
-  public void addHostToAvailableRack(String hostUuid, Integer size) {
-    addHostToAvailableRack(hostUuid, size, null);
-  }
-
-  private void addHostToAvailableRack(String hostUuid, Integer size, String idcName) {
-    checkHostInRack(hostUuid);
+  public synchronized void addHostToAvailableRack(String hostUuid, Integer size, String idcName) {
+    rackMapper.deleteByHostUuid(hostUuid);
     RackPosition rackPosition = null;
     if (StringUtils.isNotEmpty(idcName)) {
       Idc idc = addIdcIfAbsent(idcName);
@@ -135,6 +123,7 @@ public class RackService {
     rackMapper.renameRack(idcId, oldRackName, newRackName);
   }
 
+  @Transactional(rollbackFor = Exception.class)
   public List<Idc> addIdcs(List<String> idcNames) {
     List<Idc> idcs = Lists.newArrayList();
     for (String idcName : idcNames) {

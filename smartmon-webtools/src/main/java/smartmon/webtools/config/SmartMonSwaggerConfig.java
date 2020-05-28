@@ -36,10 +36,18 @@ public class SmartMonSwaggerConfig {
   private String apiInfoVer;
 
   private Parameter makeContentType() {
-    return new ParameterBuilder().name("Content-Type")
-      .modelRef(new ModelRef("string"))
+    final ParameterBuilder parameterBuilder = new ParameterBuilder();
+
+    parameterBuilder.name("Content-Type").modelRef(new ModelRef("string"))
       .parameterType("header").required(true)
-      .defaultValue("application/json;charset=UTF-8").build();
+      .defaultValue("application/json;charset=UTF-8")
+      .name("Authorization");
+
+    parameterBuilder.name("Authorization").modelRef(new ModelRef("string"))
+      .parameterType("header").required(false)
+      .defaultValue("<Test Token>")
+      .build();
+    return parameterBuilder.build();
   }
 
   private List<Parameter> makeGlobalParameters() {

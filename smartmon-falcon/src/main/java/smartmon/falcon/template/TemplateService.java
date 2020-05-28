@@ -1,8 +1,6 @@
 package smartmon.falcon.template;
 
 import smartmon.falcon.remote.types.FalconResponseData;
-import smartmon.falcon.remote.types.template.FalconAction;
-import smartmon.falcon.remote.types.template.FalconTemplates;
 import smartmon.falcon.strategy.model.Strategy;
 import smartmon.falcon.user.Team;
 

@@ -1,11 +1,12 @@
 package smartmon.smartstor.interfaces.web.representation;
 
+import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import smartmon.smartstor.interfaces.web.representation.dto.GroupDto;
 import smartmon.smartstor.interfaces.web.representation.dto.GroupNodeDto;
 import smartmon.utilities.misc.BeanConverter;
 
+@Slf4j
 @Service
 public class GroupsRepresentationService {
   @Autowired
@@ -29,8 +31,8 @@ public class GroupsRepresentationService {
   @Autowired
   private StorageHostRepository storageHostRepository;
 
-  public CachedData<GroupDto> getGroups(String serviceIp) {
-    List<StorageHost> hosts = getGroupHosts(serviceIp);
+  public CachedData<GroupDto> getGroups() {
+    List<StorageHost> hosts = getGroupHosts();
     if (CollectionUtils.isEmpty(hosts)) {
       return null;
     }
@@ -40,14 +42,18 @@ public class GroupsRepresentationService {
       .stream()
       .collect(Collectors.toMap(StorageHost::getHostId, StorageHost::getListenIp, (a, b) -> b));
     hosts.forEach(h -> {
-      String listenIp = h.getListenIp();
-      CachedData<Group> groupCachedData = getGroupCachedData(result, listenIp);
-      if (groupCachedData == null) {
-        return;
+      try {
+        String listenIp = h.getListenIp();
+        CachedData<Group> groupCachedData = getGroupCachedData(result, listenIp);
+        if (groupCachedData == null) {
+          return;
+        }
+        CachedData<Lun> lunCachedData = getLunCachedData(result, listenIp);
+        List<Group> groups = groupCachedData.getData();
+        groups.forEach(g -> generateGroupDto(groupsViewDatas, h, lunCachedData, g, hostIdIpMap));
+      } catch (Exception e) {
+        log.warn("Get group failed:{}", h.getListenIp(), e);
       }
-      CachedData<Lun> lunCachedData = getLunCachedData(result, listenIp);
-      List<Group> groups = groupCachedData.getData();
-      groups.forEach(g -> generateGroupDto(groupsViewDatas, h, lunCachedData, g, hostIdIpMap));
     });
     return result;
   }
@@ -110,24 +116,15 @@ public class GroupsRepresentationService {
     }
   }
 
-  private List<StorageHost> getGroupHosts(String serviceIp) {
-    List<StorageHost> hosts = new ArrayList<>();
-    if (StringUtils.isNotBlank(serviceIp)) {
-      StorageHost host = storageHostRepository.findByServiceIp(serviceIp);
-      if (host == null) {
-        return null;
-      }
-      hosts.add(host);
-    } else {
-      hosts = storageHostRepository.getAll();
-      if (CollectionUtils.isEmpty(hosts)) {
-        return null;
-      }
-      hosts = hosts
-        .stream()
-        .filter(h -> SysModeEnum.isIos(h.getSysMode()))
-        .collect(Collectors.toList());
+  private List<StorageHost> getGroupHosts() {
+    List<StorageHost> hosts = storageHostRepository.getAll();
+    if (CollectionUtils.isEmpty(hosts)) {
+      return null;
     }
+    hosts = hosts
+      .stream()
+      .filter(h -> SysModeEnum.isIos(h.getSysMode()))
+      .collect(Collectors.toList());
     return hosts;
   }
 }

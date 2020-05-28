@@ -109,7 +109,7 @@ public class RepoServiceImpl implements RepoService {
     private String repoFilename;
     @Value("${smartmon.repo.id:SMARTMON-REPO}")
     private String repoId;
-    @Value("${smartmon.repo.baseUrl}")
+    @Value("${smartmon.repo.baseUrl:}")
     private String repoBaseUrl;
   }
 }

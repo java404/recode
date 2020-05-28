@@ -25,6 +25,7 @@ public class SwaggerProvider implements SwaggerResourcesProvider {
   @Override
   public List<SwaggerResource> get() {
     final List<SwaggerResource> resources = new ArrayList<>();
+    resources.add(makeGatewayResource());
     final List<String> routes = new ArrayList<>();
     routeLocator.getRoutes().filter(route -> route.getId().contains("smartmon"))
       .subscribe(route -> routes.add(route.getId()));
@@ -43,5 +44,13 @@ public class SwaggerProvider implements SwaggerResourcesProvider {
     swaggerResource.setLocation(location);
     swaggerResource.setSwaggerVersion("2.0");
     return swaggerResource;
+  }
+
+  private SwaggerResource makeGatewayResource() {
+    final SwaggerResource resource = new SwaggerResource();
+    resource.setName("smartmon-gateway");
+    resource.setSwaggerVersion("2.0");
+    resource.setLocation(API_URI);
+    return resource;
   }
 }

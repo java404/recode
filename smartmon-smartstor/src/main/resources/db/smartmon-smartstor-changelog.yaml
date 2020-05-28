@@ -5,3 +5,6 @@ databaseChangeLog:
   - include:
       file: 001-task-manager-schema.yaml
       relativeToChangelogFile: true
+  - include:
+      file: 001-webcache-schema.yaml
+      relativeToChangelogFile: true

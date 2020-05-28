@@ -48,7 +48,7 @@ public interface Encryption {
     try {
       return decrypt(content);
     } catch (Exception ignore) {
-      return null;
+      return content;
     }
   }
 }

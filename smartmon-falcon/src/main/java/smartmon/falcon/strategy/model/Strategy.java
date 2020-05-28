@@ -17,4 +17,6 @@ public class Strategy {
   private String runEnd;
   private Long templateId;
   private PauseEnum pause;
+  private StrategyOptions strategyOptions;
+  private String strategyClass;
 }

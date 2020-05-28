@@ -12,6 +12,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableAsync
 @ComponentScan(basePackages = {"smartmon"})
 @MapperScan(basePackages = {"smartmon.taskmanager.mapper", "smartmon.core.mapper"})
+@tk.mybatis.spring.annotation.MapperScan(basePackages = {"smartmon.core.hosts.mapper"})
 public class SmartMonCore {
   public static void main(String[] args) {
     SpringApplication.run(SmartMonCore.class, args);

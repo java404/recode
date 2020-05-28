@@ -4,4 +4,6 @@ import lombok.Data;
 
 @Data
 public class Endpoint {
+  private String endpoint;
+  private Integer id;
 }

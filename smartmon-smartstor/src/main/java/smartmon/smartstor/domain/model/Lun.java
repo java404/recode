@@ -2,6 +2,7 @@ package smartmon.smartstor.domain.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import smartmon.smartstor.domain.model.enums.LunTypeEnum;
 import smartmon.smartstor.domain.share.Entity;
 
 @Data
@@ -23,7 +24,7 @@ public class Lun extends Entity {
   private String extPalCacheId;
   private String extDataDevName;
   private Long extCacheSize;
-  private Integer lunType;
+  private LunTypeEnum lunType;
   private String groupUuid;
   private String extDataDiskName;
   private String extCacheDevNames;

@@ -1,4 +1,4 @@
-# Package Files 
+# Package Files
 *.class
 *.jar
 *.war
@@ -33,3 +33,7 @@ gradlew.bat
 *.yaml.bak
 /logs/
 logPath_IS_UNDEFINED
+
+# vs code
+bin/
+.vscode/

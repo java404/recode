@@ -14,8 +14,11 @@ import smartmon.falcon.remote.types.team.FalconTeamInfo;
 import smartmon.falcon.remote.types.team.FalconTeamUpdateParam;
 import smartmon.falcon.remote.types.team.FalconTeamUserInfo;
 import smartmon.falcon.remote.types.user.FalconUser;
+import smartmon.falcon.remote.types.user.FalconUserCreateParam;
+import smartmon.falcon.remote.types.user.FalconUserCreateResponse;
 import smartmon.falcon.user.command.TeamCreateCommand;
 import smartmon.falcon.user.command.TeamUpdateCommand;
+import smartmon.falcon.user.command.UserCreateCommand;
 import smartmon.utilities.misc.BeanConverter;
 
 @Service
@@ -100,5 +103,13 @@ public class TeamServiceImpl implements TeamService {
     teamUpdateParam.setResume(teamUserInfo.getResume());
     teamUpdateParam.setUsers(userIds);
     falconClient.updateTeam(teamUpdateParam, falconApiComponent.getApiToken());
+  }
+
+  @Override
+  public void createUserToTeam(Integer teamId, UserCreateCommand createCommand) {
+    final FalconClient falconClient = falconApiComponent.getFalconClient();
+    final FalconUserCreateResponse userCreateResponse = falconClient.createUser(BeanConverter.copy(createCommand,
+      FalconUserCreateParam.class), falconApiComponent.getApiToken());
+    addUserToTeam(teamId, Integer.parseInt(userCreateResponse.getId()));
   }
 }

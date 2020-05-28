@@ -6,7 +6,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@MapperScan(basePackages = {"smartmon.taskmanager.mapper", "smartmon.examples"})
+@MapperScan(basePackages = {
+  "smartmon.taskmanager.mapper",
+  "smartmon.cache.mapper",
+  "smartmon.examples"})
 @ComponentScan(basePackages = {"smartmon"})
 public class SmartMonExamples {
   public static void main(String[] args) {

@@ -1,27 +1,27 @@
 package smartmon.taskmanager.types;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Strings;
-import lombok.Data;
+import lombok.Getter;
 import smartmon.utilities.misc.JsonConverter;
 
-@Data
+@Getter
 public class TaskOption {
-  @JsonIgnore
-  public static final TaskOption EMPTY = new TaskOption();
-  private JsonNode data;
+  private final String action;
+  private final String resource;
+  private final String parameters;
 
-  public String dump() {
-    return data == null ? "" : JsonConverter.writeValueAsStringQuietly(data);
+  public TaskOption(String action, String resource, String parameters) {
+    this.action = action;
+    this.resource = resource;
+    this.parameters = parameters;
   }
 
-  public static TaskOption make(String data) {
-    if (Strings.isNullOrEmpty(data)) {
-      return EMPTY;
-    }
-    final TaskOption result = new TaskOption();
-    result.setData(JsonConverter.readTreeQuietly(data));
-    return result;
+  public static TaskOption make(String action, String resource, Object parameters) {
+    return new TaskOption(action, resource,
+      parameters == null ? "" : JsonConverter.writeValueAsStringQuietly(parameters));
+  }
+
+  public <T> T getParameters(Class<T> valueType) {
+    return Strings.isNullOrEmpty(parameters) ? null : JsonConverter.readValueQuietly(parameters, valueType);
   }
 }

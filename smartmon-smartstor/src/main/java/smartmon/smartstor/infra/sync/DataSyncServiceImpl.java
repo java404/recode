@@ -62,7 +62,7 @@ public class DataSyncServiceImpl implements DataSyncService {
   }
 
   @Override
-  public List<StorageHost> syncHosts() {
+  public synchronized List<StorageHost> syncHosts() {
     try {
       log.info("Sync hosts");
       List<StorageHost> storageHosts = storageHostRepository.getAll();
@@ -90,10 +90,14 @@ public class DataSyncServiceImpl implements DataSyncService {
         continue;
       }
       StorageHost storageHost = entry.getValue();
-      if (!storageHost.isIos()) {
+      if (storageHost.isHostNotConfigured()) {
         continue;
       }
-      if (!storageHost.isHostConfigured()) {
+      if (!storageHost.isIos()) {
+        if (storageHost.isBac()) {
+          syncVersion(storageHost);
+          storageHostRepository.save(storageHost);
+        }
         continue;
       }
       String serviceIp = storageHost.getListenIp();
@@ -186,7 +190,7 @@ public class DataSyncServiceImpl implements DataSyncService {
     Iterator<Map.Entry<String, StorageHost>> iterator = hostMap.entrySet().iterator();
     while (iterator.hasNext()) {
       StorageHost host = iterator.next().getValue();
-      if (!hostSyncedKeys.contains(host.getHostKey()) && !host.isHostConfigured()) {
+      if (!hostSyncedKeys.contains(host.getHostKey()) && host.isHostNotConfigured()) {
         storageHostRepository.delete(host);
         iterator.remove();
       }

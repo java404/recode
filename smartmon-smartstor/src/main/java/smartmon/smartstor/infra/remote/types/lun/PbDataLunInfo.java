@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import smartmon.smartstor.domain.model.enums.IEnum;
 import smartmon.smartstor.domain.model.enums.LunExtStateEnum;
+import smartmon.smartstor.domain.model.enums.LunTypeEnum;
 
 @Getter
 @Setter
@@ -73,6 +74,10 @@ public class PbDataLunInfo {
 
   public String getExtSize() {
     return String.valueOf(this.extSize);
+  }
+
+  public LunTypeEnum getLunType() {
+    return IEnum.getByCode(LunTypeEnum.class, this.lunType);
   }
 
 }

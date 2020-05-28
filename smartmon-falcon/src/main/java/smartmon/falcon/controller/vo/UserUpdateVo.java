@@ -7,8 +7,8 @@ import lombok.Data;
 @Data
 @ApiModel(value = "user update model")
 public class UserUpdateVo {
-  @ApiModelProperty(value = "user cnName", position = 2)
+  @ApiModelProperty(value = "user cnName", position = 1)
   private String cnName;
-  @ApiModelProperty(value = "user email", position = 3)
+  @ApiModelProperty(value = "user email", position = 2)
   private String email;
 }

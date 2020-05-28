@@ -27,14 +27,20 @@ public class PbDataNodeInfo {
       if (iosServiceStat != null && bacServiceStat != null) {
         nodeInfo.setNodeName(iosServiceStat.getIosNodeCfg().getNodeName());
         nodeInfo.setHostId(iosServiceStat.getHostId());
+        nodeInfo.setTrsType(iosServiceStat.getIosNodeCfg().getTrsType());
+        nodeInfo.setClusterName(iosServiceStat.getIosNodeCfg().getClusterName());
         nodeInfo.setSysMode(HOST_TYPE_MERGE);
       } else if (iosServiceStat != null) {
         nodeInfo.setNodeName(iosServiceStat.getIosNodeCfg().getNodeName());
         nodeInfo.setHostId(iosServiceStat.getHostId());
+        nodeInfo.setTrsType(iosServiceStat.getIosNodeCfg().getTrsType());
+        nodeInfo.setClusterName(iosServiceStat.getIosNodeCfg().getClusterName());
         nodeInfo.setSysMode(HOST_TYPE_STORAGE);
       } else if (bacServiceStat != null) {
         nodeInfo.setNodeName(bacServiceStat.getBacNodeCfg().getNodeName());
         nodeInfo.setHostId(bacServiceStat.getHostId());
+        nodeInfo.setTrsType(bacServiceStat.getBacNodeCfg().getTrsType());
+        nodeInfo.setClusterName(bacServiceStat.getBacNodeCfg().getClusterName());
         nodeInfo.setSysMode(HOST_TYPE_DATABASE);
       }
     }

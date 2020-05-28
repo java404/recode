@@ -17,7 +17,7 @@ public class EventAlarmFilterVo {
   private String status;
   @ApiModelProperty(value = "host name", position = 5)
   private String hostName;
-  @ApiModelProperty(value = "priority", position = 5)
+  @ApiModelProperty(value = "priority", position = 6)
   private String priority;
 
   public Long getEndTime() {

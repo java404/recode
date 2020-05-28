@@ -8,6 +8,7 @@ import smartmon.falcon.remote.client.FalconClient;
 import smartmon.falcon.remote.config.FalconApiComponent;
 import smartmon.falcon.remote.types.user.FalconUser;
 import smartmon.falcon.remote.types.user.FalconUserCreateParam;
+import smartmon.falcon.remote.types.user.FalconUserCreateResponse;
 import smartmon.falcon.remote.types.user.FalconUserDeleteParam;
 import smartmon.falcon.remote.types.user.FalconUserUpdateParam;
 import smartmon.falcon.user.command.UserCreateCommand;
@@ -27,10 +28,11 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void createUser(UserCreateCommand createCommand) {
+  public UserCreateResponse createUser(UserCreateCommand createCommand) {
     final FalconClient falconClient = falconApiComponent.getFalconClient();
-    falconClient.createUser(BeanConverter.copy(createCommand,
+    final FalconUserCreateResponse userCreateResponse = falconClient.createUser(BeanConverter.copy(createCommand,
       FalconUserCreateParam.class), falconApiComponent.getApiToken());
+    return BeanConverter.copy(userCreateResponse, UserCreateResponse.class);
   }
 
   @Override

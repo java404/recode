@@ -1,5 +1,7 @@
 #!/bin/sh
 
+_base_dir=`cd "$(dirname "$0")"; pwd`
+
 [ ! -e "$JAVA_HOME/bin/java" ] && JAVA_HOME=$HOME/jdk/java
 [ ! -e "$JAVA_HOME/bin/java" ] && JAVA_HOME=/usr/java
 [ ! -e "$JAVA_HOME/bin/java" ] && unset JAVA_HOME
@@ -22,10 +24,10 @@ fi
 
 export JAVA_HOME
 export JAVA="$JAVA_HOME/bin/java"
-export BASE_DIR=`cd $(dirname $0)/..; pwd`
 export DEFAULT_SEARCH_LOCATIONS="classpath:/,classpath:/config/,file:./,file:./config/"
 
-JAVA_OPT="${JAVA_OPT} -Xms256m -Xmx512m"
+JAVA_OPT="${JAVA_OPT} -XX:+UseSerialGC -Xms256m -Xmx512m -Xss512k -Dserver.tomcat.max-threads=50"
+JAVA_OPT="${JAVA_OPT} -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${_base_dir}/java_heapdump.hprof"
 
 mkdir -pv /var/smartmon/
 echo "$JAVA ${JAVA_OPT}"

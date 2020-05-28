@@ -1,6 +1,7 @@
 package smartmon.falcon.strategy;
 
 import java.util.List;
+import java.util.Map;
 
 import smartmon.falcon.remote.types.FalconResponseData;
 import smartmon.falcon.remote.types.strategy.FalconStrategyUpdateParam;
@@ -15,4 +16,8 @@ public interface StrategyService {
   FalconResponseData updateStrategyById(Integer strategyId, FalconStrategyUpdateParam param);
 
   Strategy getStrategyById(Integer strategyId);
+
+  Map<String, Strategy> getStrategyMap(String counter);
+
+  boolean judgeStrategy(Strategy strategy, Double value);
 }

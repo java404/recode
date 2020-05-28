@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +19,14 @@ import smartmon.core.mapper.IdcMapper;
 import smartmon.core.racks.RackService;
 import smartmon.core.racks.model.Idc;
 import smartmon.core.racks.vo.IdcAddVo;
+import smartmon.taskmanager.TaskManagerService;
+import smartmon.taskmanager.record.TaskAct;
+import smartmon.taskmanager.record.TaskRes;
+import smartmon.taskmanager.types.TaskContext;
+import smartmon.taskmanager.types.TaskDescription;
+import smartmon.taskmanager.types.TaskDescriptionBuilder;
+import smartmon.taskmanager.types.TaskGroup;
+import smartmon.taskmanager.vo.TaskGroupVo;
 import smartmon.utilities.general.SmartMonResponse;
 
 @Api(tags = "idcs")
@@ -28,6 +37,8 @@ public class IdcController {
   private IdcMapper idcMapper;
   @Autowired
   private RackService rackService;
+  @Autowired
+  private TaskManagerService taskManagerService;
 
   @ApiOperation("Get all idc info")
   @GetMapping
@@ -35,16 +46,30 @@ public class IdcController {
     return new SmartMonResponse<>(idcMapper.findAll());
   }
 
+  @ApiOperation("Add idcs")
+  @PostMapping("batch")
+  public SmartMonResponse<TaskGroupVo> add(@RequestBody List<IdcAddVo> vos) {
+    List<String> idcNames = vos.stream().map(IdcAddVo::getName).collect(Collectors.toList());
+    Runnable runnable = () -> TaskContext.currentTaskContext().setDetail(rackService.addIdcs(idcNames));
+    TaskDescription description = new TaskDescriptionBuilder()
+      .withAction(TaskAct.ACT_ADD).withResource(TaskRes.RES_IDC).withParameters(idcNames)
+      .withStep("ADD", "add idcs", runnable)
+      .build();
+    final TaskGroup taskGroup = taskManagerService.createTaskGroup("AddIdcs", description);
+    taskManagerService.invokeTaskGroup(taskGroup);
+    return new SmartMonResponse<>(taskGroup.dumpVo());
+  }
+
   @ApiOperation("Add idc")
   @PostMapping
-  public SmartMonResponse add(@RequestBody IdcAddVo vo) {
+  public SmartMonResponse<Idc> add(@RequestBody IdcAddVo vo) {
     Idc idc = rackService.addIdcIfAbsent(vo.getName());
     return new SmartMonResponse<>(idc);
   }
 
   @ApiOperation("Rename")
   @PatchMapping("{name}/rename")
-  public SmartMonResponse rename(@PathVariable String name, @RequestParam("newName") String newName) {
+  public SmartMonResponse<String> rename(@PathVariable String name, @RequestParam("newName") String newName) {
     rackService.renameIdc(name, newName);
     return SmartMonResponse.OK;
   }

@@ -3,6 +3,8 @@ package smartmon.smartstor.infra.remote.types.pool;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import smartmon.smartstor.domain.model.PoolDiskInfo;
+import smartmon.smartstor.domain.model.enums.IEnum;
+import smartmon.smartstor.domain.model.enums.PoolCacheModeEnum;
 import smartmon.utilities.misc.BeanConverter;
 
 @Data
@@ -46,5 +48,9 @@ public class PbDataPoolInfo {
 
   public PoolDiskInfo getDiskInfo() {
     return BeanConverter.copy(this.diskInfo, PoolDiskInfo.class);
+  }
+
+  public PoolCacheModeEnum getExtPoolInfoPoolCacheModel() {
+    return IEnum.getByCode(PoolCacheModeEnum.class, this.extPoolInfoPoolCacheModel);
   }
 }

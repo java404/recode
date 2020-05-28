@@ -2,22 +2,25 @@ package smartmon.taskmanager.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.stereotype.Service;
 import smartmon.taskmanager.TaskManagerService;
+import smartmon.taskmanager.dto.TaskDto;
+import smartmon.taskmanager.dto.TaskGroupDto;
+import smartmon.taskmanager.dto.TaskStepDto;
 import smartmon.taskmanager.mapper.TaskManagerMapper;
-import smartmon.taskmanager.types.LogBufferEvents;
+import smartmon.taskmanager.record.TaskStatus;
 import smartmon.taskmanager.types.TaskContext;
 import smartmon.taskmanager.types.TaskDescription;
+import smartmon.taskmanager.types.TaskEvent;
 import smartmon.taskmanager.types.TaskGroup;
-import smartmon.taskmanager.types.TaskOption;
 import smartmon.taskmanager.types.TaskStep;
+import smartmon.taskmanager.vo.TaskGroupVo;
+import smartmon.taskmanager.vo.TaskVo;
 
 @Service
 @Slf4j
@@ -31,165 +34,130 @@ public class TaskManagerServiceImpl implements TaskManagerService {
   @Autowired
   private TaskManagerMapper taskManagerMapper;
 
-  private TaskGroup makeTaskGroup(String name, List<TaskContext> tasks) {
-    final TaskGroup taskGroup = new TaskGroup(serviceName, name, tasks);
-    taskManagerMapper.addTaskGroup(taskGroup);
-    log.debug("Created Task Group {}", taskGroup);
-    return taskGroup;
-  }
 
-  private TaskContext makeTaskContext(Long taskGroupId, TaskDescription description) {
-    final TaskContext taskContext = new TaskContext(taskGroupId, description);
-    taskManagerMapper.addTask(taskContext);
-    log.debug("Created Task context {}", taskContext);
-    final List<TaskStep> steps = taskContext.getSteps();
-    for (final TaskStep step : steps) {
-      step.setTaskId(taskContext.getTaskId());
-      taskManagerMapper.addTaskStep(step);
+  private final TaskEvent taskEvent = new TaskEvent() {
+    @Override
+    public void contextUpdated(TaskContext context) {
+      syncTaskContext(context);
     }
-    return taskContext;
-  }
 
-  private void updateTaskGroupStatus(TaskGroup taskGroup) {
-    taskManagerMapper.updateTaskGroup(taskGroup);
-  }
-
-  private void updateTaskStatus(TaskContext task) {
-    task.flush();
-    taskManagerMapper.updateTask(task);
-  }
-
-  private void updateTaskStepStatus(TaskStep taskStep) {
-    taskStep.flush();
-    taskManagerMapper.updateTaskStep(taskStep);
-  }
-
-  private boolean runTask(TaskGroup taskGroup, TaskContext task) {
-    final List<TaskStep> steps = task.getSteps();
-
-    TaskContext.setCurrentContext(task);
-    task.setStatus(TaskContext.STATUS_RUNNING);
-    task.setTotalSteps(steps.size());
-    task.setCompletedSteps(0);
-    updateTaskStatus(task);
-
-    boolean success = true;
-    int completedSteps = 0;
-    for (final TaskStep step : steps) {
-      task.setCurrentStep(step);
-      step.setLogBufferEvents(new LogBufferEvents() {
-        @Override
-        public void bufferUpdated(TaskStep taskStep) {
-          updateTaskStepStatus(step);
-        }
-      });
-
-      try {
-        step.getStep().run();
-      } catch (Exception error) {
-        log.warn("task step error: ", error);
-        if (step.isBreakStrategy()) {
-          task.setError(error.getMessage());
-          updateTaskStatus(task);
-          success = false;
-          break;
-        }
-      } finally {
-        step.setCompleteTime(new Date());
-        updateTaskStepStatus(step);
-
-        task.setCompletedSteps(++completedSteps);
-        updateTaskStatus(task);
-      }
+    @Override
+    public void stepUpdated(TaskStep taskStep) {
+      syncTaskStep(taskStep);
     }
-    task.setCompletedSteps(completedSteps);
-    task.setSuccess(success);
-    task.setCompleteTime(new Date());
-    task.setStatus(TaskContext.STATUS_COMPLETED);
-    updateTaskStatus(task);
-    return success;
+  };
+
+  private void syncTaskGroup(TaskGroup taskGroup) {
+    final TaskGroupDto dto = taskGroup.dumpDto();
+    taskManagerMapper.updateTaskGroup(dto);
   }
 
-  @Override
-  public TaskGroup createTaskGroup(String name, List<TaskDescription> taskDescriptions) {
-    if (CollectionUtils.isEmpty(taskDescriptions)) {
-      log.warn("Cannot create task group (no taskDescriptions).");
-      return null;
-    }
-    final List<TaskContext> tasks = new ArrayList<>();
-    final TaskGroup taskGroup = makeTaskGroup(name, tasks);
-    int taskIdx = 0;
-    for (TaskDescription taskDesc : taskDescriptions) {
-      final TaskContext taskContext = makeTaskContext(taskGroup.getTaskGroupId(), taskDesc);
-      tasks.add(taskContext);
-    }
-    return taskGroup;
+  private void syncTaskContext(TaskContext taskContext) {
+    final TaskDto dto = taskContext.dumpDto();
+    taskManagerMapper.updateTask(dto);
   }
 
-  @Override
-  public void invokeTaskGroup(TaskGroup taskGroup) {
+  private void syncTaskStep(TaskStep taskStep) {
+    final TaskStepDto dto = taskStep.dumpDto();
+    taskManagerMapper.updateTaskStep(dto);
+  }
+
+  private void run(TaskGroup taskGroup) {
     asyncTaskExecutor.submit(() -> {
-      boolean taskErr = false;
+      boolean taskGroupSuccess = true;
+      taskGroup.setStatus(TaskStatus.RUNNING);
+      syncTaskGroup(taskGroup);
 
-      taskGroup.setStatus(TaskGroup.STATUS_RUNNING);
-      updateTaskGroupStatus(taskGroup);
-
-      // TODO launch task in different threads.
       for (TaskContext task : taskGroup.getTasks()) {
-        if (!runTask(taskGroup, task)) {
-          taskErr = true;
+        // TODO launch task in different threads.
+        task.setTaskEvent(taskEvent);
+        TaskContext.run(task);
+        if (!task.isSuccess()) {
+          taskGroupSuccess = false;
         }
       }
 
-      taskGroup.setTaskError(taskErr);
-      taskGroup.setStatus(TaskGroup.STATUS_COMPLETED);
-      updateTaskGroupStatus(taskGroup);
+      taskGroup.setSuccess(taskGroupSuccess);
+      taskGroup.setStatus(TaskStatus.COMPLETED);
+      syncTaskGroup(taskGroup);
     });
   }
 
-  @Override
-  public TaskGroup createTask(String name, Runnable step) {
-    final List<TaskDescription> tasks = new ArrayList<>();
-    tasks.add(new TaskDescription(TaskOption.EMPTY,
-      Collections.singletonList(new TaskStep(step))));
-    return createTaskGroup(name, tasks);
+  private void createTaskStep(Long taskId, TaskStep taskStep) {
+    taskStep.setTaskId(taskId);
+    final TaskStepDto dto = taskStep.dumpDto();
+    taskManagerMapper.addTaskStep(dto);
+    taskStep.setTaskStepId(dto.getTaskStepId());
   }
 
-  @Override
-  public TaskGroup invokeTask(String name, Runnable... steps) {
-    final List<TaskStep> taskSteps = new ArrayList<>();
-    for (final Runnable step : steps) {
-      final TaskStep taskStep = new TaskStep(step);
-      taskSteps.add(taskStep);
+  private TaskContext createTask(Long taskGroupId, TaskDescription taskDescription) {
+    final TaskContext context = new TaskContext(taskGroupId, taskDescription);
+    final TaskDto taskDto = context.dumpDto();
+    taskManagerMapper.addTask(taskDto);
+    context.setTaskId(taskDto.getTaskId());
+    for (final TaskStep taskStep : context.getSteps()) {
+      createTaskStep(context.getTaskId(), taskStep);
     }
-    final TaskDescription task = new TaskDescription(TaskOption.EMPTY, taskSteps);
-    final TaskGroup taskGroup = createTaskGroup(name, Collections.singletonList(task));
-    invokeTaskGroup(taskGroup);
-    return taskGroup;
+    return context;
   }
 
-  private List<TaskContext> findTasks(Long groupId) {
-    final List<TaskContext> tasks = taskManagerMapper.findTasks(groupId);
-    for (final TaskContext task : tasks) {
-      final List<TaskStep> steps = taskManagerMapper.findTaskSteps(task.getTaskId());
-      task.setSteps(steps);
+  private List<TaskContext> createTasks(Long taskGroupId, List<TaskDescription> taskDescriptions) {
+    final List<TaskContext> tasks = new ArrayList<>();
+    for (TaskDescription taskDescription : taskDescriptions) {
+      tasks.add(createTask(taskGroupId, taskDescription));
     }
     return tasks;
   }
 
   @Override
-  public TaskGroup findTaskGroupById(Long id) {
-    final TaskGroup taskGroup = taskManagerMapper.findTaskGroupInfo(id);
-    taskGroup.setTasks(findTasks(taskGroup.getTaskGroupId()));
-    return taskGroup;
+  public TaskGroup createTaskGroup(String name, List<TaskDescription> taskDescriptions) {
+    final TaskGroup group = new TaskGroup(serviceName, name, null);
+    final TaskGroupDto taskGroupDto = group.dumpDto();
+    taskManagerMapper.addTaskGroup(taskGroupDto);
+    group.setTaskGroupId(taskGroupDto.getTaskGroupId());
+
+    final List<TaskContext> taskContexts = createTasks(group.getTaskGroupId(), taskDescriptions);
+    group.setTasks(taskContexts);
+    return group;
   }
 
   @Override
-  public List<TaskGroup> getAllTaskGroups() {
-    final List<TaskGroup> taskGroups = taskManagerMapper.findTaskGroupsInfo();
-    for (final TaskGroup taskGroup : taskGroups) {
-      taskGroup.setTasks(findTasks(taskGroup.getTaskGroupId()));
+  public TaskGroup createTaskGroup(String name, TaskDescription task) {
+    return createTaskGroup(name, Collections.singletonList(task));
+  }
+
+  @Override
+  public void invokeTaskGroup(TaskGroup taskGroup) {
+    run(taskGroup);
+  }
+
+  private List<TaskVo> findTasks(Long groupId) {
+    final List<TaskVo> taskVoList = new ArrayList<>();
+    final List<TaskDto> tasksDto = taskManagerMapper.findTasks(groupId);
+    for (final TaskDto taskDto : tasksDto) {
+      final List<TaskStepDto> stepsDto = taskManagerMapper.findTaskSteps(taskDto.getTaskId());
+      final TaskVo taskVo = TaskContext.dumpVo(taskDto, stepsDto);
+      taskVoList.add(taskVo);
     }
-    return taskGroups;
+    return taskVoList;
+  }
+
+  @Override
+  public TaskGroupVo findTaskGroupById(Long id) {
+    final TaskGroupDto taskGroupDto = taskManagerMapper.findTaskGroupInfo(id);
+    final List<TaskVo> tasks = findTasks(taskGroupDto.getTaskGroupId());
+    return TaskGroup.dumpVo(taskGroupDto, tasks);
+  }
+
+  @Override
+  public List<TaskGroupVo> getAllTaskGroups() {
+    final List<TaskGroupVo> taskGroupVos = new ArrayList<>();
+    final List<TaskGroupDto> taskGroupDtos = taskManagerMapper.findTaskGroupsInfo();
+    for (final TaskGroupDto taskGroupDto : taskGroupDtos) {
+      final List<TaskVo> tasks = findTasks(taskGroupDto.getTaskGroupId());
+      final TaskGroupVo taskGroupVo = TaskGroup.dumpVo(taskGroupDto, tasks);
+      taskGroupVos.add(taskGroupVo);
+    }
+    return taskGroupVos;
   }
 }

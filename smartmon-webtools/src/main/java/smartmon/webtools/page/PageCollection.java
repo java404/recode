@@ -45,8 +45,13 @@ public class PageCollection<E> {
       pageNo = 0;
       pageSize = CollectionUtils.size(source);
     }
-    this.pageable = PageRequest.of(pageNo, Math.max(pageSize, 1),
-      params.getSortDirection(), Strings.nullToEmpty(params.getSortProperty()));
+
+    if (Strings.isNullOrEmpty(params.getSortProperty())) {
+      this.pageable = PageRequest.of(pageNo, Math.max(pageSize, 1));
+    } else {
+      this.pageable = PageRequest.of(pageNo, Math.max(pageSize, 1),
+        params.getSortDirection(), Strings.nullToEmpty(params.getSortProperty()));
+    }
   }
 
   /** make Page object. */

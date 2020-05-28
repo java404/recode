@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: init-schema-001-table-tasks
+      author: xiong.jia_le
+      changes:
+        - sql:
+            comment: Data Cache
+            splitStatements: false
+            sql: CREATE TABLE cache (
+              cache_key VARCHAR(128), timestamp BIGINT,
+              data MEDIUMTEXT, errors MEDIUMTEXT,
+              CONSTRAINT pk_cache PRIMARY KEY (cache_key));

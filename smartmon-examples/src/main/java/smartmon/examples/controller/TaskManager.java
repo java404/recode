@@ -1,10 +1,6 @@
 package smartmon.examples.controller;
 
 import io.swagger.annotations.Api;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -14,11 +10,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import smartmon.taskmanager.TaskManagerService;
+import smartmon.taskmanager.record.TaskAct;
+import smartmon.taskmanager.record.TaskRes;
+import smartmon.taskmanager.record.TaskStepType;
 import smartmon.taskmanager.types.TaskContext;
 import smartmon.taskmanager.types.TaskDescription;
+import smartmon.taskmanager.types.TaskDescriptionBuilder;
 import smartmon.taskmanager.types.TaskGroup;
-import smartmon.taskmanager.types.TaskOption;
 import smartmon.taskmanager.types.TaskStep;
+import smartmon.taskmanager.vo.TaskGroupVo;
 import smartmon.utilities.general.SmartMonResponse;
 
 @Api(tags = "tasks")
@@ -41,8 +41,13 @@ public class TaskManager {
     private int data2 = 100;
   }
 
+  @Data
+  public static class TaskArg {
+    private String data = "arg1";
+  }
+
   public void taskJob1() {
-    final TaskContext taskContext = TaskContext.getCurrentContext();
+    final TaskContext taskContext = TaskContext.currentTaskContext();
     final TaskStep currentStep = taskContext.getCurrentStep();
 
     log.debug("Running task 1");
@@ -54,47 +59,45 @@ public class TaskManager {
   }
 
   public void taskJob2() {
-    final TaskContext taskContext = TaskContext.getCurrentContext();
+    final TaskContext taskContext = TaskContext.currentTaskContext();
     final TaskStep currentStep = taskContext.getCurrentStep();
 
     log.debug("Running task 2");
     currentStep.appendLog("Log line 1, Task 2");
     try {
-      Thread.sleep(1000 * 60);
-    } catch (InterruptedException ignore) {
-      log.warn("example task sleep error", ignore);
+      Thread.sleep(1000 * 3);
+    } catch (InterruptedException error) {
+      log.warn("example task sleep error", error);
     }
     currentStep.appendLog("Log line 2, Task 2");
     taskContext.setDetail(new TaskDetails());
     currentStep.setDetail(new StepDetails());
+    throw new RuntimeException("test error");
   }
 
   @GetMapping("create")
-  public SmartMonResponse<TaskGroup> create() {
-    final TaskStep taskStep1 = new TaskStep(this::taskJob1);
-    final TaskStep taskStep2 = new TaskStep(this::taskJob2);
-
-    final List<TaskDescription> tasks = new ArrayList<>();
-    final TaskDescription desc = new TaskDescription(TaskOption.EMPTY,
-      Arrays.asList(taskStep1, taskStep2));
-    tasks.add(desc);
-
-    // Save task group
-    final TaskGroup taskGroup = taskManagerService.createTaskGroup("test", tasks);
-    // Invoke task group
+  public SmartMonResponse<TaskGroupVo> create() {
+    final TaskDescription desc = new TaskDescriptionBuilder()
+      .withAction(TaskAct.ACT_EXAMPLE)
+      .withResource(TaskRes.RES_EXAMPLE)
+      .withParameters(new TaskArg())
+      .withStep(TaskStepType.STEP_EXAMPLE, "step1", this::taskJob1)
+      .withStep(TaskStepType.STEP_EXAMPLE, "step2", this::taskJob2)
+      .build();
+    final TaskGroup taskGroup = taskManagerService.createTaskGroup("example", desc);
     taskManagerService.invokeTaskGroup(taskGroup);
-    return new SmartMonResponse<>(taskGroup);
+    return new SmartMonResponse<>(taskGroup.dumpVo());
   }
 
 
   @GetMapping("all-group")
-  public List<TaskGroup> getAllGroups() {
+  public List<TaskGroupVo> getAllGroups() {
     return taskManagerService.getAllTaskGroups();
   }
 
 
   @GetMapping("group/{id}")
-  public TaskGroup getGroup(@PathVariable("id")  Long id) {
+  public TaskGroupVo getGroup(@PathVariable("id")  Long id) {
     return taskManagerService.findTaskGroupById(id);
   }
 }

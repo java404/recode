@@ -25,6 +25,6 @@ public enum SysModeEnum implements IEnum {
   }
 
   public static boolean isBac(SysModeEnum sysMode) {
-    return SysModeEnum.STORAGE == sysMode || SysModeEnum.MERGE == sysMode;
+    return SysModeEnum.DATABASE == sysMode || SysModeEnum.MERGE == sysMode;
   }
 }

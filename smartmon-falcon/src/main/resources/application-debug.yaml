@@ -1,7 +1,7 @@
 server.port: 15301
 
 spring:
-  application.name: smartmon-core
+  application.name: smartmon-falcon
   cloud.nacos.discovery.server-addr: 127.0.0.1:8848
 
 smartmon.api:
@@ -21,7 +21,7 @@ smartmon.datasource:
 
 smartmon:
   falcon:
-    address: 172.24.12.218
+    address: 172.24.8.55
     requestPort: 8080
     pushPort: 1988
     name: root

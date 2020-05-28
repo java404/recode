@@ -5,6 +5,10 @@ spring:
   cloud.nacos.discovery.server-addr: 127.0.0.1:8848
   jackson.serialization.write-dates-as-timestamps: true
 
+mapper:
+  use-simple-type: true
+  enum-as-simple-type: true
+
 smartmon.api:
   infoName: smartmon-core
   prefix: /core/api/v2
@@ -23,7 +27,6 @@ smartmon.datasource:
 smartmon.repo:
   filename: smartmon.repo
   id: SMARTMON-REPO
-  baseUrl: http://172.24.8.121:8000/repo/
 
 smartmon.batch:
   targetFolder: /tmp/smartmon

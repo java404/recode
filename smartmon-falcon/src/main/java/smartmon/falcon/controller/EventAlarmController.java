@@ -23,6 +23,13 @@ import smartmon.falcon.alarm.model.Event;
 import smartmon.falcon.alarm.model.EventNote;
 import smartmon.falcon.alarm.service.EventAlarmService;
 import smartmon.falcon.controller.vo.EventNoteCreateVo;
+import smartmon.taskmanager.TaskManagerService;
+import smartmon.taskmanager.record.TaskAct;
+import smartmon.taskmanager.record.TaskRes;
+import smartmon.taskmanager.types.TaskDescription;
+import smartmon.taskmanager.types.TaskDescriptionBuilder;
+import smartmon.taskmanager.types.TaskGroup;
+import smartmon.taskmanager.vo.TaskGroupVo;
 import smartmon.utilities.general.SmartMonResponse;
 import smartmon.webtools.page.SmartMonPageParams;
 import smartmon.webtools.page.SmartMonPageResponseBuilder;
@@ -34,6 +41,8 @@ import smartmon.webtools.page.SmartMonPageResponseBuilder;
 public class EventAlarmController {
   @Autowired
   private EventAlarmService eventAlarmService;
+  @Autowired
+  private TaskManagerService taskManagerService;
 
   /**
    * Get Alarm List.
@@ -42,11 +51,11 @@ public class EventAlarmController {
   @SmartMonPageParams
   @GetMapping
   public SmartMonResponse<Page<Alarm>> getAlarmList(
-    @RequestParam(value = "startTime", required = false) Long startTime,
-    @RequestParam(value = "endTime", required = false) Long endTime,
-    @RequestParam(value = "processStatus", required = false) String processStatus,
+    @RequestParam(value = "start-time", required = false) Long startTime,
+    @RequestParam(value = "end-time", required = false) Long endTime,
+    @RequestParam(value = "process-status", required = false) String processStatus,
     @RequestParam(value = "status", required = false) String status,
-    @RequestParam(value = "hostName", required = false) String hostName,
+    @RequestParam(value = "host-name", required = false) String hostName,
     @RequestParam(value = "priority", required = false) String priority,
     ServerHttpRequest request) {
     final EventAlarmFilterCommand filterCommand = new EventAlarmFilterCommand();
@@ -79,9 +88,14 @@ public class EventAlarmController {
    */
   @ApiOperation("DELETE Alarm")
   @DeleteMapping("{alarm-id}")
-  public SmartMonResponse deleteAlarm(@PathVariable("alarm-id") String alarmId) {
-    eventAlarmService.deleteAlarm(alarmId);
-    return SmartMonResponse.OK;
+  public SmartMonResponse<TaskGroupVo> deleteAlarm(@PathVariable("alarm-id") String alarmId) {
+    final TaskDescription description = new TaskDescriptionBuilder()
+      .withAction(TaskAct.ACT_DEL).withResource(TaskRes.RES_FALCON_ALARM).withParameters(alarmId)
+      .withStep("DELETE", "Delete alarm", () -> eventAlarmService.deleteAlarm(alarmId))
+      .build();
+    final TaskGroup taskGroup = taskManagerService.createTaskGroup("DeleteAlarm", description);
+    taskManagerService.invokeTaskGroup(taskGroup);
+    return new SmartMonResponse<>(taskGroup.dumpVo());
   }
 
   /**
@@ -89,18 +103,23 @@ public class EventAlarmController {
    */
   @ApiOperation("DELETE Alarms")
   @DeleteMapping
-  public SmartMonResponse deleteAlarm(@RequestBody List<String> alarmIds) {
-    eventAlarmService.deleteAlarms(alarmIds);
-    return SmartMonResponse.OK;
+  public SmartMonResponse<TaskGroupVo> deleteAlarm(@RequestBody List<String> alarmIds) {
+    final TaskDescription description = new TaskDescriptionBuilder()
+      .withAction(TaskAct.ACT_DEL).withResource(TaskRes.RES_FALCON_ALARM).withParameters(alarmIds)
+      .withStep("DELETE", "Batch Delete alarm", () -> eventAlarmService.deleteAlarms(alarmIds))
+      .build();
+    final TaskGroup taskGroup = taskManagerService.createTaskGroup("BatchDeleteAlarm", description);
+    taskManagerService.invokeTaskGroup(taskGroup);
+    return new SmartMonResponse<>(taskGroup.dumpVo());
   }
 
   /**
    * Get EventNotes.
    */
-  @ApiOperation("Get EventNote List")
+  @ApiOperation("Get Handle EventNote List")
   @GetMapping("/event-note/{alarm-id}")
   public SmartMonResponse<Page<EventNote>> getEventNoteList(@PathVariable("alarm-id") String alarmId,
-                                           ServerHttpRequest request) {
+                                                            ServerHttpRequest request) {
     final List<EventNote> eventNodes = eventAlarmService.getEventNodes(alarmId);
     return new SmartMonPageResponseBuilder<>(eventNodes, request, "caseId").build();
   }
@@ -110,14 +129,19 @@ public class EventAlarmController {
    */
   @ApiOperation("Handle EventNote")
   @PostMapping("/event-note/{alarm-id}")
-  public SmartMonResponse handleEventNote(@PathVariable("alarm-id") String alarmId,
-                                          @RequestBody EventNoteCreateVo noteCreateVo,
-                                          ServerHttpRequest request) {
+  public SmartMonResponse<TaskGroupVo> handleEventNote(@PathVariable("alarm-id") String alarmId,
+                                                       @RequestBody EventNoteCreateVo noteCreateVo) {
     final EventNoteCreateCommand eventNoteCreateCommand = new EventNoteCreateCommand();
     eventNoteCreateCommand.setEventId(alarmId);
     eventNoteCreateCommand.setNote(noteCreateVo.getNote());
     eventNoteCreateCommand.setStatus(noteCreateVo.getStatus().getStatusName());
     eventAlarmService.createEventNote(eventNoteCreateCommand);
-    return SmartMonResponse.OK;
+    final TaskDescription description = new TaskDescriptionBuilder()
+      .withAction(TaskAct.ACT_HANDLE).withResource(TaskRes.RES_FALCON_EVENT_NOTE).withParameters(eventNoteCreateCommand)
+      .withStep("HANDLE", "Handle eventNote", () -> eventAlarmService.createEventNote(eventNoteCreateCommand))
+      .build();
+    final TaskGroup taskGroup = taskManagerService.createTaskGroup("HandleEventNote", description);
+    taskManagerService.invokeTaskGroup(taskGroup);
+    return new SmartMonResponse<>(taskGroup.dumpVo());
   }
 }

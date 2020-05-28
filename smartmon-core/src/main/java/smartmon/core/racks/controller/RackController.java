@@ -1,6 +1,7 @@
 package smartmon.core.racks.controller;
 
 import com.google.common.collect.Lists;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -37,7 +38,7 @@ public class RackController {
 
   @ApiOperation("Get all rack allocation info")
   @GetMapping("allocated")
-  public SmartMonResponse getAll() {
+  public SmartMonResponse<List<RackAllocationVo>> getAll() {
     List<RackAllocation> racks = rackMapper.findAll();
     if (CollectionUtils.isEmpty(racks)) {
       return new SmartMonResponse<>(Lists.newArrayList());
@@ -80,15 +81,8 @@ public class RackController {
 
   @ApiOperation("Add host to available rack")
   @PostMapping("allocate")
-  public SmartMonResponse<String> addHostToAvailableRack(@RequestBody RackAllocateVo vo) {
-    rackService.addHostToAvailableRack(vo.getHostUuid(), vo.getSize());
-    return SmartMonResponse.OK;
-  }
-
-  @ApiOperation("Add host to given rack position batch")
-  @PostMapping("allocate-batch")
-  public SmartMonResponse<String> addHostToAvailableRackBatch(@RequestBody List<IdcRackAllocateVo> vos) {
-    rackService.addHostToAvailableRackBatch(vos);
+  public SmartMonResponse<String> addHostToAvailableRack(@RequestBody IdcRackAllocateVo vo) {
+    rackService.addHostToAvailableRack(vo.getHostUuid(), vo.getSize(), vo.getIdcName());
     return SmartMonResponse.OK;
   }
 

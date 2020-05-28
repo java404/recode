@@ -8,7 +8,7 @@ import smartmon.falcon.user.command.UserUpdateCommand;
 public interface UserService {
   List<User> getUserList();
 
-  void createUser(UserCreateCommand createCommand);
+  UserCreateResponse createUser(UserCreateCommand createCommand);
 
   void updateUser(UserUpdateCommand updateCommand);
 

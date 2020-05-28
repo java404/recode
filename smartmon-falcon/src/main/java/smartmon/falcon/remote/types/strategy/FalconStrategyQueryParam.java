@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 @Builder
 public class FalconStrategyQueryParam {
   @JsonProperty("tid")
-  private Integer templateId;
+  private Integer tid;
 }

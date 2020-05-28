@@ -1,10 +1,9 @@
 package smartmon.core.agent;
 
 import smartmon.taskmanager.types.TaskGroup;
-import smartmon.utilities.misc.TargetHost;
 
 public interface AgentService {
-  TaskGroup installInjector(String hostUuid);
+  TaskGroup installAgent(String hostUuid);
 
-  TaskGroup installInjector(TargetHost targetHost);
+  TaskGroup uninstallAgent(String hostUuid);
 }

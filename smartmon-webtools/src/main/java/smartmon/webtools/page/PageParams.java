@@ -1,9 +1,8 @@
 package smartmon.webtools.page;
 
+import com.google.common.base.Strings;
 import java.util.List;
 import java.util.Map;
-
-import com.google.common.base.Strings;
 import lombok.Getter;
 import org.springframework.data.domain.Sort;
 import smartmon.utilities.misc.PropertiesParser;

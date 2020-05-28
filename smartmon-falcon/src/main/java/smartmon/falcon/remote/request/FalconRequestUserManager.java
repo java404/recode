@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import smartmon.falcon.remote.types.FalconResponseData;
 import smartmon.falcon.remote.types.user.FalconUser;
 import smartmon.falcon.remote.types.user.FalconUserCreateParam;
+import smartmon.falcon.remote.types.user.FalconUserCreateResponse;
 import smartmon.falcon.remote.types.user.FalconUserDeleteParam;
 import smartmon.falcon.remote.types.user.FalconUserUpdateParam;
 
@@ -18,8 +19,8 @@ public interface FalconRequestUserManager {
   List<FalconUser> listUsers(@HeaderMap Map<String, String> falconApiToken);
 
   @RequestLine("POST /user/create")
-  FalconResponseData createUser(@RequestBody FalconUserCreateParam createParam,
-                                @HeaderMap Map<String, String> falconApiToken);
+  FalconUserCreateResponse createUser(@RequestBody FalconUserCreateParam createParam,
+                                      @HeaderMap Map<String, String> falconApiToken);
 
   @RequestLine("PUT /admin/change_user_profile")
   FalconResponseData updateUser(@RequestBody FalconUserUpdateParam updateParam,
@@ -28,6 +29,4 @@ public interface FalconRequestUserManager {
   @RequestLine("DELETE /admin/delete_user")
   FalconResponseData deleteUser(@RequestBody FalconUserDeleteParam deleteParam,
                                 @HeaderMap Map<String, String> falconApiToken);
-
-
 }

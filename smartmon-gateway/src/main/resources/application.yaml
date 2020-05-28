@@ -1,32 +1,34 @@
 server.port: 18080
 
 spring:
-  application.name: smartmon-gateway-test
-  cloud.nacos.discovery.server-addr: 172.24.8.55:8848
+  application.name: smartmon-gateway
+  cloud.nacos.discovery.server-addr: 127.0.0.1:8848
+  cloud.nacos.discovery.ip: 127.0.0.1
   jackson.serialization.write-dates-as-timestamps: true
-  security:
-    user:
-      name: root
-      password: root
-  cloud:
-    gateway:
-      discovery.locator:
-        enabled: true
-        lower-case-service-id: true
-      routes:
-        - id: smartmon-vhe
-          uri: lb://smartmon-vhe
-          predicates:
-            - Path=/vhe/**
-        - id: smartmon-core
-          uri: lb://smartmon-core
-          predicates:
-            - Path=/core/**
-        - id: smartmon-smartstor
-          uri: lb://smartmon-smartstor
-          predicates:
-            - Path=/smartstor/**
-        - id: smartmon-falcon
-          uri: lb://smartmon-falcon
-          predicates:
-            - Path=/falcon/**
+  servlet.multipart:
+    max-file-size: -1
+    max-request-size: -1
+  cloud.gateway:
+    discovery.locator.enabled: true
+    discovery.locator.lower-case-service-id: true
+    routes:
+      - id: smartmon-vhe
+        uri: lb://smartmon-vhe
+        predicates:
+          - Path=/vhe/**
+      - id: smartmon-core
+        uri: lb://smartmon-core
+        predicates:
+          - Path=/core/**
+      - id: smartmon-smartstor
+        uri: lb://smartmon-smartstor
+        predicates:
+          - Path=/smartstor/**
+      - id: smartmon-falcon
+        uri: lb://smartmon-falcon
+        predicates:
+          - Path=/falcon/**
+
+smartmon.api:
+  infoName: smartmon-gateway
+  prefix: /gateway/api/v2

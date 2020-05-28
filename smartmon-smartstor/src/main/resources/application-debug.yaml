@@ -27,7 +27,7 @@ smartmon.datasource:
   liquibase.debug: true
   h2.path: /var/smartmon
   h2.file: smartstor.h2
-  mysql.host: 172.24.8.55
+  mysql.host: 172.24.8.132
   mysql.user: root
   mysql.password: root
   mysql.db: smartmon_smartstor

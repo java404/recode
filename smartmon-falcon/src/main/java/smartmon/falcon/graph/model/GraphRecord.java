@@ -13,7 +13,7 @@ public class GraphRecord {
   private List<GraphValue> graphValues;
 
   @Data
-  private static class GraphValue {
+  public static class GraphValue {
     private Long timestamp;
     private Double value;
   }

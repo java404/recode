@@ -1,10 +1,15 @@
 package smartmon.utilities.misc;
 
+import com.google.common.collect.Maps;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.cglib.beans.BeanMap;
 
 @Slf4j
 public class BeanConverter {
@@ -37,5 +42,19 @@ public class BeanConverter {
       log.warn("Beans convert exception:", e);
     }
     return results;
+  }
+
+  public static <T> Map<String, Object> beanToMap(T bean) {
+    Map<String, Object> map = Maps.newHashMap();
+    if (bean != null) {
+      BeanMap beanMap = BeanMap.create(bean);
+      for (Object key : beanMap.keySet()) {
+        Object value = beanMap.get(key);
+        if (Objects.nonNull(value)) {
+          map.put(Objects.toString(key), beanMap.get(key));
+        }
+      }
+    }
+    return map;
   }
 }

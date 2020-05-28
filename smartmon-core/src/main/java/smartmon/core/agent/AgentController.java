@@ -4,12 +4,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import smartmon.taskmanager.types.TaskGroup;
+import smartmon.taskmanager.vo.TaskGroupVo;
 import smartmon.utilities.general.SmartMonResponse;
 
 @Api(tags = "agents")
@@ -20,9 +21,16 @@ public class AgentController {
   private AgentService agentService;
 
   @ApiOperation("install agent")
-  @PatchMapping
-  public SmartMonResponse<TaskGroup> installAgent(@RequestParam("hostUuid") String hostUuid) {
-    TaskGroup taskGroup = agentService.installInjector(hostUuid);
-    return new SmartMonResponse<>(taskGroup);
+  @PostMapping
+  public SmartMonResponse<TaskGroupVo> installAgent(@RequestParam("hostUuid") String hostUuid) {
+    TaskGroup taskGroup = agentService.installAgent(hostUuid);
+    return new SmartMonResponse<>(taskGroup.dumpVo());
+  }
+
+  @ApiOperation("uninstall agent")
+  @DeleteMapping
+  public SmartMonResponse<TaskGroupVo> uninstallAgent(@RequestParam("hostUuid") String hostUuid) {
+    TaskGroup taskGroup = agentService.uninstallAgent(hostUuid);
+    return new SmartMonResponse<>(taskGroup.dumpVo());
   }
 }

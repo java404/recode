@@ -57,7 +57,7 @@ public class ShellSession {
   @Getter
   private Session session;
 
-  ShellSession(TargetHost hostInfo, Encryption encryption) {
+  public ShellSession(TargetHost hostInfo, Encryption encryption) {
     this.hostInfo = hostInfo;
     this.encryption = encryption;
   }
@@ -94,7 +94,7 @@ public class ShellSession {
     session.setConfig("TCPKeepAlive", "yes");
     session.setPassword(getSshPassword());
     session.setUserInfo(jscUserInfo);
-    session.setTimeout(Math.max(soTimeout, soTimeout));
+    session.setTimeout(Math.max(MIN_SO_TIMEOUT_SECONDS, soTimeout));
     session.connect(connTimeout);
     return session;
   }

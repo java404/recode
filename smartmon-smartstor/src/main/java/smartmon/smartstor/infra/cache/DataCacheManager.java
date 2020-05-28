@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import smartmon.cache.SmartMonCacheService;
 import smartmon.cache.SmatMonCacheItem;
 import smartmon.smartstor.domain.model.Disk;
+import smartmon.smartstor.domain.model.DiskRaidLedInfo;
 import smartmon.smartstor.domain.model.Lun;
 import smartmon.smartstor.domain.model.Pool;
 
@@ -43,6 +44,7 @@ public class DataCacheManager {
       resourceTypeKeyMap.put(Disk.class, "Disks");
       resourceTypeKeyMap.put(Pool.class, "Pools");
       resourceTypeKeyMap.put(Lun.class, "Luns");
+      resourceTypeKeyMap.put(DiskRaidLedInfo.class, "DiskRaidLedInfos");
     }
 
     static <T> String getCacheKey(String serviceIp, Class<T> resourceType) {

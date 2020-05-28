@@ -7,41 +7,83 @@ databaseChangeLog:
             comment: Task Group
             splitStatements: false
             sql: CREATE TABLE task_group (
-              task_group_id BIGINT(20) NOT NULL AUTO_INCREMENT,
+              task_group_id BIGINT(20) AUTO_INCREMENT,
               name VARCHAR(128),
               service VARCHAR(128),
               create_time datetime DEFAULT NULL,
               complete_time datetime DEFAULT NULL,
               status VARCHAR(128),
-              task_error BOOLEAN,
+              success BOOLEAN,
               CONSTRAINT pk_task_group__task_group_id PRIMARY KEY (task_group_id));
         - sql:
             comment: Task Items
+            dbms: mysql, mariadb
             splitStatements: false
             sql: CREATE TABLE task (
-              task_id BIGINT(20) NOT NULL AUTO_INCREMENT,
+              task_id BIGINT(20) AUTO_INCREMENT,
               task_group_id BIGINT(20),
               create_time datetime DEFAULT NULL,
               complete_time datetime DEFAULT NULL,
               status VARCHAR(128),
               option MEDIUMTEXT COLLATE UTF8_BIN,
-              details MEDIUMTEXT COLLATE UTF8_BIN,
+              detail MEDIUMTEXT COLLATE UTF8_BIN,
               success BOOLEAN,
               error MEDIUMTEXT COLLATE UTF8_BIN,
-              total_steps TINYINT NOT NULL DEFAULT 0,
-              completed_steps TINYINT NOT NULL DEFAULT 0,
+              total_steps TINYINT DEFAULT 0,
+              completed_steps TINYINT DEFAULT 0,
               CONSTRAINT pk_task__task_id PRIMARY KEY (task_id),
-              CONSTRAINT fk_task__task_group_id FOREIGN KEY (`task_group_id`) REFERENCES `task_group` (`task_group_id`));
+              CONSTRAINT fk_task__task_group_id FOREIGN KEY (task_group_id) REFERENCES task_group (task_group_id));
+        - sql:
+            comment: Task Items
+            dbms: h2
+            splitStatements: false
+            sql: CREATE TABLE task (
+              task_id BIGINT(20) AUTO_INCREMENT,
+              task_group_id BIGINT(20),
+              create_time datetime DEFAULT NULL,
+              complete_time datetime DEFAULT NULL,
+              status VARCHAR(128),
+              option MEDIUMTEXT,
+              detail MEDIUMTEXT,
+              success BOOLEAN,
+              error MEDIUMTEXT,
+              total_steps TINYINT DEFAULT 0,
+              completed_steps TINYINT DEFAULT 0,
+              CONSTRAINT pk_task__task_id PRIMARY KEY (task_id),
+              CONSTRAINT fk_task__task_group_id FOREIGN KEY (task_group_id) REFERENCES task_group (task_group_id));
         - sql:
             comment: Task Step
             splitStatements: false
+            dbms: mysql, mariadb
             sql: CREATE TABLE task_step (
-              task_step_id BIGINT(20) NOT NULL AUTO_INCREMENT,
+              task_step_id BIGINT(20) AUTO_INCREMENT,
               task_id BIGINT(20),
               create_time datetime DEFAULT NULL,
               complete_time datetime DEFAULT NULL,
               strategy VARCHAR(128),
               detail MEDIUMTEXT COLLATE UTF8_BIN,
+              error MEDIUMTEXT COLLATE UTF8_BIN,
+              success BOOLEAN,
               step_log MEDIUMTEXT COLLATE UTF8_BIN,
+              step_name TEXT COLLATE UTF8_BIN,
+              step_type TEXT COLLATE UTF8_BIN,
               CONSTRAINT pk_task_step__task_step_id PRIMARY KEY (task_step_id),
-              CONSTRAINT fk_task_ste__task_id FOREIGN KEY (`task_id`) REFERENCES `task` (`task_id`));
+              CONSTRAINT fk_task_ste__task_id FOREIGN KEY (task_id) REFERENCES task (task_id));
+        - sql:
+            comment: Task Step
+            splitStatements: false
+            dbms: h2
+            sql: CREATE TABLE task_step (
+              task_step_id BIGINT(20) AUTO_INCREMENT,
+              task_id BIGINT(20),
+              create_time datetime DEFAULT NULL,
+              complete_time datetime DEFAULT NULL,
+              strategy VARCHAR(128),
+              detail MEDIUMTEXT,
+              error MEDIUMTEXT,
+              success BOOLEAN,
+              step_log MEDIUMTEXT,
+              step_name TEXT,
+              step_type TEXT,
+              CONSTRAINT pk_task_step__task_step_id PRIMARY KEY (task_step_id),
+              CONSTRAINT fk_task_ste__task_id FOREIGN KEY (task_id) REFERENCES task (task_id));

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Strings;
 import java.math.BigDecimal;
 import lombok.Data;
+import smartmon.smartstor.domain.model.enums.IEnum;
+import smartmon.smartstor.domain.model.enums.RaidTypeEnum;
 
 
 @Data
@@ -73,5 +75,9 @@ public class PbDataRaidDiskInfo {
     } catch (Exception err) {
       return 0L;
     }
+  }
+
+  public RaidTypeEnum getRaidType() {
+    return IEnum.getByCode(RaidTypeEnum.class, this.raidType);
   }
 }

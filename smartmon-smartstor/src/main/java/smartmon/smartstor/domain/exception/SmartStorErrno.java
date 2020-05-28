@@ -11,4 +11,9 @@ public class SmartStorErrno {
   public static final int STORAGE_HOST_VERIFY_FAILED = BEGIN_NUM + 6;
   public static final int PBDATA_NO_BODY = BEGIN_NUM + 7;
   public static final int PBDATA_DECODE = BEGIN_NUM + 8;
+  public static final int PBDATA_GROUP_OPT_FAILED = BEGIN_NUM + 9;
+  public static final int PBDATA_DISK_OPT_FAILED = BEGIN_NUM + 10;
+  public static final int PBDATA_LUN_OPT_FAILED = BEGIN_NUM + 11;
+  public static final int PBDATA_POOL_OPT_FAILED = BEGIN_NUM + 12;
+  public static final int FEIGN_EXEC_FAILED = BEGIN_NUM + 13;
 }

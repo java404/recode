@@ -28,6 +28,7 @@ import smartmon.falcon.remote.types.graph.FalconEndpointCounter;
 import smartmon.falcon.remote.types.graph.FalconEndpointCounterQueryParam;
 import smartmon.falcon.remote.types.graph.FalconGraphHistoryQueryParam;
 import smartmon.falcon.remote.types.graph.FalconGraphLastPointQueryParam;
+import smartmon.falcon.remote.types.graph.FalconGraphLastRecord;
 import smartmon.falcon.remote.types.graph.FalconGraphRecord;
 import smartmon.falcon.remote.types.host.FalconHostGroup;
 import smartmon.falcon.remote.types.host.FalconHostGroupCreateParam;
@@ -47,6 +48,7 @@ import smartmon.falcon.remote.types.template.FalconTemplateInfo;
 import smartmon.falcon.remote.types.template.FalconTemplates;
 import smartmon.falcon.remote.types.user.FalconUser;
 import smartmon.falcon.remote.types.user.FalconUserCreateParam;
+import smartmon.falcon.remote.types.user.FalconUserCreateResponse;
 import smartmon.falcon.remote.types.user.FalconUserDeleteParam;
 import smartmon.falcon.remote.types.user.FalconUserUpdateParam;
 import smartmon.utilities.misc.TargetHost;
@@ -163,7 +165,7 @@ public class FalconClient {
     return this.userManagerRequest.listUsers(falconApiToken);
   }
 
-  public FalconResponseData createUser(FalconUserCreateParam createParam, Map<String, String> falconApiToken) {
+  public FalconUserCreateResponse createUser(FalconUserCreateParam createParam, Map<String, String> falconApiToken) {
     return this.userManagerRequest.createUser(createParam, falconApiToken);
   }
 
@@ -218,11 +220,15 @@ public class FalconClient {
     return this.graphManagerRequest.getGraphHistory(queryParam, falconApiToken);
   }
 
-  public List<FalconGraphRecord> getGraphLastPoint(FalconGraphLastPointQueryParam queryParam,
-                                                   Map<String, String> falconApiToken) {
+  public List<FalconGraphLastRecord> getGraphLastPoint(List<FalconGraphLastPointQueryParam> queryParam,
+                                                       Map<String, String> falconApiToken) {
     return this.graphManagerRequest.getGraphLastPoint(queryParam, falconApiToken);
   }
 
+  public List<FalconEndpoint> getEndpoints(FalconEndpointQueryParam queryParam,
+                                           Map<String, String> falconApiToken) {
+    return this.endPointManagerRequest.listEndpoints(queryParam, falconApiToken);
+  }
 
   public FalconEventCases listEventCases(FalconEventCasesQueryParam eventCaseQueryParam,
                                          Map<String, String> falconApiToken) {

@@ -27,8 +27,10 @@ JAVA_OPT="${JAVA_OPT} -Xms256m -Xmx512m"
 
 SMARTMON_LOG_DIR=/var/log/smartmon
 SMARTMON_DB_DIR=/var/smartmon
+SMARTMON_STORE_DIR=/opt/smartmon/data
 mkdir -pv ${SMARTMON_DB_DIR}
 mkdir -pv ${SMARTMON_LOG_DIR}
+mkdir -pv ${SMARTMON_STORE_DIR}
 
 echo "$JAVA ${JAVA_OPT}"
 echo "SmartMon-Gateway is starting"

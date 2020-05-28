@@ -1,7 +1,5 @@
 package smartmon.falcon.strategy.model;
 
-import smartmon.falcon.alarm.model.EventNoteStatusEnum;
-
 import java.util.Arrays;
 import java.util.Objects;
 

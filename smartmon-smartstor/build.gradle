@@ -59,6 +59,7 @@ processResources {
 dependencies {
   compile project(':smartmon-utilities')
   compile project(':smartmon-smartstor-provider')
+  compile project(':smartmon-falcon-provider')
   compile project(':smartmon-taskmanager')
   compile project(':smartmon-cache')
   compile project(':smartmon-webtools')

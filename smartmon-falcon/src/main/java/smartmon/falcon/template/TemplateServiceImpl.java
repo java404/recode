@@ -1,5 +1,7 @@
 package smartmon.falcon.template;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import java.util.Arrays;
@@ -8,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +21,11 @@ import smartmon.falcon.remote.types.FalconResponseData;
 import smartmon.falcon.remote.types.template.FalconAction;
 import smartmon.falcon.remote.types.template.FalconActionUpdateParam;
 import smartmon.falcon.strategy.model.Strategy;
+import smartmon.falcon.strategy.model.StrategyOptions;
 import smartmon.falcon.user.Team;
 import smartmon.utilities.misc.BeanConverter;
 
+@Slf4j
 @Service
 public class TemplateServiceImpl implements TemplateService {
 
@@ -78,10 +83,23 @@ public class TemplateServiceImpl implements TemplateService {
 
   @Override
   public List<Strategy> getStrategiesByTemplateId(Integer templateId) {
+    final ObjectMapper mapper = new ObjectMapper();
     return CollectionUtils.emptyIfNull(falconApiComponent.getFalconClient()
       .getTemplateInfoById(templateId, falconApiComponent.getApiToken()).getStrategies())
       .stream()
-      .map(s -> BeanConverter.copy(s, Strategy.class))
+      .map(s -> {
+        Strategy strategy = BeanConverter.copy(s, Strategy.class);
+        try {
+          if (StringUtils.isNotEmpty(s.getFalconStrategyOptions())) {
+            StrategyOptions strategyOptions = mapper.readValue(s
+                .getFalconStrategyOptions(), StrategyOptions.class);
+            strategy.setStrategyOptions(strategyOptions);
+          }
+        } catch (JsonProcessingException e) {
+          log.error(" get strategyOptions error ", e);
+        }
+        return strategy;
+      })
       .collect(Collectors.toList());
   }
 

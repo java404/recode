@@ -7,6 +7,7 @@ import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import smartmon.smartstor.domain.model.Disk;
+import smartmon.smartstor.domain.model.RaidDiskInfo;
 import smartmon.utilities.misc.BeanConverter;
 import smartmon.utilities.misc.JsonConverter;
 
@@ -33,7 +34,8 @@ public class PbDataDiskInfos {
       this.raidDiskInfos.forEach(raidDiskInfo -> {
         final Disk copyRaidDiskInfo = BeanConverter.copy(raidDiskInfo, Disk.class);
         if (copyRaidDiskInfo != null) {
-          copyRaidDiskInfo.setRaidInfo(JsonConverter.writeValueAsStringQuietly(raidDiskInfo));
+          //copyRaidDiskInfo.setRaidInfo(JsonConverter.writeValueAsStringQuietly(raidDiskInfo));
+          copyRaidDiskInfo.setRaidInfo(BeanConverter.copy(raidDiskInfo, RaidDiskInfo.class));
           copyRaidDiskInfo.setDiskName("");
           copyRaidDiskInfo.setDevName(raidDiskInfo.getRaidDevName());
           copyRaidDiskInfo.setSize(raidDiskInfo.getRaidSize());

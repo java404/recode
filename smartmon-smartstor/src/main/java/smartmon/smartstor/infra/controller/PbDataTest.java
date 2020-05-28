@@ -23,19 +23,19 @@ public class PbDataTest {
   @GetMapping("disk/list")
   @ResponseBody
   public List<Disk> getDisks() {
-    return apiProxy.getDisks("172.24.12.218");
+    return apiProxy.getDisks("172.24.12.216");
   }
 
   @GetMapping("disk/info")
   @ResponseBody
   public Disk getDiskInfo() {
-    return apiProxy.getDiskInfo("172.24.12.218", "hd01");
+    return apiProxy.getDiskInfo("172.24.12.216", "hd01");
   }
 
   @GetMapping("group/list")
   @ResponseBody
   public List<Group> getGroups() {
-    return apiProxy.getGroups("172.24.12.218");
+    return apiProxy.getGroups("172.24.12.216");
   }
 
   @GetMapping("pool/list")
@@ -49,7 +49,7 @@ public class PbDataTest {
   @GetMapping("lun/list")
   @ResponseBody
   public List<Lun> getLuns() {
-    return apiProxy.getLuns("172.24.12.218");
+    return apiProxy.getLuns("172.24.12.216");
   }
 
   @PostMapping("disk")

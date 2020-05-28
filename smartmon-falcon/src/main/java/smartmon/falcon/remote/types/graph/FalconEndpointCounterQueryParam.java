@@ -10,5 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FalconEndpointCounterQueryParam {
   @JsonProperty("eid")
-  private Integer endpointId;
+  private String eid;
+  private String metricQuery;
+  private Integer page;
+  private Integer limit;
 }

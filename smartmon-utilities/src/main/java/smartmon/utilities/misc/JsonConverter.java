@@ -1,8 +1,11 @@
 package smartmon.utilities.misc;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Splitter;
@@ -10,6 +13,7 @@ import com.google.common.base.Strings;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.ListUtils;
 
@@ -21,6 +25,7 @@ public class JsonConverter {
     mapper = new ObjectMapper();
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
   }
 
   private static ObjectMapper getMapper() {
@@ -60,6 +65,19 @@ public class JsonConverter {
   public static <T> T readValueQuietly(String value, Class<T> valueType) {
     try {
       return getMapper().readValue(value, valueType);
+    } catch (JsonProcessingException error) {
+      log.warn("Json process exception:", error);
+      return null;
+    }
+  }
+
+  public static <T> T readValueQuietly(String value, Class<?> parametrized, Class<?>... parameterClasses) {
+    try {
+      if (value == null) {
+        return null;
+      }
+      JavaType javaType = getMapper().getTypeFactory().constructParametricType(parametrized, parameterClasses);
+      return getMapper().readValue(value, javaType);
     } catch (JsonProcessingException error) {
       log.warn("Json process exception:", error);
       return null;

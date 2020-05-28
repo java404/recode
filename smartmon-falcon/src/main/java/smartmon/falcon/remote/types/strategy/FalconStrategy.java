@@ -24,4 +24,8 @@ public class FalconStrategy {
   @JsonProperty("tpl_id")
   private Long templateId;
   private PauseEnum pause;
+  @JsonProperty("strategy_options")
+  private String falconStrategyOptions;
+  @JsonProperty("strategy_class")
+  private String strategyClass;
 }

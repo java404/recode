@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import smartmon.taskmanager.TaskManagerService;
 import smartmon.taskmanager.exception.InvalidTaskGroupId;
 import smartmon.taskmanager.types.TaskGroup;
+import smartmon.taskmanager.vo.TaskGroupVo;
 import smartmon.utilities.general.SmartMonResponse;
 
 
@@ -24,14 +25,14 @@ public class SmartMonTaskManager {
   private TaskManagerService taskManagerService;
 
   @GetMapping
-  public SmartMonResponse<List<TaskGroup>> getAllTaskGroups() {
+  public SmartMonResponse<List<TaskGroupVo>> getAllTaskGroups() {
     return new SmartMonResponse<>(taskManagerService.getAllTaskGroups());
   }
 
   @ApiOperation("Get task group by id")
   @GetMapping("{id}")
-  public SmartMonResponse<TaskGroup> getByTaskId(@PathVariable Long id) {
-    final TaskGroup taskGroup = taskManagerService.findTaskGroupById(id);
+  public SmartMonResponse<TaskGroupVo> getByTaskId(@PathVariable("id") Long id) {
+    final TaskGroupVo taskGroup = taskManagerService.findTaskGroupById(id);
     if (taskGroup == null) {
       log.error("Invalid task group {}", id);
       throw new InvalidTaskGroupId();

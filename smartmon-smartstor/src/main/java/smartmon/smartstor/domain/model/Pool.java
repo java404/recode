@@ -2,6 +2,7 @@ package smartmon.smartstor.domain.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import smartmon.smartstor.domain.model.enums.PoolCacheModeEnum;
 import smartmon.smartstor.domain.share.Entity;
 
 @Data
@@ -20,7 +21,7 @@ public class Pool extends Entity {
   private Double extPoolInfoReadCacheHitRate;
   private Double extPoolInfoWriteCacheHitRate;
   private Double extPoolInfoTotalCacheHitRate;
-  private Integer extPoolInfoPoolCacheModel;
+  private PoolCacheModeEnum extPoolInfoPoolCacheModel;
   private Boolean isVariable;
   private Integer exportState;
   private String exportStateStr;

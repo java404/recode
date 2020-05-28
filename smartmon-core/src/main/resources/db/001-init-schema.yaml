@@ -9,6 +9,10 @@ databaseChangeLog:
             sql: CREATE TABLE metadata (
               name VARCHAR(128), value MEDIUMTEXT,
               constraint pk_metadata primary key (name));
+  - changeSet:
+      id: init-schema-001-table-idc
+      author: xiong.jia_le
+      changes:
         - sql:
             comment: Table idc
             splitStatements: false
@@ -17,6 +21,10 @@ databaseChangeLog:
               name VARCHAR(100),
               constraint pk_idc primary key (id),
               constraint uk_idc_name unique key (name));
+  - changeSet:
+      id: init-schema-001-table-rack_allocation
+      author: xiong.jia_le
+      changes:
         - sql:
             comment: Table rack_allocation
             splitStatements: false
@@ -27,13 +35,58 @@ databaseChangeLog:
               host_uuid VARCHAR(100),
               size int(11),
               constraint pk_rack_allocation primary key (idc_id, rack_name, rack_index));
+  - changeSet:
+      id: init-schema-001-table-smartmon_host
+      author: xiong.jia_le
+      changes:
         - sql:
             comment: Table smartmon_host
             splitStatements: false
             sql: CREATE TABLE smartmon_host (
               host_uuid VARCHAR(100) NOT NULL,
+              create_time datetime,
+              update_time datetime,
+              status_time datetime,
               manage_ip VARCHAR(100) NOT NULL,
               sys_username VARCHAR(100) NOT NULL,
               sys_password VARCHAR(100) NOT NULL,
               ssh_port int(11),
-              constraint pk_smartmon_host primary key (host_uuid));
+              ipmi_address VARCHAR(100),
+              ipmi_username VARCHAR(100),
+              ipmi_password VARCHAR(100),
+              power_state VARCHAR(50),
+              agent_state VARCHAR(50),
+              agent_task_id VARCHAR(50),
+              hostname VARCHAR(100),
+              system_vendor VARCHAR(100),
+              system VARCHAR(100),
+              architecture VARCHAR(100),
+              os_family VARCHAR(100),
+              distribution VARCHAR(100),
+              kernel VARCHAR(100),
+              processor_model VARCHAR(100),
+              processor_cores int(11),
+              processor_count int(11),
+              threads_per_core int(11),
+              logic_processor_count int(11),
+              memory_total int(11),
+              swap_total int(11),
+              mounts MEDIUMTEXT,
+              bios_version VARCHAR(100),
+              constraint pk_smartmon_host primary key (host_uuid),
+              constraint uk_manage_ip unique key (manage_ip));
+  - changeSet:
+      id: init-schema-001-table-metafile
+      author: xiong.jia_le
+      changes:
+        - sql:
+            comment: Table metafile
+            splitStatements: false
+            sql: CREATE TABLE metafile (
+              file_id BIGINT(20) AUTO_INCREMENT,
+              original_filename TEXT,
+              local_filename VARCHAR(512),
+              local_filesize BIGINT(20) NULL,
+              timestamp datetime DEFAULT NULL,
+              type VARCHAR(128), status VARCHAR(128), error_message TEXT,
+              CONSTRAINT pk_metafile__file_id PRIMARY KEY (file_id));

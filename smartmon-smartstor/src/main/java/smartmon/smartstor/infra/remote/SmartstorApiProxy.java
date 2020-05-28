@@ -30,15 +30,24 @@ import smartmon.smartstor.infra.remote.types.PbDataResponseCode;
 import smartmon.smartstor.infra.remote.types.disk.PbDataDiskAddParam;
 import smartmon.smartstor.infra.remote.types.disk.PbDataDiskInfo;
 import smartmon.smartstor.infra.remote.types.disk.PbDataDiskInfos;
+import smartmon.smartstor.infra.remote.types.group.PbDataGroupAddNodeParam;
+import smartmon.smartstor.infra.remote.types.group.PbDataGroupAddParam;
 import smartmon.smartstor.infra.remote.types.group.PbDataGroupInfos;
 import smartmon.smartstor.infra.remote.types.lun.PbDataAsmDiskInfo;
+import smartmon.smartstor.infra.remote.types.lun.PbDataLunConfigParam;
+import smartmon.smartstor.infra.remote.types.lun.PbDataLunCreateParam;
 import smartmon.smartstor.infra.remote.types.lun.PbDataLunInfo;
 import smartmon.smartstor.infra.remote.types.lun.PbDataLunInfoBackendRes;
 import smartmon.smartstor.infra.remote.types.lun.PbDataLunInfos;
 import smartmon.smartstor.infra.remote.types.node.PbDataNodeInfos;
 import smartmon.smartstor.infra.remote.types.node.PbDataNodeItem;
+import smartmon.smartstor.infra.remote.types.pool.PbDataPoolCreateParam;
+import smartmon.smartstor.infra.remote.types.pool.PbDataPoolDirtyConfigParam;
 import smartmon.smartstor.infra.remote.types.pool.PbDataPoolInfo;
 import smartmon.smartstor.infra.remote.types.pool.PbDataPoolInfos;
+import smartmon.smartstor.infra.remote.types.pool.PbDataPoolSizeConfigParam;
+import smartmon.smartstor.infra.remote.types.pool.PbDataPoolSkipConfigParam;
+import smartmon.smartstor.infra.remote.types.pool.PbDataPoolSynClevelConfgParam;
 import smartmon.utilities.misc.BeanConverter;
 
 @Component
@@ -117,32 +126,28 @@ public class SmartstorApiProxy implements SmartstorApiService {
   }
 
   @Override
-  public void addDisk(String serviceIp, String devName, Integer partitionCount, String diskType) {
+  public PbDataResponseCode addDisk(String serviceIp, String devName, Integer partitionCount, String diskType) {
     final PbDataClient client = pbDataClientService.getClient(serviceIp, getSmartStorApiPort());
-    PbDataResponseCode pbDataResponseCode = client.diskAdd(
+    return client.diskAdd(
       new PbDataDiskAddParam(devName, partitionCount, diskType));
-    System.out.println(pbDataResponseCode);
   }
 
   @Override
-  public void delDisk(String serviceIp, String diskName) {
+  public PbDataResponseCode delDisk(String serviceIp, String diskName) {
     final PbDataClient client = pbDataClientService.getClient(serviceIp, getSmartStorApiPort());
-    PbDataResponseCode pbDataResponseCode = client.diskDel(diskName);
-    System.out.println(pbDataResponseCode);
+    return client.diskDel(diskName);
   }
 
   @Override
-  public void diskRaidLedOnState(String serviceIp, String cesAddr) {
+  public PbDataResponseCode diskRaidLedOnState(String serviceIp, String cesAddr) {
     final PbDataClient client = pbDataClientService.getClient(serviceIp, getSmartStorApiPort());
-    final PbDataResponseCode pbDataResponseCode = client.diskRaidLedOnState(cesAddr);
-    System.out.println(pbDataResponseCode);
+    return client.diskRaidLedOnState(cesAddr);
   }
 
   @Override
-  public void diskRaidLedOffState(String serviceIp, String cesAddr) {
+  public PbDataResponseCode diskRaidLedOffState(String serviceIp, String cesAddr) {
     final PbDataClient client = pbDataClientService.getClient(serviceIp, getSmartStorApiPort());
-    final PbDataResponseCode pbDataResponseCode = client.diskRaidLedOnState(cesAddr);
-    System.out.println(pbDataResponseCode);
+    return client.diskRaidLedOnState(cesAddr);
   }
 
   @Override
@@ -193,6 +198,114 @@ public class SmartstorApiProxy implements SmartstorApiService {
       return convertLuns(lunInfos.getLunInfos());
     }
     return Collections.emptyList();
+  }
+
+  @Override
+  public void addGroup(String serviceIp, String groupName) {
+    final PbDataClient client = pbDataClientService.getClient(serviceIp, getSmartStorApiPort());
+    client.groupAdd(new PbDataGroupAddParam(groupName, null));
+  }
+
+  @Override
+  public PbDataResponseCode delGroup(String serviceIp, String groupName) {
+    final PbDataClient client = pbDataClientService.getClient(serviceIp, getSmartStorApiPort());
+    return client.groupDel(groupName);
+  }
+
+  @Override
+  public PbDataResponseCode addNodeToGroup(String serviceIp, String groupName, String nodeName) {
+    final PbDataClient client = pbDataClientService.getClient(serviceIp, getSmartStorApiPort());
+    return client.groupAddNode(new PbDataGroupAddNodeParam(nodeName, null), groupName);
+  }
+
+  @Override
+  public PbDataResponseCode removeNodeFromGroup(String serviceIp, String groupName, String nodeName) {
+    final PbDataClient client = pbDataClientService.getClient(serviceIp, getSmartStorApiPort());
+    return client.groupDelNode(groupName, nodeName);
+  }
+
+  @Override
+  public PbDataResponseCode addLun(String serviceIp,
+                                   String dataDiskName,
+                                   Boolean baseDisk,
+                                   String poolName,
+                                   Integer size,
+                                   String groupName) {
+    final PbDataClient client = pbDataClientService.getClient(serviceIp, getSmartStorApiPort());
+    return client.lunCreate(new PbDataLunCreateParam(dataDiskName, baseDisk, poolName, size, groupName));
+  }
+
+  @Override
+  public PbDataResponseCode lunOffline(String serviceIp, String lunName, Boolean asmStatus) {
+    final PbDataClient client = pbDataClientService.getClient(serviceIp, getSmartStorApiPort());
+    return client.lunOffline(lunName, asmStatus);
+  }
+
+  @Override
+  public PbDataResponseCode lunOnline(String serviceIp, String lunName) {
+    final PbDataClient client = pbDataClientService.getClient(serviceIp, getSmartStorApiPort());
+    return client.lunOnline(lunName);
+  }
+
+  @Override
+  public PbDataResponseCode addPool(String serviceIp, String diskName, Boolean isVariable,
+                                    Long extent, Long bucket, Long sippet) {
+    final PbDataClient client = pbDataClientService.getClient(serviceIp, getSmartStorApiPort());
+    return client.poolCreate(new PbDataPoolCreateParam(diskName, isVariable, extent, bucket, sippet));
+  }
+
+  @Override
+  public PbDataResponseCode addLunToGroup(String serviceIp, String groupName, String lunName) {
+    final PbDataClient client = pbDataClientService.getClient(serviceIp, getSmartStorApiPort());
+    return client.lunConfig(new PbDataLunConfigParam(groupName), lunName);
+  }
+
+  @Override
+  public PbDataResponseCode lunActive(String serviceIp, String lunName) {
+    final PbDataClient client = pbDataClientService.getClient(serviceIp, getSmartStorApiPort());
+    return client.lunActive(lunName);
+  }
+
+  @Override
+  public PbDataResponseCode lunInactive(String serviceIp, String lunName, Boolean asmStatus) {
+    final PbDataClient client = pbDataClientService.getClient(serviceIp, getSmartStorApiPort());
+    return client.lunInActive(lunName, asmStatus);
+  }
+
+  @Override
+  public PbDataResponseCode delLun(String serviceIp,
+                                   String lunName,
+                                   Boolean isLvvote,
+                                   Boolean asmStatus) {
+    final PbDataClient client = pbDataClientService.getClient(serviceIp, getSmartStorApiPort());
+    return client.lunDel(lunName, asmStatus, isLvvote);
+  }
+
+  @Override
+  public PbDataResponseCode confPoolSize(String serviceIp, String poolName, Long size) {
+    final PbDataClient client = pbDataClientService.getClient(serviceIp, getSmartStorApiPort());
+    return client.poolConfigSizeUpdata(poolName, new PbDataPoolSizeConfigParam(size));
+  }
+
+  @Override
+  public PbDataResponseCode confDirtythreshold(String serviceIp,
+                                               String poolName,
+                                               Integer threshLower,
+                                               Integer threshUpper) {
+    final PbDataClient client = pbDataClientService.getClient(serviceIp, getSmartStorApiPort());
+    return client.poolConfigDirtyThresh(poolName, new PbDataPoolDirtyConfigParam(threshLower, threshUpper));
+  }
+
+  @Override
+  public PbDataResponseCode confSynclevel(String serviceIp, String poolName, Integer syncLevel) {
+    final PbDataClient client = pbDataClientService.getClient(serviceIp, getSmartStorApiPort());
+    return client.poolConfigSynClevel(poolName, new PbDataPoolSynClevelConfgParam(syncLevel));
+  }
+
+  @Override
+  public PbDataResponseCode confSkipThreshold(String serviceIp, String poolName, Integer skipThreshold) {
+    final PbDataClient client = pbDataClientService.getClient(serviceIp, getSmartStorApiPort());
+    return client.poolConfigSkip(poolName, new PbDataPoolSkipConfigParam(skipThreshold));
   }
 
   private List<Lun> convertLuns(List<PbDataLunInfo> lunInfos) {

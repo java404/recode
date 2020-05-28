@@ -1,22 +1,22 @@
 package smartmon.vhe.controller;
 
 import io.swagger.annotations.Api;
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import smartmon.taskmanager.TaskManagerService;
 import smartmon.taskmanager.types.TaskGroup;
+import smartmon.taskmanager.vo.TaskGroupVo;
 import smartmon.utilities.general.SmartMonResponse;
 import smartmon.vhe.controller.vo.HostInitParamVo;
-import smartmon.vhe.service.StorageHostService;
+import smartmon.vhe.service.HostService;
 import smartmon.vhe.service.dto.VheStorageHostDto;
-import smartmon.vhe.service.dto.VheStorageHostInitDto;
 import smartmon.vhe.service.feign.SmartStorFeignClient;
 import smartmon.webtools.page.SmartMonPageResponseBuilder;
 
@@ -25,21 +25,19 @@ import smartmon.webtools.page.SmartMonPageResponseBuilder;
 @RequestMapping("${smartmon.api.prefix:/vhe/api/v2}/hosts")
 public class HostController {
   @Autowired
-  private StorageHostService hostService;
+  private HostService hostService;
   @Autowired
   private SmartStorFeignClient client;
-  @Autowired
-  private TaskManagerService taskManagerService;
 
   @PostMapping("init")
-  public SmartMonResponse<TaskGroup> initHost(@RequestBody List<HostInitParamVo> hostsVo) {
-    final TaskGroup taskContext = taskManagerService
-      .invokeTask("InitHost", () -> hostService.init(VheStorageHostInitDto.convertToList(hostsVo)));
-    return new SmartMonResponse<>(taskContext);
+  public SmartMonResponse<TaskGroupVo> initHost(@RequestBody List<HostInitParamVo> hostsVo) {
+    TaskGroup taskGroup = hostService.init(HostInitParamVo.toDtos(hostsVo));
+    return new SmartMonResponse<>(taskGroup.dumpVo());
   }
 
   @GetMapping
   public SmartMonResponse getAll(ServerHttpRequest request) {
-    return new SmartMonPageResponseBuilder<VheStorageHostDto>(hostService.listAll(), request, "listenIp").build();
+    return new SmartMonPageResponseBuilder<VheStorageHostDto>(hostService.listAll(),
+      request, "listenIp").build();
   }
 }

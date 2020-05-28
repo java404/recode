@@ -1,5 +1,7 @@
 package smartmon.smartstor.domain.model;
 
+import java.util.Objects;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
@@ -27,9 +29,15 @@ public class StorageHost extends Entity {
   private String clusterName;
   private String version;
   private Integer versionNum;
+  private String nodeUuid;
 
   public String getHostKey() {
     return StringUtils.isNotEmpty(hostId) ? hostId : listenIp;
+  }
+
+  public boolean match(String hostId, String listenIp) {
+    String hostKey = StringUtils.isNotEmpty(hostId) ? hostId : listenIp;
+    return Objects.equals(this.getHostKey(), hostKey);
   }
 
   public boolean isIos() {
@@ -38,6 +46,10 @@ public class StorageHost extends Entity {
 
   public boolean isBac() {
     return SysModeEnum.isBac(sysMode);
+  }
+
+  public boolean isHostNotConfigured() {
+    return !isHostConfigured();
   }
 
   public boolean isHostConfigured() {

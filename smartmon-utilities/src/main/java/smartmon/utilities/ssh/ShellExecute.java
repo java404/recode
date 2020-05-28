@@ -83,7 +83,7 @@ public class ShellExecute {
     while (true) {
       while (reader.ready()) {
         final String line = reader.readLine();
-        onShellOutput(line + "\n");
+        onShellOutput(line);
       }
 
       if (channelExec.isClosed()) {

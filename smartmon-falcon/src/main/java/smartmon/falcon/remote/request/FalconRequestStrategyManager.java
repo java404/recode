@@ -3,6 +3,7 @@ package smartmon.falcon.remote.request;
 import feign.HeaderMap;
 import feign.Headers;
 import feign.Param;
+import feign.QueryMap;
 import feign.RequestLine;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +18,7 @@ import smartmon.falcon.remote.types.strategy.FalconStrategyUpdateParam;
 public interface FalconRequestStrategyManager {
   @RequestLine("GET /strategy")
   @Headers({"Content-Type: application/json"})
-  List<FalconStrategy> getStrategiesByTemplateId(@RequestBody FalconStrategyQueryParam queryParam,
+  List<FalconStrategy> getStrategiesByTemplateId(@QueryMap FalconStrategyQueryParam queryParam,
                                                  @HeaderMap Map<String, String> falconApiToken);
 
   @RequestLine("GET /strategy/{strategyId}")

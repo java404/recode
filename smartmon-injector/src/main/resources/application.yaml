@@ -8,5 +8,15 @@ logging.config: classpath:logback-smartmon.xml
 
 smartmon.api:
   infoName: smartmon-injector
-  prefix: /api/v2/injector
+  prefix: /injector/api/v2
 
+smartmon.datasource:
+  standalone: true
+  liquibase.changeLog: classpath:db/smartmon-injector-changelog.yaml
+  liquibase.debug: true
+  h2.path: /var/smartmon
+  h2.file: injector.h2
+  mysql.host: 172.24.8.121
+  mysql.user: root
+  mysql.password: root
+  mysql.db: smartmon_injector

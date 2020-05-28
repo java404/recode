@@ -1,11 +1,17 @@
 package smartmon.smartstor.infra.remote.types.disk;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.Lists;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import smartmon.smartstor.domain.model.DiskPart;
+import smartmon.smartstor.domain.model.RaidDiskInfo;
 import smartmon.smartstor.domain.model.enums.DiskTypeEnum;
 import smartmon.smartstor.domain.model.enums.IEnum;
-import smartmon.utilities.misc.JsonConverter;
+import smartmon.utilities.misc.BeanConverter;
 
 @Data
 public class PbDataDiskInfo {
@@ -46,19 +52,43 @@ public class PbDataDiskInfo {
     return this.headerUuid != null ? this.headerUuid.getUuid() : null;
   }
 
-  public String getDiskParts() {
-    return JsonConverter.writeValueAsStringQuietly(this.diskparts);
+  public List<DiskPart> getDiskParts() {
+    //return JsonConverter.writeValueAsStringQuietly(this.diskparts);
+    if (CollectionUtils.isEmpty(diskparts)) {
+      return Lists.newArrayList();
+    }
+    for (PbDataDiskPart diskPart : diskparts) {
+      diskPart.setDevName(this.devName);
+      diskPart.setLastHeartbeatTime(this.lastHeartbeatTime);
+      diskPart.setActualState(this.actualState);
+    }
+    return BeanConverter.copy(diskparts, DiskPart.class);
   }
 
-  public String getRaidInfo() {
-    return JsonConverter.writeValueAsStringQuietly(this.raidInfo);
+  public RaidDiskInfo getRaidInfo() {
+    return BeanConverter.copy(raidInfo, RaidDiskInfo.class);
+    //return JsonConverter.writeValueAsStringQuietly(this.raidInfo);
   }
 
-  public String getExtDiskpartToLunName() {
-    return JsonConverter.writeValueAsStringQuietly(this.extDiskpartToLunNames);
+  public String getExtDiskpartToLunNames() {
+    if (CollectionUtils.isEmpty(this.extDiskpartToLunNames)) {
+      return null;
+    }
+    List<String> names = new ArrayList<>();
+    for (PbDataSimpleKv kv : this.extDiskpartToLunNames) {
+      names.add(kv.toString());
+    }
+    return StringUtils.join(names, ",");
   }
 
   public String getExtDiskpartToPoolNames() {
-    return JsonConverter.writeValueAsStringQuietly(this.extDiskpartToPoolNames);
+    if (CollectionUtils.isEmpty(this.extDiskpartToPoolNames)) {
+      return null;
+    }
+    List<String> names = new ArrayList<>();
+    for (PbDataSimpleKv kv : this.extDiskpartToPoolNames) {
+      names.add(kv.toString());
+    }
+    return StringUtils.join(names, ",");
   }
 }

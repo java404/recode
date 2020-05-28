@@ -29,5 +29,12 @@ public class CacheApi {
     smartMonCacheService.put("item", item);
     final SmatMonCacheItem cacheItem = smartMonCacheService.get("item");
     log.debug("Item {}", cacheItem.getData(TestItem.class).getData());
+
+    smartMonCacheService.putError("item", "error");
+
+    item.setData("456");
+    smartMonCacheService.put("item", item);
+    final SmatMonCacheItem cacheItem2 = smartMonCacheService.get("item");
+    log.debug("Item {}", cacheItem2.getData(TestItem.class).getData());
   }
 }

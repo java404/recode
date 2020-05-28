@@ -2,6 +2,7 @@ package smartmon.falcon.remote;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import smartmon.falcon.graph.model.MergerTypeEnum;
 import smartmon.falcon.remote.client.FalconClient;
 import smartmon.falcon.remote.types.user.FalconUserCreateParam;
 import smartmon.utilities.misc.TargetHost;
@@ -17,9 +18,14 @@ public class UserRemoteTest {
     falconClient.createUser(null, null);
   }
 
-  @Ignore
   @Test
   public void test() {
-    System.out.println(System.currentTimeMillis()/1000);
+//    System.out.println(System.currentTimeMillis()/1000);
+//    System.out.println(MergerTypeEnum.AVERAGE.toString());
+//    System.out.println("123456798");
+
+    String a = "12345/ggg/hhh";
+    String b = a.substring(0, a.indexOf("/"));
+    System.out.println(b);
   }
 }

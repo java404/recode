@@ -5,16 +5,27 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
 import smartmon.falcon.entity.NodeConfigEntity;
 import smartmon.falcon.mapper.NodeConfigMapper;
+import tk.mybatis.mapper.entity.Example;
 
 @Service
 public class NodeConfigService {
   @Autowired
   private NodeConfigMapper nodeConfigMapper;
 
-  public List<NodeConfigEntity> getAll() {
-    return nodeConfigMapper.findAll();
+  public List<NodeConfigEntity> getAll(String hostname, String name) {
+    Example example = new Example(NodeConfigEntity.class);
+    Example.Criteria criteria = example.createCriteria();
+    if (!StringUtils.isEmpty(hostname)) {
+      criteria.andEqualTo("hostname", hostname);
+    }
+    if (!StringUtils.isEmpty(name)) {
+      criteria.andEqualTo("name", name);
+    }
+    return nodeConfigMapper.selectByExample(example);
   }
 
   public NodeConfigEntity addNodeConfig(String data, String hostname, String name) {

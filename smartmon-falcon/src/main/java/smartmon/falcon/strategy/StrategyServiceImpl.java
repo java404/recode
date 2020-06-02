@@ -1,5 +1,6 @@
 package smartmon.falcon.strategy;
 
+import com.google.common.collect.Lists;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,8 @@ import smartmon.falcon.remote.types.strategy.FalconStrategyQueryParam;
 import smartmon.falcon.remote.types.strategy.FalconStrategyUpdateParam;
 import smartmon.falcon.strategy.model.PauseEnum;
 import smartmon.falcon.strategy.model.Strategy;
+import smartmon.falcon.template.Template;
+import smartmon.falcon.template.TemplateInfo;
 import smartmon.falcon.template.TemplateService;
 import smartmon.utilities.misc.BeanConverter;
 
@@ -27,6 +30,17 @@ public class StrategyServiceImpl implements StrategyService {
   private FalconApiComponent falconApiComponent;
   @Autowired
   private TemplateService templateService;
+
+  @Override
+  public List<Strategy> getStrategies() {
+    List<Strategy> strategies = Lists.newArrayList();
+    final List<Template> templates = templateService.listTemplate();
+    for (Template template : templates) {
+      final TemplateInfo templateInfo = templateService.getTemplateInfoById(template.getId());
+      strategies.addAll(templateInfo.getStrategies());
+    }
+    return strategies;
+  }
 
   @Override
   public List<Strategy> getStrategiesByTemplateId(Integer templateId) {

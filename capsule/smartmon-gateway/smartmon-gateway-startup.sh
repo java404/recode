@@ -1,5 +1,7 @@
 #!/bin/sh
 
+_base_dir=`cd "$(dirname "$0")"; pwd`
+
 error_exit ()
 {
   echo "ERROR: $1 !!"
@@ -23,14 +25,17 @@ fi
 export JAVA_HOME
 export JAVA="$JAVA_HOME/bin/java"
 
-JAVA_OPT="${JAVA_OPT} -Xms256m -Xmx512m"
-
 SMARTMON_LOG_DIR=/var/log/smartmon
 SMARTMON_DB_DIR=/var/smartmon
 SMARTMON_STORE_DIR=/opt/smartmon/data
 mkdir -pv ${SMARTMON_DB_DIR}
 mkdir -pv ${SMARTMON_LOG_DIR}
 mkdir -pv ${SMARTMON_STORE_DIR}
+
+export MALLOC_ARENA_MAX=2
+JAVA_OPT="${JAVA_OPT} -XX:+UseSerialGC -Xms256m -Xmx512m -Xss512k -XX:PermSize=128m -XX:MaxPermSize=128m"
+JAVA_OPT="${JAVA_OPT} -Dserver.tomcat.max-threads=50"
+JAVA_OPT="${JAVA_OPT} -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${_base_dir}/java_heapdump.hprof"
 
 echo "$JAVA ${JAVA_OPT}"
 echo "SmartMon-Gateway is starting"

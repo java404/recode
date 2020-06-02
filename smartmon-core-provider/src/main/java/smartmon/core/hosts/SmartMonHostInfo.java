@@ -9,4 +9,5 @@ public class SmartMonHostInfo {
   private BasicInfo basicInfo;
   private SystemInfo systemInfo;
   private HardwareInfo hardwareInfo;
+  private NetworkInfo networkInfo;
 }

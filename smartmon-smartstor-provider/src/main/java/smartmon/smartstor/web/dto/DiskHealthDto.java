@@ -7,7 +7,14 @@ public class DiskHealthDto {
   private String endpoint;
   private String counter;
   private GraphValue value;
-  private Boolean isHealth;
+  private Boolean isMatch;
+
+  public Boolean isHealth() {
+    if (isMatch == null) {
+      return null;
+    }
+    return !isMatch;
+  }
 
   @Data
   public static class GraphValue {

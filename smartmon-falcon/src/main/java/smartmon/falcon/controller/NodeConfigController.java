@@ -2,6 +2,7 @@ package smartmon.falcon.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import smartmon.falcon.controller.vo.NodeConfigCreateVo;
 import smartmon.falcon.entity.NodeConfigEntity;
@@ -29,8 +31,10 @@ public class NodeConfigController {
    */
   @ApiOperation("Get Node Config List")
   @GetMapping
-  public SmartMonResponse<List<NodeConfigEntity>> getNodeConfigList() {
-    return new SmartMonResponse<>(nodeConfigService.getAll());
+  public SmartMonResponse<List<NodeConfigEntity>> getNodeConfigList(
+      @RequestParam(value = "hostname", defaultValue = "") String hostname,
+      @RequestParam(value = "name", defaultValue = "") String name) {
+    return new SmartMonResponse<>(nodeConfigService.getAll(hostname, name));
   }
 
   /**

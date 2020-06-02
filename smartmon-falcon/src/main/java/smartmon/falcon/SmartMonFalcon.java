@@ -9,7 +9,8 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 @EnableDiscoveryClient
 @ComponentScan(basePackages = {"smartmon"})
-@MapperScan(basePackages = {"smartmon.taskmanager.mapper","smartmon.falcon.mapper"})
+@MapperScan(basePackages = {"smartmon.taskmanager.mapper"})
+@tk.mybatis.spring.annotation.MapperScan(basePackages = {"smartmon.falcon.mapper"})
 public class SmartMonFalcon {
   public static void main(String[] args) {
     SpringApplication.run(SmartMonFalcon.class, args);

@@ -3,6 +3,9 @@ server.port: 1989
 spring:
   application.name: smartmon-injector
   jackson.serialization.write-dates-as-timestamps: true
+  servlet.multipart:
+    max-file-size: -1
+    max-request-size: -1
 
 logging.config: classpath:logback-smartmon.xml
 

@@ -77,9 +77,7 @@ public class StorageHostRepositoryPersistence implements StorageHostRepository {
   @Override
   public StorageHost findByServiceIp(String serviceIp) {
     StorageHostEntity entity = hostMapper.findByServiceIp(serviceIp);
-    StorageHost host = new StorageHost();
-    BeanUtils.copyProperties(entity, host);
-    return host;
+    return BeanConverter.copy(entity, StorageHost.class);
   }
 
   @Override

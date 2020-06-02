@@ -3,6 +3,8 @@ package smartmon.taskmanager.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -62,6 +64,41 @@ public class TaskManagerServiceImpl implements TaskManagerService {
     taskManagerMapper.updateTaskStep(dto);
   }
 
+  private void runParallel(TaskGroup taskGroup) {
+    asyncTaskExecutor.submit(() -> {
+      boolean taskGroupSuccess = true;
+      taskGroup.setStatus(TaskStatus.RUNNING);
+      syncTaskGroup(taskGroup);
+
+      final List<CompletableFuture<Boolean>> futures = new ArrayList<>();
+      for (TaskContext task : taskGroup.getTasks()) {
+        task.setTaskEvent(taskEvent);
+        final CompletableFuture<Boolean> future = CompletableFuture.supplyAsync(() -> {
+          TaskContext.run(task);
+          return task.isSuccess();
+        }, asyncTaskExecutor);
+        futures.add(future);
+      }
+
+      CompletableFuture.allOf(futures.toArray(new CompletableFuture<?>[]{})).join();
+      for (final CompletableFuture<Boolean> future : futures) {
+        try {
+          final Boolean result = future.get();
+          if (!result) {
+            taskGroupSuccess = false;
+          }
+        } catch (InterruptedException | ExecutionException error) {
+          log.error("Task get result error: ", error);
+          taskGroupSuccess = false;
+        }
+      }
+
+      taskGroup.setSuccess(taskGroupSuccess);
+      taskGroup.setStatus(TaskStatus.COMPLETED);
+      syncTaskGroup(taskGroup);
+    });
+  }
+
   private void run(TaskGroup taskGroup) {
     asyncTaskExecutor.submit(() -> {
       boolean taskGroupSuccess = true;
@@ -69,7 +106,6 @@ public class TaskManagerServiceImpl implements TaskManagerService {
       syncTaskGroup(taskGroup);
 
       for (TaskContext task : taskGroup.getTasks()) {
-        // TODO launch task in different threads.
         task.setTaskEvent(taskEvent);
         TaskContext.run(task);
         if (!task.isSuccess()) {
@@ -129,6 +165,11 @@ public class TaskManagerServiceImpl implements TaskManagerService {
   @Override
   public void invokeTaskGroup(TaskGroup taskGroup) {
     run(taskGroup);
+  }
+
+  @Override
+  public void invokeTaskGroupParallel(TaskGroup taskGroup) {
+    runParallel(taskGroup);
   }
 
   private List<TaskVo> findTasks(Long groupId) {

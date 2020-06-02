@@ -9,6 +9,8 @@ import smartmon.falcon.strategy.model.PauseEnum;
 import smartmon.falcon.strategy.model.Strategy;
 
 public interface StrategyService {
+  List<Strategy> getStrategies();
+
   List<Strategy> getStrategiesByTemplateId(Integer templateId);
 
   FalconResponseData setStrategyStatus(Integer strategyId, PauseEnum pause);

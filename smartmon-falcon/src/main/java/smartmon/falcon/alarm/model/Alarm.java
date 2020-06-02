@@ -1,7 +1,7 @@
 package smartmon.falcon.alarm.model;
 
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
+import smartmon.falcon.strategy.model.Strategy;
 import smartmon.falcon.strategy.model.StrategyPriorityEnum;
 
 @Data
@@ -31,4 +31,12 @@ public class Alarm {
   private String pdsBusinessName; //PDS 业务名称
   private String pdsBusinessUuid; //PDS UUID
   private String endpointAlias; //Endpoint 别名
+
+  private String events;
+  private Strategy strategy;
+  private AlarmTypeEnum alarmTypeEnum;
+  private String alarmObject;
+  private String alarmMessage;
+  private String alarmTime;
+  private String alarmRecoverTime;
 }

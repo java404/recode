@@ -4,7 +4,7 @@ pipeline {
     stage('Build') {
       steps {
         sh 'gradle --version'
-        sh 'gradle build'
+        sh 'gradle build; gradle publish'
         sh 'cd ${WORKSPACE}/capsule && make'
       }
     }

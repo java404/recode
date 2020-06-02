@@ -31,3 +31,6 @@ smartmon.datasource:
   mysql.user: root
   mysql.password: root
   mysql.db: smartmon_smartstor
+
+ribbon.ConnectTimeout: 500000
+ribbon.ReadTimeout: 500000

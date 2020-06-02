@@ -5,8 +5,8 @@ import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
-import smartmon.core.agent.AgentStateEnum;
 import smartmon.core.hosts.HardwareInfo;
+import smartmon.core.hosts.NetworkInfo;
 import smartmon.core.ipmi.PowerStateEnum;
 import smartmon.utilities.misc.JsonConverter;
 
@@ -45,7 +45,15 @@ public class SmartMonHostDetailVo {
   //Hardware info - mainboard
   private String biosVersion;
 
+  //Network info
+  private String networks;
+  private List<String> monitorNetInterfaces;
+
   public List<HardwareInfo.MountInfo> getMounts() {
     return JsonConverter.readValueQuietly(mounts, List.class, HardwareInfo.MountInfo.class);
+  }
+
+  public NetworkInfo getNetworks() {
+    return JsonConverter.readValueQuietly(networks, NetworkInfo.class);
   }
 }

@@ -1,6 +1,8 @@
 package smartmon.falcon.alarm.service;
 
 import java.util.List;
+
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import smartmon.falcon.alarm.command.EventAlarmFilterCommand;
@@ -18,12 +20,16 @@ import smartmon.falcon.remote.types.alarm.FalconEventNoteQueryParam;
 import smartmon.falcon.remote.types.alarm.FalconEventNotes;
 import smartmon.falcon.remote.types.alarm.FalconEvents;
 import smartmon.falcon.remote.types.alarm.FalconEventsQueryParam;
+import smartmon.falcon.strategy.StrategyService;
+import smartmon.falcon.strategy.model.Strategy;
 import smartmon.utilities.misc.BeanConverter;
 
 @Service
 public class EventAlarmServiceImpl implements EventAlarmService {
   @Autowired
   private FalconApiComponent falconApiComponent;
+  @Autowired
+  private StrategyService strategyService;
 
   @Override
   public List<Alarm> getAlarms(EventAlarmFilterCommand eventAlarmFilterCommand) {
@@ -31,7 +37,18 @@ public class EventAlarmServiceImpl implements EventAlarmService {
     final FalconEventCasesQueryParam queryParam = BeanConverter.copy(eventAlarmFilterCommand,
       FalconEventCasesQueryParam.class);
     final FalconEventCases falconEventCases = falconClient.listEventCases(queryParam, falconApiComponent.getApiToken());
-    return BeanConverter.copy(falconEventCases.getEvents(), Alarm.class);
+    final List<Alarm> alarms = BeanConverter.copy(falconEventCases.getEvents(), Alarm.class);
+    if (CollectionUtils.isNotEmpty(alarms)) {
+      setAlarmStrategyRelation(alarms);
+    }
+    return alarms;
+  }
+
+  private void setAlarmStrategyRelation(List<Alarm> alarms) {
+    alarms.forEach(alarm -> {
+      Strategy strategy = strategyService.getStrategyById(alarm.getStrategyId());
+      alarm.setStrategy(strategy);
+    });
   }
 
   @Override

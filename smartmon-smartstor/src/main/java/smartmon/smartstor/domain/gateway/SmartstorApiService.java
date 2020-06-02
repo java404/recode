@@ -71,4 +71,6 @@ public interface SmartstorApiService {
   PbDataResponseCode confSynclevel(String serviceIp, String poolName, Integer syncLevel);
 
   PbDataResponseCode confSkipThreshold(String serviceIp, String poolName, Integer skipThreshold);
+
+  PbDataResponseCode delPool(String serviceIp, String poolName);
 }

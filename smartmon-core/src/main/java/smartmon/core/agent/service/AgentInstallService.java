@@ -15,9 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import smartmon.agent.client.AgentClientService;
 import smartmon.core.agent.AgentStateEnum;
 import smartmon.core.agent.SmartMonBatchConfig;
-import smartmon.core.agent.client.AgentClientService;
 import smartmon.core.config.SmartMonErrno;
 import smartmon.core.hosts.HostsService;
 import smartmon.core.hosts.mapper.SmartMonHostMapper;
@@ -61,6 +61,21 @@ public class AgentInstallService {
   @Autowired
   private AgentStateService agentStateService;
 
+  public synchronized TaskGroup installBasicService(TargetHost targetHost) {
+    Runnable configRepoClient = () -> repoService.configRepoClient(targetHost);
+    Runnable installBasicService = () -> installInjector(targetHost);
+    Map<String, String> parameters = Maps.newHashMap();
+    parameters.put("hostAddress", targetHost.getAddress());
+    TaskDescription desc = new TaskDescriptionBuilder()
+      .withAction(TaskAct.ACT_INSTALL).withResource(TaskRes.RES_INJECTOR).withParameters(parameters)
+      .withStep("INSTALL", "config yum repo", configRepoClient)
+      .withStep("INSTALL", "install basic service", installBasicService)
+      .build();
+    final TaskGroup taskGroup = taskManagerService.createTaskGroup("InstallInjector", desc);
+    taskManagerService.invokeTaskGroup(taskGroup);
+    return taskGroup;
+  }
+
   public synchronized TaskGroup installAgent(String hostUuid) {
     SmartMonHost smartMonHost = smartMonHostMapper.selectByPrimaryKey(hostUuid);
     checkAgentState(smartMonHost.getManageIp(), smartMonHost.getAgentState());
@@ -92,6 +107,19 @@ public class AgentInstallService {
         address, agentState);
       throw new SmartMonException(SmartMonErrno.AGENT_STATE_ERROR, message);
     }
+  }
+
+  public void installInjectorIfNeed(TargetHost targetHost) {
+    try {
+      Boolean isInjectorHealthy = agentClientService.isInjectorHealthy(targetHost.getAddress());
+      if (Objects.equals(Boolean.TRUE, isInjectorHealthy)) {
+        TaskContext.currentTaskContext().getCurrentStep().appendLog("injector already installed");
+        return;
+      }
+    } catch (Exception ignored) {
+    }
+    repoService.configRepoClient(targetHost);
+    installInjector(targetHost);
   }
 
   private void installInjector(TargetHost targetHost) {

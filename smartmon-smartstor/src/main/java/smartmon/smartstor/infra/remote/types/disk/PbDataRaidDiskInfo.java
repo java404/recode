@@ -4,8 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Strings;
 import java.math.BigDecimal;
 import lombok.Data;
+import smartmon.smartstor.domain.model.HddDiskHealthInfo;
+import smartmon.smartstor.domain.model.SsdDiskHealthInfo;
 import smartmon.smartstor.domain.model.enums.IEnum;
 import smartmon.smartstor.domain.model.enums.RaidTypeEnum;
+import smartmon.utilities.misc.BeanConverter;
 
 
 @Data
@@ -33,6 +36,10 @@ public class PbDataRaidDiskInfo {
 
   private String model;
   private String health;
+  @JsonProperty("ssd_diskhealth_info")
+  private PbDataSsdDiskHealthInfo ssdDiskhealthInfo;
+  @JsonProperty("hdd_diskhealth_info")
+  private PbDataHddDiskHealthInfo hddDiskhealthInfo;
 
   public String getRaidDevName() {
     return String.format("%s:%s:%s", this.ctl, this.eid, this.slot);
@@ -79,5 +86,13 @@ public class PbDataRaidDiskInfo {
 
   public RaidTypeEnum getRaidType() {
     return IEnum.getByCode(RaidTypeEnum.class, this.raidType);
+  }
+
+  public SsdDiskHealthInfo getSsdDiskhealthInfo() {
+    return BeanConverter.copy(ssdDiskhealthInfo, SsdDiskHealthInfo.class);
+  }
+
+  public HddDiskHealthInfo getHddDiskhealthInfo() {
+    return BeanConverter.copy(ssdDiskhealthInfo, HddDiskHealthInfo.class);
   }
 }

@@ -20,7 +20,7 @@ import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.support.CronTrigger;
 import smartmon.core.agent.service.AgentStateService;
-import smartmon.core.hostinfo.HostInfoService;
+import smartmon.core.hostinfo.HostInfoSyncService;
 import smartmon.core.ipmi.IpmiService;
 
 @Slf4j
@@ -34,7 +34,7 @@ public class SchedulingConfig implements SchedulingConfigurer {
   @Autowired
   private AgentStateService agentStateService;
   @Autowired
-  private HostInfoService hostInfoService;
+  private HostInfoSyncService hostInfoSyncService;
   @Autowired
   private IpmiService ipmiService;
 
@@ -80,7 +80,7 @@ public class SchedulingConfig implements SchedulingConfigurer {
   private void syncHostInfo() {
     try {
       log.info(">>>>>>>>> SchedulingConfig.syncHostInfo");
-      hostInfoService.syncHostInfo(executorService);
+      hostInfoSyncService.syncHostInfo(executorService);
     } catch (Exception err) {
       log.error(">>>>>>>>> SchedulingConfig.syncHostInfo error", err);
     }

@@ -6,9 +6,11 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import smartmon.core.hosts.RemoteHostCommand;
 import smartmon.taskmanager.types.TaskGroup;
 import smartmon.taskmanager.vo.TaskGroupVo;
 import smartmon.utilities.general.SmartMonResponse;
@@ -31,6 +33,13 @@ public class AgentController {
   @DeleteMapping
   public SmartMonResponse<TaskGroupVo> uninstallAgent(@RequestParam("hostUuid") String hostUuid) {
     TaskGroup taskGroup = agentService.uninstallAgent(hostUuid);
+    return new SmartMonResponse<>(taskGroup.dumpVo());
+  }
+
+  @ApiOperation("install injector")
+  @PostMapping("injectors")
+  public SmartMonResponse<TaskGroupVo> installInjector(@RequestBody RemoteHostCommand command) {
+    TaskGroup taskGroup = agentService.installInjector(command.toTargetHost());
     return new SmartMonResponse<>(taskGroup.dumpVo());
   }
 }

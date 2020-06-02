@@ -1,9 +1,18 @@
-server.port: 18080
+server.port: 18081
 
 spring:
   application.name: smartmon-examples
   cloud.nacos.discovery.server-addr: 127.0.0.1:8848
   jackson.serialization.write-dates-as-timestamps: true
+
+dubbo:
+  application.name: smartmon-examples-dubbo
+  registry.address: nacos://127.0.0.1:8848
+  scan.base-packages: smartmon.examples.data
+  protocol:
+    name: dubbo
+    port: -1
+    threads: 15
 
 smartmon.api:
   infoName: smartmon-examples

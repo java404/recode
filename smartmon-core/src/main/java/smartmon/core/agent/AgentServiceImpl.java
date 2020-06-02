@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import smartmon.core.agent.service.AgentInstallService;
 import smartmon.core.agent.service.AgentUninstallService;
 import smartmon.taskmanager.types.TaskGroup;
+import smartmon.utilities.misc.TargetHost;
 
 @Slf4j
 @Service
@@ -23,5 +24,10 @@ public class AgentServiceImpl implements AgentService {
   @Override
   public TaskGroup uninstallAgent(String hostUuid) {
     return agentUninstallService.uninstallAgent(hostUuid);
+  }
+
+  @Override
+  public TaskGroup installInjector(TargetHost targetHost) {
+    return agentInstallService.installBasicService(targetHost);
   }
 }

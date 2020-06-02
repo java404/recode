@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import smartmon.injector.files.FileService;
+import smartmon.injector.config.SmartMonBatchConfig;
 import smartmon.taskmanager.TaskManagerService;
 import smartmon.taskmanager.types.TaskDescription;
 import smartmon.taskmanager.types.TaskDescriptionBuilder;
@@ -21,11 +21,11 @@ public class ExecutorController {
   @Autowired
   private TaskManagerService taskManagerService;
   @Autowired
-  private FileService fileService;
+  private SmartMonBatchConfig smartMonBatchConfig;
 
   @PostMapping("shell-command")
   public String executeShellCommand(@RequestBody String command) {
-    String commandExecute = String.format("cd %s && %s", fileService.getTargetFolder(), command);
+    String commandExecute = String.format("cd %s && %s", smartMonBatchConfig.getFileUploadTargetPath(), command);
     Runnable executeShellCommand = () -> {
       LogOutputProcessor processor = new LogOutputProcessorInStepContext();
       executorService.executeShellCommand(commandExecute, processor);

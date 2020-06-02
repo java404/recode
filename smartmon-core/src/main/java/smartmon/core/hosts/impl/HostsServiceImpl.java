@@ -4,18 +4,24 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import smartmon.agent.client.AgentClientService;
 import smartmon.core.config.SmartMonErrno;
 import smartmon.core.hosts.HostsService;
+import smartmon.core.hosts.NetworkInfo;
 import smartmon.core.hosts.exception.SshConnectFailedException;
 import smartmon.core.hosts.mapper.SmartMonHostMapper;
 import smartmon.core.hosts.types.HostAddCommand;
 import smartmon.core.hosts.types.HostConfigCommand;
+import smartmon.core.hosts.types.MonitorNetInterfaceVo;
 import smartmon.core.hosts.types.SmartMonHost;
 import smartmon.core.misc.SshService;
 import smartmon.utilities.general.SmartMonException;
+import smartmon.utilities.misc.JsonConverter;
 
 @Service
 public class HostsServiceImpl implements HostsService {
@@ -23,6 +29,8 @@ public class HostsServiceImpl implements HostsService {
   private SmartMonHostMapper smartMonHostMapper;
   @Autowired
   private SshService sshService;
+  @Autowired
+  private AgentClientService agentClientService;
 
   @Override
   public List<SmartMonHost> getAll() {
@@ -101,6 +109,52 @@ public class HostsServiceImpl implements HostsService {
       host.setUpdateTime(new Date());
       smartMonHostMapper.updateByPrimaryKey(host);
     }
+  }
+
+  @Override
+  public MonitorNetInterfaceVo getMonitorNetInterfaces(String hostUuid) {
+    SmartMonHost host = smartMonHostMapper.selectByPrimaryKey(hostUuid);
+    if (host == null) {
+      return null;
+    }
+    MonitorNetInterfaceVo vo = new MonitorNetInterfaceVo();
+    vo.setHostUuid(host.getHostUuid());
+    vo.setHostname(host.getHostname());
+    NetworkInfo networkInfo = host.getNetworkInfo();
+    if (networkInfo != null) {
+      List<String> interfaces = ignoreLo(networkInfo.getInterfaces());;
+      vo.setNetInterfaces(interfaces);
+    }
+    List<String> monitorInterfaces = getMonitorNetInterfaces(host);
+    vo.setMonitorNetInterfaces(monitorInterfaces);
+    return vo;
+  }
+
+  @Override
+  public List<String> getMonitorNetInterfaces(SmartMonHost host) {
+    if (host.getMonitorNetInterfaces() != null) {
+      return host.getMonitorNetworkInterfaces();
+    }
+    return agentClientService.getMonitorInterfaces(host.getManageIp());
+  }
+
+  @Override
+  public void configMonitorNetInterfaces(String hostUuid, List<String> monitorNetInterfaces) {
+    SmartMonHost smartMonHost = smartMonHostMapper.selectByPrimaryKey(hostUuid);
+    if (smartMonHost == null) {
+      String message = String.format("host[%s] is not exists", hostUuid);
+      throw new SmartMonException(SmartMonErrno.HOST_NOT_FOUND, message);
+    }
+    monitorNetInterfaces = ignoreLo(monitorNetInterfaces);
+    agentClientService.configMonitorInterfaces(smartMonHost.getManageIp(), monitorNetInterfaces);
+    String interfaces = JsonConverter.writeValueAsStringQuietly(monitorNetInterfaces);
+    smartMonHostMapper.updateMonitorNetInterfacesById(hostUuid, interfaces);
+  }
+
+  private List<String> ignoreLo(List<String> netInterfaces) {
+    return ListUtils.emptyIfNull(netInterfaces)
+      .stream().filter(net -> !Objects.equals("lo", net))
+      .collect(Collectors.toList());
   }
 
   @Override

@@ -33,7 +33,7 @@ public class SmartMonCacheServiceImpl implements SmartMonCacheService {
   public SmatMonCacheItem get(String key) {
     final CacheItem item = cacheMapper.get(key);
     if (item == null) {
-      log.warn("cannot find cache key {}", Strings.nullToEmpty(key));
+      log.debug("cannot find cache key {}", Strings.nullToEmpty(key));
       return null;
     }
     return new SmatMonCacheItem(item.getKey(), item.getData(), item.getErrors());

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import smartmon.core.hosts.SmartMonHostInfo;
+import smartmon.injector.hostinfo.services.NetworkInfoService;
 
 @Slf4j
 @Api(tags = "host-info")
@@ -16,19 +17,19 @@ import smartmon.core.hosts.SmartMonHostInfo;
 @RestController
 public class HostInfoController {
   @Autowired
-  private BasicInfoService basicInfoService;
+  private HostInfoService hostInfoService;
   @Autowired
-  private SystemInfoService systemInfoService;
-  @Autowired
-  private HardwareInfoService hardwareInfoService;
+  private NetworkInfoService networkInfoService;
 
   @ApiOperation("get host info")
   @GetMapping("info")
   public SmartMonHostInfo getSmartMonHostInfo() {
-    SmartMonHostInfo smartMonHostInfo = new SmartMonHostInfo();
-    smartMonHostInfo.setBasicInfo(basicInfoService.getBasicInfo());
-    smartMonHostInfo.setSystemInfo(systemInfoService.getSystemInfo());
-    smartMonHostInfo.setHardwareInfo(hardwareInfoService.getHardwareInfo());
-    return smartMonHostInfo;
+    return hostInfoService.getSmartMonHostInfo();
+  }
+
+  @ApiOperation("get network interfaces")
+  @GetMapping("network/interfaces")
+  public String getNetInterfaces() {
+    return networkInfoService.getNetInterfaces();
   }
 }

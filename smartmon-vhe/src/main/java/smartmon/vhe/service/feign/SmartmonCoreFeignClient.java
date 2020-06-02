@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import smartmon.core.hosts.RemoteHostCommand;
 import smartmon.core.hosts.SmartMonHost;
 import smartmon.core.idc.vo.IdcVo;
 import smartmon.core.racks.vo.RackAllocationVo;
@@ -34,6 +35,9 @@ public interface SmartmonCoreFeignClient {
 
   @PostMapping(value = "/agents")
   SmartMonResponse<TaskGroupVo> installAgent(@RequestParam("hostUuid") String hostUuid);
+
+  @PostMapping(value = "/agents/injectors", consumes = MediaType.APPLICATION_JSON_VALUE)
+  SmartMonResponse<TaskGroupVo> installInjector(@RequestBody RemoteHostCommand remoteHostCommand);
 
   @GetMapping(value = "/tasks/{id}")
   SmartMonResponse<TaskGroupVo> getByTaskId(@PathVariable("id") String taskGroupId);

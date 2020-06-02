@@ -27,7 +27,8 @@ public class SmartMonUploader {
   })
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public Mono<SmartMonResponse<?>> put(@RequestPart("type") String type,
+                                       @RequestPart("desc") String desc,
                                        @RequestPart("file") Mono<FilePart> file) {
-    return file.flatMap(part -> Mono.just(smartMonStore.put(type, part)));
+    return file.flatMap(part -> Mono.just(new SmartMonResponse<>(smartMonStore.put(type, desc, part))));
   }
 }

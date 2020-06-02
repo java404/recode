@@ -29,6 +29,18 @@ spring:
         predicates:
           - Path=/falcon/**
 
+dubbo:
+  application.name: smartmon-gateway-dubbo
+  registry.address: nacos://127.0.0.1:8848
+  service.version: 1.0.0
+  protocol:
+    name: dubbo
+    port: -1
+    threads: 10
+
 smartmon.api:
   infoName: smartmon-gateway
   prefix: /gateway/api/v2
+
+smartmon.security:
+  ignoreUrls: /ui/**,/repo/**,/swagger-ui.html**,/webjars/**,/swagger-resources/**,/v2/api-docs,/**/v2/api-docs,/gateway/api/v2/passport/**

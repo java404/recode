@@ -63,6 +63,9 @@ public class JsonConverter {
   }
 
   public static <T> T readValueQuietly(String value, Class<T> valueType) {
+    if (value == null) {
+      return null;
+    }
     try {
       return getMapper().readValue(value, valueType);
     } catch (JsonProcessingException error) {
@@ -72,10 +75,10 @@ public class JsonConverter {
   }
 
   public static <T> T readValueQuietly(String value, Class<?> parametrized, Class<?>... parameterClasses) {
+    if (value == null) {
+      return null;
+    }
     try {
-      if (value == null) {
-        return null;
-      }
       JavaType javaType = getMapper().getTypeFactory().constructParametricType(parametrized, parameterClasses);
       return getMapper().readValue(value, javaType);
     } catch (JsonProcessingException error) {

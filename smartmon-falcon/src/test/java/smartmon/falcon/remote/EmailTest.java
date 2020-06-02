@@ -13,11 +13,11 @@ public class EmailTest {
   @Test
   public void sendQqEmail() {
     Properties properties = new Properties();
-    properties.put("mail.transport.protocol", "smtp");// 连接协议
-    properties.put("mail.smtp.host", "smtp.qq.com");// 主机名
+    //properties.put("mail.transport.protocol", "smtp");// 连接协议
+    properties.put("mail.smtp.host", "localhost");// 主机名
     properties.put("mail.smtp.port", 465);// 端口号
-    properties.put("mail.smtp.auth", "true");
-    properties.put("mail.smtp.ssl.enable", "true");// 设置是否使用ssl安全连接 ---一般都使用
+    properties.put("mail.smtp.auth", false);
+    //properties.put("mail.smtp.ssl.enable", "true");// 设置是否使用ssl安全连接 ---一般都使用
     properties.put("mail.debug", "true");// 设置是否显示debug信息 true 会在控制台显示相关信息
     // 得到回话对象
     Session session = Session.getInstance(properties);
@@ -25,12 +25,12 @@ public class EmailTest {
     Message message = new MimeMessage(session);
     // 设置发件人邮箱地址
     try {
-      message.setFrom(new InternetAddress("1416412681@qq.com"));
+      message.setFrom(new InternetAddress("qingwen_wang@phegda.com"));
       // 设置收件人邮箱地址
       //如果使用setRecipient只能设置一个收件人，InternetAddress为参数
       //如果使用setRecipients可以设置多个收件人，InternetAddress为参数
       message.setRecipients(Message.RecipientType.TO,
-        new InternetAddress[]{new InternetAddress("1416412681@qq.com")});
+        new InternetAddress[]{new InternetAddress("qingwen_wang@phegda.com")});
       // 设置邮件标题
       message.setSubject(String.format("SmartMon-X 告警恢复通知 - [级别:严重] [2020-05-28 17:23:00] 内存使用率过高"));
       // 设置邮件内容
@@ -44,7 +44,8 @@ public class EmailTest {
       // 得到邮差对象
       Transport transport = session.getTransport();
       // 连接自己的邮箱账户
-      transport.connect("1416412681@qq.com", "skiukqtinujzieag");// password为stmp授权码
+      transport.connect();
+      //transport.connect("qingwen_wang@phegda.com", "qingwen4128..");// password为stmp授权码
       // 发送邮件
       transport.sendMessage(message, message.getAllRecipients());
       transport.close();
@@ -56,67 +57,52 @@ public class EmailTest {
   @Ignore
   @Test
   public void sendPhegdataEmail() {
-    /**
-     * 1.配置发件人邮箱信息以及创建一个Java 配置类存放SMTP服务器地址等参数。
-     */
-    // 发件人邮箱
-    String sendEmailAccount = "qingwen_wang@phegda.com";
-    // 发件人密码
-    String sendEmailPassword = "skiukqtinujzieag";
-    // 发件人邮箱的 SMTP 服务器地址, 此处为Outlook邮箱的SMTP服务器
-    String sendEmailSMTPHost = "smtp.phegda.com";
-    // 收件人邮箱
-    String receiveMailAccount = "qingwen_wang@phegda.com";
-    // 使用Java配置类进行配置
-    Properties props = new Properties();
-    // 使用的协议（JavaMail规范要求）
-    props.setProperty("mail.transport.protocol", "smtp");
-    // 发件人的邮箱的 SMTP 服务器地址
-    props.setProperty("mail.smtp.host", sendEmailSMTPHost);
-    // 需要请求认证
-    //props.setProperty("mail.smtp.auth", "true");
-    // 默认端口号设置为587，也可以设置为465，具体取决于SMTP服务器要求的端口号
-    final String smtpPort = "465";
-    props.setProperty("mail.smtp.port",smtpPort );
-    props.setProperty("mail.smtp.socketFactory.fallback", "false");
-    props.setProperty("mail.smtp.starttls.enable", "true");
-    props.setProperty("mail.smtp.socketFactory.port", smtpPort );
+    // 收件人电子邮箱
+    String to = "qingwen_wang@phegda.com";
 
-    /**
-     * 2.创建一个同邮件服务器交互的session
-     */
-    Session session = Session.getDefaultInstance(props);
-    session.setDebug(true);
-    // 1. 创建一封邮件
-    try {
+    // 发件人电子邮箱
+    String from = "qingwen_wang@phegda.com";
+
+    // 指定发送邮件的主机为 localhost
+    String host = "smtp.phegda.com";
+
+    // 获取系统属性
+    Properties properties = System.getProperties();
+
+    // 设置邮件服务器
+    properties.setProperty("mail.smtp.host", host);
+    properties.put("mail.debug", "true");
+
+    // 获取默认session对象
+    Session session = Session.getDefaultInstance(properties, new Authenticator() {
+      @Override
+      protected PasswordAuthentication getPasswordAuthentication() {
+        return new PasswordAuthentication("qingwen_wang@phegda.com", "qingwen4128..");
+      }
+    });
+
+    try{
+      // 创建默认的 MimeMessage 对象
       MimeMessage message = new MimeMessage(session);
-      // 2. From: 发件人
-      message.setFrom(new InternetAddress(sendEmailAccount, "ExampleFrom", "UTF-8"));
-      // 3. To: 收件人
-      message.setRecipient(MimeMessage.RecipientType.TO,
-        new InternetAddress(receiveMailAccount, "ExampleUser", "UTF-8"));
-      // 4. Subject: 邮件主题（标题有广告嫌疑，避免被邮件服务器误认为是滥发广告以至返回失败，请修改标题）
-      message.setSubject("test", "UTF-8");
-      // 5. Content: 邮件正文
-      message.setContent("<h3>This is a test email.</h3>", "text/html;charset=UTF-8");
-      // 6. 设置邮件发件时间
-      message.setSentDate(new Date());
-      // 7. 保存设置
-      message.saveChanges();
 
-      /**
-       * 3.创建一封格式化的邮件
-       */
-      // 1. 根据 Session 获取邮件传输对象
-      Transport transport = session.getTransport();
-      // 2. 使用 邮箱账号 和 密码 连接邮件服务器
-      //transport.connect(sendEmailAccount, sendEmailPassword);
-      // 3. 发送邮件, 发到所有的收件地址, message.getAllRecipients() 获取到的是在创建邮件对象时添加的所有收件人, 抄送人,
-      transport.sendMessage(message, message.getAllRecipients());
-      // 4. 关闭连接
-      transport.close();
-    } catch (Exception e) {
+      // Set From: 头部头字段
+      message.setFrom(new InternetAddress(from));
 
+      // Set To: 头部头字段
+      message.addRecipient(Message.RecipientType.TO,
+        new InternetAddress(to));
+
+      // Set Subject: 头部头字段
+      message.setSubject("This is the Subject Line!");
+
+      // 设置消息体
+      message.setText("This is actual message");
+
+      // 发送消息
+      Transport.send(message);
+      System.out.println("Sent message successfully....");
+    }catch (MessagingException mex) {
+      mex.printStackTrace();
     }
   }
 }

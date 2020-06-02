@@ -1,0 +1,12 @@
+[Unit]
+Description=SmartMon Database
+Requires=network.target smartmon-nacos.service
+After=network.target smartmon-nacos.service
+
+[Service]
+User=root
+ExecStart=/opt/smartmon/smartmon-database/smartmon-database-startup.sh
+WorkingDirectory=/opt/smartmon/smartmon-database
+
+[Install]
+WantedBy=multi-user.target

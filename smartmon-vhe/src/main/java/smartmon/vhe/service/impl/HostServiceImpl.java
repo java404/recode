@@ -52,7 +52,7 @@ public class HostServiceImpl implements HostService {
   public TaskGroup init(List<HostInitDto> hostInitDtos) {
     List<TaskDescription> tasks = hostInitDtos.stream().map(this::taskDescription).collect(Collectors.toList());
     TaskGroup taskGroup = taskManagerService.createTaskGroup("InitHost", tasks);
-    taskManagerService.invokeTaskGroup(taskGroup);
+    taskManagerService.invokeTaskGroupParallel(taskGroup);
     return taskGroup;
   }
 

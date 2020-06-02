@@ -16,4 +16,5 @@ public class FalconApiConfig {
   private String name;
   private String session;
   private String businessHost;
+  private String hostGroup;
 }

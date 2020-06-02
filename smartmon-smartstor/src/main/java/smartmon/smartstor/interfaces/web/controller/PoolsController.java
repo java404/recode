@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import smartmon.smartstor.app.PoolAppService;
+import smartmon.smartstor.app.command.LunDelCommand;
 import smartmon.smartstor.app.command.PoolAddCommand;
+import smartmon.smartstor.app.command.PoolDeleteCommand;
 import smartmon.smartstor.app.command.PoolDirtyThresholdCommand;
 import smartmon.smartstor.app.command.PoolSizeCommand;
 import smartmon.smartstor.app.command.PoolSkipThresholdCommand;
@@ -23,7 +26,9 @@ import smartmon.smartstor.app.command.PoolSyncLevelCommand;
 import smartmon.smartstor.interfaces.web.representation.PoolsRepresentationService;
 import smartmon.smartstor.web.dto.PoolDto;
 import smartmon.smartstor.web.dto.StoragePoolDto;
+import smartmon.smartstor.web.vo.LunDelVo;
 import smartmon.smartstor.web.vo.PoolAddVo;
+import smartmon.smartstor.web.vo.PoolDelVo;
 import smartmon.smartstor.web.vo.PoolDirtyThresholdVo;
 import smartmon.smartstor.web.vo.PoolSizeVo;
 import smartmon.smartstor.web.vo.PoolSkipThresholdVo;
@@ -138,6 +143,23 @@ public class PoolsController {
       .withStep("PATCH", "Config pool skip threshold", () -> poolAppService.confSkipThreshold(command))
       .build();
     final TaskGroup taskGroup = taskManagerService.createTaskGroup("ConfPoolSkipThreshold", description);
+    taskManagerService.invokeTaskGroup(taskGroup);
+    return new SmartMonResponse<>(taskGroup.dumpVo());
+  }
+
+  @ApiOperation("Delete pool batch")
+  @DeleteMapping("batch")
+  public SmartMonResponse<TaskGroupVo> deleteBatch(@RequestBody List<PoolDelVo> vos) {
+    List<TaskDescription> descriptions = new ArrayList<>();
+    for (PoolDelVo vo : vos) {
+      PoolDeleteCommand command = BeanConverter.copy(vo, PoolDeleteCommand.class);
+      final TaskDescription description = new TaskDescriptionBuilder()
+        .withAction(TaskAct.ACT_DEL).withResource(TaskRes.RES_POOL).withParameters(command)
+        .withStep("DELETE", "Delete pool", () -> poolAppService.deletePool(command))
+        .build();
+      descriptions.add(description);
+    }
+    final TaskGroup taskGroup = taskManagerService.createTaskGroup("DeletePoolBatch", descriptions);
     taskManagerService.invokeTaskGroup(taskGroup);
     return new SmartMonResponse<>(taskGroup.dumpVo());
   }

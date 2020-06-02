@@ -13,6 +13,8 @@ public interface TaskManagerService {
 
   void invokeTaskGroup(TaskGroup taskGroup);
 
+  void invokeTaskGroupParallel(TaskGroup taskGroup);
+
   TaskGroupVo findTaskGroupById(Long id);
 
   List<TaskGroupVo> getAllTaskGroups();

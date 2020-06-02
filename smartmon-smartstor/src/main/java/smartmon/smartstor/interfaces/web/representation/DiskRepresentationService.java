@@ -9,6 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,27 +55,33 @@ public class DiskRepresentationService extends BaseRepresentationService {
     }
     List<Disk> data = cachedData.getData();
     List<DiskDto> diskDtos = new ArrayList<>();
+    Map<String, LastGraphValueResult> healthMap = null;
+    if (getHealthInfo) {
+      healthMap = getHealthMap(host.getGuid());
+    }
     for (Disk disk : data) {
       DiskDto diskDto = BeanConverter.copy(disk, DiskDto.class);
       if (diskDto == null) {
         continue;
       }
-      formatDisk(host, getHealthInfo, disk, diskDto);
+      formatDisk(host, healthMap, disk, diskDto);
       diskDtos.add(diskDto);
     }
     return new CachedData<>(diskDtos, cachedData.isExpired(), cachedData.getError());
   }
 
-  private void formatDisk(StorageHost host, boolean getHealthInfo, Disk disk, DiskDto diskDto) {
+  private void formatDisk(StorageHost host,
+                          Map<String, LastGraphValueResult> healthMap,
+                          Disk disk,
+                          DiskDto diskDto) {
     try {
       String serviceIp = host.getListenIp();
-      String hostName = host.getHostname();
       diskDto.setDiskTypeName(disk.getDiskType() == null ? "" : disk.getDiskType().getName());
       RaidDiskInfo raidInfo = disk.getRaidInfo();
       if (raidInfo != null) {
         diskDto.setIsRaid(true);
         //diskDto.setMode(raidInfo.getModel());
-        diskDto.setHealth(raidInfo.getHealth());
+        diskDto.setHealthDetail(raidInfo.getHealth());
         String ctl = raidInfo.getCtl();
         Integer eid = raidInfo.getEid();
         Integer slot = raidInfo.getSlot();
@@ -86,8 +93,8 @@ public class DiskRepresentationService extends BaseRepresentationService {
         diskDto.setRaidSize(raidInfo.getSize());
         diskDto.setRaidType(raidInfo.getDriveType());
         //TODO ssd health ,hdd health
-        diskDto.setSsdHealth("");
-        diskDto.setHddHealth("");
+        //diskDto.setSsdHealth("");
+        //diskDto.setHddHealth("");
       }
 
       DiskNvmeHealthDto nvmeHealthDto =
@@ -95,7 +102,7 @@ public class DiskRepresentationService extends BaseRepresentationService {
       //nvme
       diskDto.setNvmeHealth(nvmeHealthDto);
       if (StringUtils.isNotBlank(disk.getNvmeHealth())) {
-        diskDto.setHealth(disk.getNvmeHealth());
+        diskDto.setHealthDetail(disk.getNvmeHealth());
       }
 
       String diskName = disk.getDiskName();
@@ -104,37 +111,62 @@ public class DiskRepresentationService extends BaseRepresentationService {
         List<DiskPartDto> partDtos = BeanConverter.copy(disk.getDiskParts(), DiskPartDto.class);
         diskDto.setParts(partDtos);
       }
-      //TODO disk health
-      if (getHealthInfo) {
-        getDiskHealth(disk, diskDto, hostName);
+      if (MapUtils.isNotEmpty(healthMap)) {
+        getDiskHealth(disk, diskDto, healthMap);
       }
     } catch (Exception e) {
       log.warn("Format disk failed", e);
     }
   }
 
-  private void getDiskHealth(Disk disk, DiskDto diskDto, String hostName) {
+  private Map<String, LastGraphValueResult> getHealthMap(String hostUuid) {
     try {
+      LastGraphValueCompareQueryVo vo = LastGraphValueCompareQueryVo.newVo(null, "disk.health", hostUuid);
+      SmartMonResponse<List<LastGraphValueResult>> resp = falconFeignClient.thresholdCompare(vo);
+      if (resp == null || resp.getErrno() != 0) {
+        return null;
+      }
+      List<LastGraphValueResult> result = resp.getContent();
+      if (CollectionUtils.isEmpty(result)) {
+        return null;
+      }
+      return result
+        .stream()
+        .collect(Collectors.toMap(LastGraphValueResult::getCounter, Function.identity(), (a, b) -> b));
+    } catch (Exception e) {
+      log.warn("Failed to get disk health from falcon", e);
+    }
+    return null;
+  }
+
+  private void getDiskHealth(Disk disk, DiskDto diskDto, Map<String, LastGraphValueResult> healthMap) {
+    try {
+      long unhealthyCount = 0;
       String devName = disk.getDevName();
       if (StringUtils.isBlank(devName)) {
         return;
       }
       devName = devName.substring(devName.lastIndexOf("/") + 1);
       String tag = "device=" + devName;
-      LastGraphValueCompareQueryVo vo = LastGraphValueCompareQueryVo.newVo(tag, "disk.health", hostName);
-      SmartMonResponse<List<LastGraphValueResult>> resp = falconFeignClient.thresholdCompare(vo);
-      if (resp == null || resp.getErrno() != 0) {
+      List<DiskHealthDto> diskHealthDtos = new ArrayList<>();
+      for (Map.Entry<String, LastGraphValueResult> entry : healthMap.entrySet()) {
+        String key = entry.getKey();
+        if (!key.contains(tag)) {
+          continue;
+        }
+        LastGraphValueResult graphValueResult = entry.getValue();
+        DiskHealthDto diskHealthDto = convertDiskHealth(graphValueResult);
+        if (!diskHealthDto.isHealth()) {
+          unhealthyCount++;
+        }
+        diskHealthDtos.add(diskHealthDto);
+      }
+      if (CollectionUtils.isEmpty(diskHealthDtos)) {
         return;
       }
-      List<LastGraphValueResult> result = resp.getContent();
-      if (CollectionUtils.isEmpty(result)) {
-        return;
-      }
-      List<DiskHealthDto> diskHealthDtos = result
-        .stream()
-        .map(this::convertDiskHealth)
-        .collect(Collectors.toList());
+      diskDto.setHasHealth(true);
       diskDto.setHealths(diskHealthDtos);
+      diskDto.setHealth(unhealthyCount == 0);
     } catch (Exception e) {
       log.warn("Get disk health failed: {}", disk.getDevName(), e);
     }
@@ -206,7 +238,7 @@ public class DiskRepresentationService extends BaseRepresentationService {
     for (StorageHost host : iosHosts) {
       try {
         StorageDiskDto storageDiskDto = BeanConverter.copy(host, StorageDiskDto.class);
-        CachedData<DiskDto> cachedData = getDisks(host, false);
+        CachedData<DiskDto> cachedData = getDisks(host, true);
         if (cachedData == null) {
           continue;
         }
@@ -244,7 +276,7 @@ public class DiskRepresentationService extends BaseRepresentationService {
   public DiskDto getDiskInfo(String serviceIp, String diskName, String devName) {
     StorageHost host = storageHostRepository.findByServiceIp(serviceIp);
     CachedData<Disk> cachedData = dataCacheManager.gets(serviceIp, Disk.class);
-    if (cachedData == null) {
+    if (host == null || cachedData == null) {
       return null;
     }
     List<Disk> data = cachedData.getData();
@@ -266,7 +298,7 @@ public class DiskRepresentationService extends BaseRepresentationService {
       return null;
     }
     DiskDto diskDto = BeanConverter.copy(matchDisk, DiskDto.class);
-    formatDisk(host, true, matchDisk, diskDto);
+    formatDisk(host, getHealthMap(host.getGuid()), matchDisk, diskDto);
     return diskDto;
   }
 
@@ -373,7 +405,7 @@ public class DiskRepresentationService extends BaseRepresentationService {
             && !diskType.equalsIgnoreCase(disk.getDiskType().getName())) {
             continue;
           }
-          formatDisk(host, false, disk, diskDto);
+          formatDisk(host, null, disk, diskDto);
           AvailableDiskDto availDisk = BeanConverter.copy(diskDto, AvailableDiskDto.class);
           getPartNos(disk, availDisk);
           if (CollectionUtils.isEmpty(availDisk.getPartNos())) {

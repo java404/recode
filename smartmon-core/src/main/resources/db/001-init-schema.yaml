@@ -73,6 +73,8 @@ databaseChangeLog:
               swap_total int(11),
               mounts MEDIUMTEXT,
               bios_version VARCHAR(100),
+              networks MEDIUMTEXT,
+              monitor_net_interfaces MEDIUMTEXT,
               constraint pk_smartmon_host primary key (host_uuid),
               constraint uk_manage_ip unique key (manage_ip));
   - changeSet:
@@ -88,5 +90,6 @@ databaseChangeLog:
               local_filename VARCHAR(512),
               local_filesize BIGINT(20) NULL,
               timestamp datetime DEFAULT NULL,
+              file_desc MEDIUMTEXT,
               type VARCHAR(128), status VARCHAR(128), error_message TEXT,
               CONSTRAINT pk_metafile__file_id PRIMARY KEY (file_id));

@@ -62,5 +62,5 @@ dependencies {
 
   compile('javax.servlet:javax.servlet-api:4.0.1')
   compile('org.springframework.boot:spring-boot-starter-webflux')
-  compile libs.springCloudServiceProvided
+  compile libs.springCloudServiceProvider
 }

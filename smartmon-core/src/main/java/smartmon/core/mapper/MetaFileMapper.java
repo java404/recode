@@ -1,6 +1,8 @@
 package smartmon.core.mapper;
 
 import java.util.List;
+
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Result;
@@ -11,9 +13,9 @@ import smartmon.core.store.SmartMonStoreFile;
 
 public interface MetaFileMapper {
   @Insert("INSERT INTO metafile "
-    + " ( original_filename, local_filename, local_filesize, timestamp, type, status ) VALUES "
+    + " ( original_filename, local_filename, local_filesize, timestamp, type, status, file_desc ) VALUES "
     + " (#{originalFilename}, #{localFilename}, #{localFileSize}, "
-    + "  #{timestamp}, #{type}, #{status}) ")
+    + "  #{timestamp}, #{type}, #{status}, #{desc}) ")
   @Options(useGeneratedKeys = true, keyProperty = "fileId", keyColumn = "file_id")
   void put(SmartMonStoreFile storeFile);
 
@@ -29,6 +31,7 @@ public interface MetaFileMapper {
     @Result(property = "timestamp", column = "timestamp"),
     @Result(property = "type", column = "type"),
     @Result(property = "status", column = "status"),
+    @Result(property = "desc", column = "file_desc"),
     @Result(property = "errorMessage", column = "error_message"),
   })
   List<SmartMonStoreFile> findAll();
@@ -42,7 +45,11 @@ public interface MetaFileMapper {
     @Result(property = "timestamp", column = "timestamp"),
     @Result(property = "type", column = "type"),
     @Result(property = "status", column = "status"),
+    @Result(property = "desc", column = "file_desc"),
     @Result(property = "errorMessage", column = "error_message"),
   })
   SmartMonStoreFile findById(long fileId);
+
+  @Delete("DELETE FROM metafile WHERE file_id = #{fileId} ")
+  void removeById(long fileId);
 }

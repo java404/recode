@@ -11,7 +11,7 @@ public class SystemConfig {
   private String serverAddress;
   @Value("${smartmon.system.server.port:80}")
   private Integer serverPort;
-  @Value("${smartmon.system.monitor.agent.port:}")
+  @Value("${smartmon.system.monitor.agent.port:1988}")
   private Integer agentPort;
   @Value("${smartmon.system.monitor.collector.port:}")
   private Integer collectorPort;

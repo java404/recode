@@ -4,6 +4,7 @@ import java.util.List;
 
 import smartmon.core.hosts.types.HostAddCommand;
 import smartmon.core.hosts.types.HostConfigCommand;
+import smartmon.core.hosts.types.MonitorNetInterfaceVo;
 import smartmon.core.hosts.types.SmartMonHost;
 
 public interface HostsService {
@@ -14,6 +15,12 @@ public interface HostsService {
   SmartMonHost addHost(HostAddCommand hostAddCommand);
 
   SmartMonHost configHost(String hostUuid, HostConfigCommand hostConfigCommand);
+
+  MonitorNetInterfaceVo getMonitorNetInterfaces(String hostUuid);
+
+  void configMonitorNetInterfaces(String hostUuid, List<String> monitorNetInterfaces);
+
+  List<String> getMonitorNetInterfaces(SmartMonHost host);
 
   boolean isServer(String ip);
 }

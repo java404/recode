@@ -5,6 +5,16 @@ spring:
   cloud.nacos.discovery.server-addr: 127.0.0.1:8848
   jackson.serialization.write-dates-as-timestamps: true
 
+dubbo:
+  application.name: smartmon-core-dubbo
+  registry.address: nacos://127.0.0.1:8848
+  service.version: 1.0.0
+  scan.base-packages: smartmon.core
+  protocol:
+    name: dubbo
+    port: -1
+    threads: 10
+
 mapper:
   use-simple-type: true
   enum-as-simple-type: true

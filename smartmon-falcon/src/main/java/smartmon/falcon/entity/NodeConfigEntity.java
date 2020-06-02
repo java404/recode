@@ -2,6 +2,9 @@ package smartmon.falcon.entity;
 
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Table;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -14,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonRawValue;
  */
 @JsonPropertyOrder({ "id", "uuid", "data", "hostname", "name", "createtime", "updatetime" })
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Table(name = "node_config")
 public class NodeConfigEntity {
 
   @JsonProperty("id")
@@ -34,11 +38,13 @@ public class NodeConfigEntity {
 
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
   @JsonProperty("createtime")
+  @Column(name = "createtime")
   private Date createTime;
 
   // @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
   @JsonProperty("updatetime")
+  @Column(name = "updatetime")
   private Date updateTime;
 
   /**

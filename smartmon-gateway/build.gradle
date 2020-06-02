@@ -62,4 +62,5 @@ dependencies {
   compile('org.springframework.cloud:spring-cloud-starter-openfeign')
   compile('com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery:2.2.0.RELEASE')
   compile('com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-config:2.2.0.RELEASE')
+  compile libs.dubboProvider
 }

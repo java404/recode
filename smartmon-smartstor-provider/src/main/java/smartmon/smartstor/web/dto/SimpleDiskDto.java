@@ -10,13 +10,15 @@ public class SimpleDiskDto {
   private Long size;
   private Long extFreeSize;
   private Boolean actualState;
-  private String health;
+  private String healthDetail;
   private Boolean isRaid;
   private String raidType; // Raid
   private String raidCes;
   private String raidLedOperate;
   private String raidLedOperateResult;
   private String raidLedState;
-  private String hddHealth;
-  private String ssdHealth;
+  //private String hddHealth;
+  //private String ssdHealth;
+  private boolean hasHealth;
+  private boolean isHealth;
 }

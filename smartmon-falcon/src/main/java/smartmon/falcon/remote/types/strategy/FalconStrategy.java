@@ -2,6 +2,8 @@ package smartmon.falcon.remote.types.strategy;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
+import smartmon.falcon.alarm.model.AlarmTypeEnum;
 import smartmon.falcon.strategy.model.PauseEnum;
 
 @Data
@@ -28,4 +30,8 @@ public class FalconStrategy {
   private String falconStrategyOptions;
   @JsonProperty("strategy_class")
   private String strategyClass;
+
+  public AlarmTypeEnum getStrategyClass() {
+    return StringUtils.isNotEmpty(this.strategyClass) ? AlarmTypeEnum.fromName(this.strategyClass) : null;
+  }
 }

@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 
 public class FileUtilities {
   public static File createTempFile(String rootFolder,
@@ -34,5 +35,10 @@ public class FileUtilities {
       return "/";
     }
     return root.endsWith("/") ? root : root + "/";
+  }
+
+  public static boolean isAbs(String filename) {
+    final File file = new File(Strings.nullToEmpty(filename));
+    return file.isAbsolute();
   }
 }

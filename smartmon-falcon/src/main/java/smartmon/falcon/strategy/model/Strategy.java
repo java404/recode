@@ -1,6 +1,7 @@
 package smartmon.falcon.strategy.model;
 
 import lombok.Data;
+import smartmon.falcon.alarm.model.AlarmTypeEnum;
 
 @Data
 public class Strategy {
@@ -18,5 +19,5 @@ public class Strategy {
   private Long templateId;
   private PauseEnum pause;
   private StrategyOptions strategyOptions;
-  private String strategyClass;
+  private AlarmTypeEnum strategyClass;
 }

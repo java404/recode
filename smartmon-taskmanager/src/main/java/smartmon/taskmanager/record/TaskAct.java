@@ -10,6 +10,8 @@ public class TaskAct {
   public static final String ACT_INSTALL = "install";
   public static final String ACT_UNINSTALL = "uninstall";
   public static final String ACT_CONFIG = "config";
+  public static final String ACT_SEND = "send";
+  public static final String ACT_PRECHECK = "precheck";
 
   public static final String ACT_HANDLE = "handle";
   public static final String ACT_CREATE = "create";

@@ -45,6 +45,6 @@ dependencyManagement {
 
 dependencies {
   compile project(':smartmon-utilities')
-  compile libs.springProvided
+  compile libs.springProvider
   compile libs.mybatisSarter
 }

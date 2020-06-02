@@ -7,4 +7,5 @@ public class Template {
   private Integer id;
   private String templateName;
   private String createUser;
+  private String templateAlias;
 }

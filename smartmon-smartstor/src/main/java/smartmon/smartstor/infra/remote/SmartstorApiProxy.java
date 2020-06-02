@@ -308,6 +308,12 @@ public class SmartstorApiProxy implements SmartstorApiService {
     return client.poolConfigSkip(poolName, new PbDataPoolSkipConfigParam(skipThreshold));
   }
 
+  @Override
+  public PbDataResponseCode delPool(String serviceIp, String poolName) {
+    final PbDataClient client = pbDataClientService.getClient(serviceIp, getSmartStorApiPort());
+    return client.poolDel(poolName);
+  }
+
   private List<Lun> convertLuns(List<PbDataLunInfo> lunInfos) {
     if (CollectionUtils.isEmpty(lunInfos)) {
       return Collections.emptyList();

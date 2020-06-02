@@ -57,6 +57,7 @@ public class EventAlarmController {
     @RequestParam(value = "status", required = false) String status,
     @RequestParam(value = "host-name", required = false) String hostName,
     @RequestParam(value = "priority", required = false) String priority,
+    @RequestParam(value = "valid-alarms", required = false) Boolean validAlarms,
     ServerHttpRequest request) {
     final EventAlarmFilterCommand filterCommand = new EventAlarmFilterCommand();
     filterCommand.setStartTime(startTime);

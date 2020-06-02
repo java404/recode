@@ -6,7 +6,7 @@ spring:
 
 smartmon.api:
   infoName: smartmon-falcon
-  prefix: /api/v2/falcon
+  prefix: /falcon/api/v2
 
 smartmon.datasource:
   standalone: false
@@ -21,9 +21,10 @@ smartmon.datasource:
 
 smartmon:
   falcon:
-    address: 172.24.8.55
+    address: 172.24.8.132
     requestPort: 8080
     pushPort: 1988
     name: root
     session: default-token-used-in-server-side
     businessHost: pbdata-aggregator
+    hostGroup: pbdata

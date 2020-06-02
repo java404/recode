@@ -13,9 +13,30 @@ public enum AlarmTypeEnum {
   private final String name;
   private final String desc;
 
+  public Integer getIndex() {
+    return index;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public String getDesc() {
+    return desc;
+  }
+
   AlarmTypeEnum(Integer index, String name, String desc) {
     this.index = index;
     this.name = name;
     this.desc = desc;
+  }
+
+  public static AlarmTypeEnum fromName(String name) {
+    for (AlarmTypeEnum alarmTypeEnum : AlarmTypeEnum.values()) {
+      if (alarmTypeEnum.getName().equalsIgnoreCase(name)) {
+        return alarmTypeEnum;
+      }
+    }
+    return null;
   }
 }

@@ -20,6 +20,7 @@ import smartmon.falcon.remote.config.FalconApiComponent;
 import smartmon.falcon.remote.types.FalconResponseData;
 import smartmon.falcon.remote.types.template.FalconAction;
 import smartmon.falcon.remote.types.template.FalconActionUpdateParam;
+import smartmon.falcon.remote.types.template.FalconTemplateInfo;
 import smartmon.falcon.strategy.model.Strategy;
 import smartmon.falcon.strategy.model.StrategyOptions;
 import smartmon.falcon.user.Team;
@@ -123,5 +124,19 @@ public class TemplateServiceImpl implements TemplateService {
       .listTemplates(falconApiComponent.getApiToken()).getTemplates())
       .stream().map(f -> BeanConverter.copy(f.getTemplate(), Template.class))
       .collect(Collectors.toList());
+  }
+
+  @Override
+  public TemplateInfo getTemplateInfoById(Integer templateId) {
+    TemplateInfo templateInfo = new TemplateInfo();
+    final FalconTemplateInfo falconTemplateInfo = falconApiComponent.getFalconClient()
+      .getTemplateInfoById(templateId, falconApiComponent.getApiToken());
+    if (falconTemplateInfo != null) {
+      templateInfo.setAction(BeanConverter.copy(falconTemplateInfo.getAction(), Action.class));
+      templateInfo.setParentName(falconTemplateInfo.getParentName());
+      templateInfo.setStrategies(BeanConverter.copy(falconTemplateInfo.getStrategies(), Strategy.class));
+      templateInfo.setTemplate(BeanConverter.copy(falconTemplateInfo.getTemplate(), Template.class));
+    }
+    return templateInfo;
   }
 }

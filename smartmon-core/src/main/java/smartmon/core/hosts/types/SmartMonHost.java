@@ -2,6 +2,7 @@ package smartmon.core.hosts.types;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Id;
@@ -10,8 +11,10 @@ import javax.persistence.Table;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import smartmon.core.agent.AgentStateEnum;
+import smartmon.core.hosts.NetworkInfo;
 import smartmon.core.ipmi.PowerStateEnum;
 import smartmon.core.misc.SshService;
+import smartmon.utilities.misc.JsonConverter;
 
 @Data
 @Table(name = "smartmon_host")
@@ -60,6 +63,10 @@ public class SmartMonHost implements Serializable {
   //Hardware info - mainboard
   private String biosVersion;
 
+  //Network info
+  private String networks;
+  private String monitorNetInterfaces;
+
   public Integer getSshPort() {
     return Objects.nonNull(sshPort) ? sshPort : SshService.DEFAULT_SSH_PORT;
   }
@@ -72,5 +79,13 @@ public class SmartMonHost implements Serializable {
   public boolean hasIp(String ip) {
     //TODO: need improve, judge all ips
     return Objects.equals(manageIp, ip);
+  }
+
+  public NetworkInfo getNetworkInfo() {
+    return JsonConverter.readValueQuietly(networks, NetworkInfo.class);
+  }
+
+  public List<String> getMonitorNetworkInterfaces() {
+    return JsonConverter.readValueQuietly(monitorNetInterfaces, List.class, String.class);
   }
 }

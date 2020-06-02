@@ -78,8 +78,8 @@ dependencies {
   compile('javax.servlet:javax.servlet-api:4.0.1')
   compile('org.springframework.boot:spring-boot-starter-webflux')
   compile('org.springframework.cloud:spring-cloud-context')
+  compile libs.springCloudServiceProvider
   compile('org.snmp4j:snmp4j:2.8.2')
   compile('javax.mail:javax.mail-api:1.5.6')
   compile('com.sun.mail:javax.mail:1.6.2')
-  compile libs.springCloudServiceProvided
 }

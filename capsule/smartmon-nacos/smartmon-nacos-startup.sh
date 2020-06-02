@@ -31,6 +31,7 @@ export BASE_DIR=`cd $(dirname $0)/..; pwd`
 export DEFAULT_SEARCH_LOCATIONS="classpath:/,classpath:/config/,file:./,file:./config/"
 export CUSTOM_SEARCH_LOCATIONS=${DEFAULT_SEARCH_LOCATIONS},file:${BASE_DIR}/conf/
 
+export MALLOC_ARENA_MAX=2
 JAVA_OPT="${JAVA_OPT} -Xms512m -Xmx512m -Xmn256m"
 JAVA_OPT="${JAVA_OPT} -Dnacos.standalone=true"
 

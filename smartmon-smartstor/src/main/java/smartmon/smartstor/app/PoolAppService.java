@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import smartmon.smartstor.app.command.PoolAddCommand;
+import smartmon.smartstor.app.command.PoolDeleteCommand;
 import smartmon.smartstor.app.command.PoolDirtyThresholdCommand;
 import smartmon.smartstor.app.command.PoolSizeCommand;
 import smartmon.smartstor.app.command.PoolSkipThresholdCommand;
@@ -86,6 +87,15 @@ public class PoolAppService {
     PbDataResponseCode pbDataResponseCode =
       smartstorApiService.confSkipThreshold(command.getServiceIp(), command.getPoolName(), command.getSkipThreshold());
     chkResponseFailed(pbDataResponseCode, "Config pool skip threshold failed");
+    dataSyncService.syncPools(command.getServiceIp());
+  }
+
+  public void deletePool(PoolDeleteCommand command) {
+    log.info("Delete pool : {}", command.getPoolName());
+    exsitStorageHost(command.getServiceIp());
+    PbDataResponseCode pbDataResponseCode =
+      smartstorApiService.delPool(command.getServiceIp(), command.getPoolName());
+    chkResponseFailed(pbDataResponseCode, "Delete pool failed");
     dataSyncService.syncPools(command.getServiceIp());
   }
 }

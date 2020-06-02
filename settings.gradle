@@ -3,6 +3,7 @@ include("smartmon-database")
 include("smartmon-core")
 include("smartmon-core-provider")
 include("smartmon-examples")
+include("smartmon-examples-provider")
 
 include("smartmon-utilities")
 include("smartmon-taskmanager")
@@ -16,3 +17,7 @@ include("smartmon-vhe")
 include("smartmon-falcon")
 include("smartmon-falcon-provider")
 include("smartmon-injector")
+include("smartmon-oracle")
+include("smartmon-oracle-cli")
+include 'smartmon-agent-cli'
+

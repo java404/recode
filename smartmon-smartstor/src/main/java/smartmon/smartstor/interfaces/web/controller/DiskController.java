@@ -50,7 +50,7 @@ public class DiskController {
   @ApiOperation("Get disks")
   @GetMapping("{serviceIp}")
   public SmartMonResponse<CachedData<DiskDto>> getDisks(@RequestParam("ServiceIp") String serviceIp) {
-    return new SmartMonResponse<>(diskRepresentationService.getDisks(serviceIp, false));
+    return new SmartMonResponse<>(diskRepresentationService.getDisks(serviceIp, true));
   }
 
   @ApiOperation("Add disk batch")

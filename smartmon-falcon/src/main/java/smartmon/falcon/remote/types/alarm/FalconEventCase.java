@@ -38,6 +38,7 @@ public class FalconEventCase {
   private Integer processNote;
   @JsonProperty("process_status")
   private String processStatus;
+  private String events;
 
   public StrategyPriorityEnum getPriority() {
     return this.priority != null ? StrategyPriorityEnum.getByIndex(this.priority) : null;

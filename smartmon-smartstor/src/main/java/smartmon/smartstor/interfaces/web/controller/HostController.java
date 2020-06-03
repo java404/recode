@@ -52,6 +52,11 @@ public class HostController {
     return new SmartMonResponse<>(hostRepresentationService.getStorageHosts());
   }
 
+  @GetMapping("{hostGuid}")
+  public SmartMonResponse<StorageHostDto> getHostInfo(@PathVariable("hostGuid") String hostGuid) {
+    return new SmartMonResponse<>(hostRepresentationService.getHostByGuid(hostGuid));
+  }
+
   @GetMapping("scan")
   public SmartMonResponse<TaskGroupVo> scanHosts(@RequestParam("serviceIps") String serviceIps) {
     final Set<String> ips = Arrays.stream(serviceIps.split(",")).collect(Collectors.toSet());

@@ -4,10 +4,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.apache.dubbo.common.utils.PathUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.task.AsyncTaskExecutor;
@@ -43,7 +42,7 @@ public class SmartMonStoreServiceImpl implements SmartMonStoreService {
   private void dropStoreFile(SmartMonStoreFile item) {
     log.info("remove stor file {} - {}, {}/{}", item.getFileId(), item.getOriginalFilename(),
       storeFolder, item.getLocalFilename());
-    FileUtils.deleteQuietly(new File(PathUtils.buildPath(storeFolder, item.getLocalFilename())));
+    FileUtils.deleteQuietly(new File(FilenameUtils.concat(storeFolder, item.getLocalFilename())));
     metaFileMapper.removeById(item.getFileId());
   }
 

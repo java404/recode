@@ -17,7 +17,8 @@ include("smartmon-vhe")
 include("smartmon-falcon")
 include("smartmon-falcon-provider")
 include("smartmon-injector")
+include("smartmon-injector-provider")
 include("smartmon-oracle")
 include("smartmon-oracle-cli")
-include 'smartmon-agent-cli'
+include("smartmon-oracle-provider")
 

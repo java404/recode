@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import smartmon.taskmanager.types.TaskGroup;
 import smartmon.taskmanager.vo.TaskGroupVo;
 import smartmon.utilities.general.SmartMonResponse;
+import smartmon.vhe.deployment.command.SmartstorDeployCommand;
 import smartmon.vhe.deployment.command.SmartstorPrecheckCommand;
 
 @Api(tags = "deployment")
@@ -34,6 +35,13 @@ public class DeploymentController {
   @PostMapping("smartstor/precheck")
   public SmartMonResponse<TaskGroupVo> precheckSmartstor(@RequestBody List<SmartstorPrecheckCommand> commands) {
     TaskGroup taskGroup = smartstorService.precheck(commands);
+    return new SmartMonResponse<>(taskGroup.dumpVo());
+  }
+
+  @ApiOperation("smartstor deploy")
+  @PostMapping("smartstor/deploy")
+  public SmartMonResponse<TaskGroupVo> deploySmartstor(@RequestBody List<SmartstorDeployCommand> commands) {
+    TaskGroup taskGroup = smartstorService.deploy(commands);
     return new SmartMonResponse<>(taskGroup.dumpVo());
   }
 }

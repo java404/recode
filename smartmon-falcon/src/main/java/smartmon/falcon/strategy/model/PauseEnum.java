@@ -1,5 +1,8 @@
 package smartmon.falcon.strategy.model;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 public enum PauseEnum {
   ENABLED(0, "enabled"), DISABLED(1, "disabled");
 
@@ -17,5 +20,11 @@ public enum PauseEnum {
 
   public String getName() {
     return name;
+  }
+
+  public static PauseEnum getByCode(int code) {
+    return Arrays.stream(PauseEnum.values())
+      .filter(enumConstant -> Objects.equals(enumConstant.getCode(), code))
+      .findFirst().orElse(null);
   }
 }

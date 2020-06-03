@@ -35,6 +35,11 @@ ext {
       'org.apache.dubbo:dubbo:2.7.7',
       'org.apache.dubbo:dubbo-registry-nacos:2.7.7',
       'com.alibaba.nacos:nacos-client:1.2.1'
+    ],
+    swagger: [
+      'io.springfox:springfox-swagger-ui:3.0.0-SNAPSHOT',
+      'io.springfox:springfox-swagger2:3.0.0-SNAPSHOT',
+      'io.springfox:springfox-spring-webflux:3.0.0-SNAPSHOT'
     ]
   ]
 }

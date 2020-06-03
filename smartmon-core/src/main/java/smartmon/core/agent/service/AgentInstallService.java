@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import smartmon.agent.client.AgentClientService;
 import smartmon.core.agent.AgentStateEnum;
 import smartmon.core.agent.SmartMonBatchConfig;
 import smartmon.core.config.SmartMonErrno;
@@ -23,6 +22,7 @@ import smartmon.core.hosts.HostsService;
 import smartmon.core.hosts.mapper.SmartMonHostMapper;
 import smartmon.core.hosts.types.SmartMonHost;
 import smartmon.core.repo.RepoService;
+import smartmon.injector.client.AgentClientService;
 import smartmon.taskmanager.TaskManagerService;
 import smartmon.taskmanager.misc.TaskSynchronizer;
 import smartmon.taskmanager.record.TaskAct;
@@ -179,14 +179,15 @@ public class AgentInstallService {
   }
 
   private void uploadAgentInstallFiles(String serviceIp) {
-    Map<String, File> files = Maps.newHashMap();
-    String filepath = "scripts/agent_install.sh";
-    String fullPath = smartMonBatchConfig.getSourceRoot() + filepath;
-    File file = new File(fullPath);
-    files.put(filepath, file);
-    files.keySet().forEach(filename ->
-      TaskContext.currentTaskContext().getCurrentStep().appendLog("upload file: " + filename));
-    agentClientService.uploadFiles(serviceIp, files);
+    String filepath = "scripts";
+    String filename = "agent_install.sh";
+    File file = new File(smartMonBatchConfig.getSourceRoot() + filepath, filename);
+    TaskContext.currentTaskContext().getCurrentStep().appendLog("upload file: " + filename);
+    try {
+      agentClientService.uploadFile(serviceIp, filepath, filename, file);
+    } catch (Exception err) {
+      throw new RuntimeException(err);
+    }
   }
 
   private void doAgentInstall(String serviceIp, String hostUuid) {

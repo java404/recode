@@ -35,6 +35,10 @@
     </layout>
   </appender>
 
+  <logger name="liquibase.integration.spring.SpringLiquibase" level="ERROR" />
+  <logger name="com.alibaba.cloud.nacos.client.NacosPropertySourceBuilder" level="ERROR" />
+  <logger name="com.netflix.config.sources.URLConfigurationSource" level="ERROR" />
+
   <root level="${logLevel}">
     <appender-ref ref="CONSOLE" />
     <appender-ref ref="FILE" />

@@ -151,7 +151,7 @@ public class DiskRepresentationService extends BaseRepresentationService {
       List<DiskHealthDto> diskHealthDtos = new ArrayList<>();
       for (Map.Entry<String, LastGraphValueResult> entry : healthMap.entrySet()) {
         String key = entry.getKey();
-        if (!key.contains(tag)) {
+        if (!key.contains(tag) && !key.contains(disk.getDevName())) { //device=sda || device=/dev/nvme0n1
           continue;
         }
         LastGraphValueResult graphValueResult = entry.getValue();

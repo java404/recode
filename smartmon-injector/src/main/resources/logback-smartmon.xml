@@ -35,6 +35,8 @@
     </layout>
   </appender>
 
+  <logger name="liquibase.integration.spring.SpringLiquibase" level="ERROR" />
+
   <root level="${logLevel}">
     <appender-ref ref="CONSOLE" />
     <appender-ref ref="FILE" />

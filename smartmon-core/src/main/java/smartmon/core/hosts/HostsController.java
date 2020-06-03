@@ -63,7 +63,7 @@ public class HostsController {
     SmartMonHostDetailVo vo = BeanConverter.copy(smartMonHost, SmartMonHostDetailVo.class);
     if (vo != null) {
       List<String> monitorNetInterfaces = hostsService.getMonitorNetInterfaces(smartMonHost);
-      vo.setMonitorNetInterfaces(monitorNetInterfaces);
+      vo.setMonitorInterfaces(monitorNetInterfaces);
     }
     return new SmartMonResponse<>(vo);
   }

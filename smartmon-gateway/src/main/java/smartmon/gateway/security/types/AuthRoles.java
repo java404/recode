@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections4.ListUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -34,9 +33,12 @@ public class AuthRoles {
 
   public static List<GrantedAuthority> makeAuthorities(List<String> roles) {
     final List<GrantedAuthority> authorities = new ArrayList<>();
-    for (final String role : ListUtils.emptyIfNull(roles)) {
-      authorities.add(roleAuthorities.getOrDefault(role, DEFAULT_ROLE_AUTH));
-    }
+    authorities.add(new SimpleGrantedAuthority("admin"));
+    authorities.add(new SimpleGrantedAuthority("user"));
+
+    //    for (final String role : ListUtils.emptyIfNull(roles)) {
+    //      authorities.add(roleAuthorities.getOrDefault(role, DEFAULT_ROLE_AUTH));
+    //    }
     return authorities;
   }
 }

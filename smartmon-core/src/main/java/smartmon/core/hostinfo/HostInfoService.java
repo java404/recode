@@ -2,11 +2,10 @@ package smartmon.core.hostinfo;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import smartmon.agent.client.AgentClientService;
 import smartmon.core.agent.service.AgentInstallService;
+import smartmon.injector.client.AgentClientService;
 import smartmon.taskmanager.TaskManagerService;
 import smartmon.taskmanager.record.TaskAct;
 import smartmon.taskmanager.record.TaskRes;

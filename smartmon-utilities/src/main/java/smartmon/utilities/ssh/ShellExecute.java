@@ -40,7 +40,7 @@ public class ShellExecute {
   }
 
   public int run(String command) throws JSchException, IOException {
-    return run(command, ShellSession.DEFAULT_CONNECT_TIMEOUT, ShellSession.DEFAULT_SO_TIMEOUT);
+    return run(command, ShellSession.DEFAULT_CONNECT_TIMEOUT_SECONDS, ShellSession.DEFAULT_SO_TIMEOUT);
   }
 
   public int run(String command, int connTimeout, int soTimeout) throws JSchException, IOException {
@@ -58,7 +58,7 @@ public class ShellExecute {
       channelExec.setInputStream(null);
 
       final InputStream inputStream = channelExec.getInputStream();
-      channelExec.connect(connTimeout);
+      channelExec.connect(connTimeout * 1000);
       readOutput(channelExec, inputStream);
       return channelExec.getExitStatus();
     } catch (JSchException | IOException err) {

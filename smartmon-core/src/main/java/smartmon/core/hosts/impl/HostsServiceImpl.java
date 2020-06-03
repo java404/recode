@@ -5,11 +5,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import smartmon.agent.client.AgentClientService;
 import smartmon.core.config.SmartMonErrno;
 import smartmon.core.hosts.HostsService;
 import smartmon.core.hosts.NetworkInfo;
@@ -20,8 +18,10 @@ import smartmon.core.hosts.types.HostConfigCommand;
 import smartmon.core.hosts.types.MonitorNetInterfaceVo;
 import smartmon.core.hosts.types.SmartMonHost;
 import smartmon.core.misc.SshService;
+import smartmon.injector.client.AgentClientService;
 import smartmon.utilities.general.SmartMonException;
 import smartmon.utilities.misc.JsonConverter;
+import smartmon.utilities.misc.LocalNetworkInterface;
 
 @Service
 public class HostsServiceImpl implements HostsService {
@@ -122,7 +122,7 @@ public class HostsServiceImpl implements HostsService {
     vo.setHostname(host.getHostname());
     NetworkInfo networkInfo = host.getNetworkInfo();
     if (networkInfo != null) {
-      List<String> interfaces = ignoreLo(networkInfo.getInterfaces());;
+      List<String> interfaces = ignoreLo(networkInfo.getInterfaces());
       vo.setNetInterfaces(interfaces);
     }
     List<String> monitorInterfaces = getMonitorNetInterfaces(host);
@@ -159,6 +159,6 @@ public class HostsServiceImpl implements HostsService {
 
   @Override
   public boolean isServer(String ip) {
-    return false; //TODO: implement
+    return (new LocalNetworkInterface()).isLocalIp(ip);
   }
 }

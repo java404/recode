@@ -96,10 +96,24 @@ public class StrategyServiceImpl implements StrategyService {
 
   @Override
   public Strategy getStrategyById(Integer strategyId) {
-    return BeanConverter
-      .copy(falconApiComponent.getFalconClient()
-        .getStrategyById(strategyId, falconApiComponent.getApiToken()),
-        Strategy.class);
+    final FalconStrategy falconStrategy = falconApiComponent.getFalconClient()
+      .getStrategyById(strategyId, falconApiComponent.getApiToken());
+    final Strategy strategy = BeanConverter.copy(falconStrategy, Strategy.class);
+    strategy.setStrategyOptions(falconStrategy.getFalconStrategyOptions());
+    return strategy;
+  }
+
+  @Override
+  public Strategy getStrategyById(Integer strategyId, List<Strategy> strategies) {
+    Strategy strategy = null;
+    for (Strategy s : strategies) {
+      Long id = strategyId.longValue();
+      if (id.equals(s.getId())) {
+        strategy = s;
+        break;
+      }
+    }
+    return strategy;
   }
 
   @Override

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import smartmon.core.hosts.RemoteHostCommand;
 import smartmon.core.hosts.SmartMonHost;
+import smartmon.core.hosts.SmartMonHostDetailVo;
 import smartmon.core.idc.vo.IdcVo;
 import smartmon.core.racks.vo.RackAllocationVo;
 import smartmon.taskmanager.vo.TaskGroupVo;
@@ -41,4 +42,7 @@ public interface SmartmonCoreFeignClient {
 
   @GetMapping(value = "/tasks/{id}")
   SmartMonResponse<TaskGroupVo> getByTaskId(@PathVariable("id") String taskGroupId);
+
+  @GetMapping("/hosts/{hostUuid}")
+  SmartMonResponse<SmartMonHostDetailVo> getHostInfo(@PathVariable("hostUuid") String hostUuid);
 }

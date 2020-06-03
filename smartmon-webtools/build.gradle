@@ -41,6 +41,7 @@ dependencies {
 
   compile libs.springProvider
   compile libs.springData
+  compile libs.swagger
 
   compile('javax.servlet:javax.servlet-api:4.0.1')
   compile('io.jsonwebtoken:jjwt-api:0.11.1')

@@ -20,4 +20,5 @@ public class Strategy {
   private PauseEnum pause;
   private StrategyOptions strategyOptions;
   private AlarmTypeEnum strategyClass;
+  private Integer strategyLevel;
 }

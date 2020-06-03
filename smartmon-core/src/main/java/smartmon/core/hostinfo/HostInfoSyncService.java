@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import smartmon.agent.client.AgentClientService;
 import smartmon.core.agent.AgentStateEnum;
 import smartmon.core.hosts.BasicInfo;
 import smartmon.core.hosts.HardwareInfo;
@@ -19,6 +18,7 @@ import smartmon.core.hosts.SmartMonHostInfo;
 import smartmon.core.hosts.SystemInfo;
 import smartmon.core.hosts.mapper.SmartMonHostMapper;
 import smartmon.core.hosts.types.SmartMonHost;
+import smartmon.injector.client.AgentClientService;
 import smartmon.utilities.misc.JsonConverter;
 
 @Slf4j

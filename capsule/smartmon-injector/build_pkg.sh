@@ -14,6 +14,7 @@ _pkg_dir=${_tmpdir}/smartmon-injector-${_pkg_ver}
 
 mkdir -pv ${_pkg_dir}/conf
 cp -v ${_build_root}/smartmon-injector/libs/smartmon-injector-1.0.jar ${_pkg_dir}/
+cp -v ${_build_root}/smartmon-oracle-cli/libs/smartmon-oracle-cli-1.0.jar ${_pkg_dir}/
 cp -v ${_base_dir}/smartmon-injector-startup.sh ${_pkg_dir}/
 cp -v ${_base_dir}/smartmon-injector.service ${_pkg_dir}/conf/
 

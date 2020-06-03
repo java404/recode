@@ -63,7 +63,7 @@ dependencies {
   compile project(':smartmon-webdata')
   compile project(':smartmon-taskmanager')
   compile project(':smartmon-core-provider')
-  compile project(':smartmon-agent-cli')
+  compile project(':smartmon-injector-provider')
 
   compile('fr.jrds:vxIPMI:2.0.0.1')
 

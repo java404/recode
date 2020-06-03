@@ -18,7 +18,7 @@ public class ShellExecuteSync extends ShellExecute {
   }
 
   public ShellResult invoke(String command) throws JSchException, IOException {
-    return invoke(command, ShellSession.DEFAULT_CONNECT_TIMEOUT, ShellSession.DEFAULT_SO_TIMEOUT);
+    return invoke(command, ShellSession.DEFAULT_CONNECT_TIMEOUT_SECONDS, ShellSession.DEFAULT_SO_TIMEOUT);
   }
 
   public ShellResult invoke(String command, int connTimeout, int soTimeout) throws JSchException, IOException {

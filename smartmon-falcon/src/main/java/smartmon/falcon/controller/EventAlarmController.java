@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import smartmon.falcon.alarm.command.EventAlarmFilterCommand;
 import smartmon.falcon.alarm.command.EventNoteCreateCommand;
 import smartmon.falcon.alarm.model.Alarm;
+import smartmon.falcon.alarm.model.AlarmFilterStrategy;
 import smartmon.falcon.alarm.model.Event;
 import smartmon.falcon.alarm.model.EventNote;
 import smartmon.falcon.alarm.service.EventAlarmService;
@@ -59,6 +60,8 @@ public class EventAlarmController {
     @RequestParam(value = "priority", required = false) String priority,
     @RequestParam(value = "valid-alarms", required = false) Boolean validAlarms,
     ServerHttpRequest request) {
+    AlarmFilterStrategy alarmFilterStrategy = validAlarms != null && validAlarms ?
+      AlarmFilterStrategy.LEVEL_PRIORITY : AlarmFilterStrategy.ALL;
     final EventAlarmFilterCommand filterCommand = new EventAlarmFilterCommand();
     filterCommand.setStartTime(startTime);
     filterCommand.setEndTime(endTime == null ? System.currentTimeMillis() / 1000 : endTime);
@@ -68,7 +71,7 @@ public class EventAlarmController {
       filterCommand.setEndpoints(Collections.singletonList(hostName));
     }
     filterCommand.setPriority(priority);
-    final List<Alarm> alarms = eventAlarmService.getAlarms(filterCommand);
+    final List<Alarm> alarms = eventAlarmService.getAlarms(filterCommand, alarmFilterStrategy);
     return new SmartMonPageResponseBuilder<>(alarms, request, "endpoint").build();
   }
 

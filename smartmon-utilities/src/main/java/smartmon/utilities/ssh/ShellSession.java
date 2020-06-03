@@ -12,7 +12,8 @@ import smartmon.utilities.misc.TargetHost;
 @Slf4j
 public class ShellSession {
   private static final int MIN_SO_TIMEOUT_SECONDS = 60 * 1000;
-  public static final int DEFAULT_CONNECT_TIMEOUT = 5000;
+  private static final int MIN_CONN_TIMEOUT_SECONDS = 30 * 1000;
+  public static final int DEFAULT_CONNECT_TIMEOUT_SECONDS = 50;
   public static final int DEFAULT_SO_TIMEOUT = MIN_SO_TIMEOUT_SECONDS;
 
   protected final JSch jsch = new JSch();
@@ -95,7 +96,7 @@ public class ShellSession {
     session.setPassword(getSshPassword());
     session.setUserInfo(jscUserInfo);
     session.setTimeout(Math.max(MIN_SO_TIMEOUT_SECONDS, soTimeout));
-    session.connect(connTimeout);
+    session.connect(Math.max(connTimeout  * 1000, MIN_CONN_TIMEOUT_SECONDS));
     return session;
   }
 

@@ -35,7 +35,7 @@ public class SecureCopy {
 
   public boolean copy(SecureCopyParameters options)
       throws JSchException, IOException, SftpException {
-    return copy(options, ShellSession.DEFAULT_CONNECT_TIMEOUT, ShellSession.DEFAULT_SO_TIMEOUT);
+    return copy(options, ShellSession.DEFAULT_CONNECT_TIMEOUT_SECONDS, ShellSession.DEFAULT_SO_TIMEOUT);
   }
 
   /** Copy files to remote host via SCP protocol. */
@@ -52,7 +52,7 @@ public class SecureCopy {
       session.connect(connTimeout, soTimeout);
       final Session jschSession = session.getSession();
       channelSftp = (ChannelSftp)jschSession.openChannel("sftp");
-      channelSftp.connect(connTimeout);
+      channelSftp.connect(connTimeout * 1000);
 
       final Set<String> sources = options.getSourceFile();
       for (String source : sources) {

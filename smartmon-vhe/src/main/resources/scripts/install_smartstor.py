@@ -64,7 +64,6 @@ def load_precheck_result():
 
 
 def execute_install(smartstor_installer_path):
-    stop_agent()
     print_info("[INFO]smartstor install start")
     install_cmd = "%s --args-file=%s" % (
         smartstor_installer_path, PARAMETER_TEMPLATE_FILEPATH)
@@ -72,18 +71,7 @@ def execute_install(smartstor_installer_path):
     print_info("[INFO]smartstor install complete")
     success = (status >> 8) == 0
     message = "install smartstor success" if success else "install smartstor failed"
-    restart_agent()
     return success, message, None
-
-def stop_agent():
-    print_info("[INFO]stop agent")
-    cmd = "supervisorctl stop smtmon-agent smtmon-agent-pb smtmon-dbapi smtmon-jdbc > /dev/null 2>&1"
-    os.system(cmd)
-
-def restart_agent():
-    print_info("[INFO]restart agent")
-    cmd = "supervisorctl restart smtmon-agent smtmon-agent-pb smtmon-dbapi smtmon-jdbc > /dev/null 2>&1"
-    os.system(cmd)
 
 def print_info(info):
     print info

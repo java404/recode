@@ -8,7 +8,7 @@ import smartmon.webtools.encryption.EncryptionService;
 
 @Service
 public class SshService {
-  private static final int DEFAULT_CONNECT_TIMEOUT = 5000;
+  private static final int DEFAULT_CONNECT_TIMEOUT = 50;
   public static final int DEFAULT_SSH_PORT = 22;
 
   @Autowired

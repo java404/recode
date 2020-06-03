@@ -38,5 +38,7 @@ publishing {
 
 dependencies {
   compile project(':smartmon-utilities')
+  compile project(':smartmon-oracle-provider')
   compile('org.zeroturnaround:zt-exec:1.11')
+  compile libs.springProvider
 }

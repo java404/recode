@@ -14,14 +14,23 @@ smartmon.datasource:
   liquibase.debug: true
   h2.path: /var/smartmon
   h2.file: falcon.h2
-  mysql.host: 172.24.8.132
+  mysql.host: 172.24.8.55
   mysql.user: root
   mysql.password: root
   mysql.db: smartmon_falcon
 
+dubbo:
+  application.name: smartmon-falcon-dubbo
+  registry.address: nacos://127.0.0.1:8848
+  service.version: 1.0.0
+  protocol:
+    name: dubbo
+    port: -1
+    threads: 10
+
 smartmon:
   falcon:
-    address: 172.24.8.132
+    address: 172.24.8.55
     requestPort: 8080
     pushPort: 1988
     name: root

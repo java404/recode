@@ -1,5 +1,6 @@
 package smartmon.gateway.security;
 
+import com.google.common.collect.Lists;
 import java.util.Arrays;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,12 +9,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import reactor.core.publisher.Mono;
 import smartmon.utilities.misc.StringItems;
@@ -41,9 +42,21 @@ public class SecurityConfig {
     return urls;
   }
 
+  private Mono<AuthorizationDecision> checkAuthorities(Mono<Authentication> authentication, String... auth) {
+    return authentication
+      .filter(Authentication::isAuthenticated)
+      .flatMapIterable(Authentication::getAuthorities)
+      .map(GrantedAuthority::getAuthority)
+      .collectList()
+      .map(items -> items.containsAll(Lists.newArrayList(auth)))
+      .map(AuthorizationDecision::new)
+      .defaultIfEmpty(new AuthorizationDecision(false));
+  }
+
   private void updatingSecurityPolicies(ServerHttpSecurity http) {
     http.authorizeExchange()
-      .pathMatchers(HttpMethod.GET, "/gateway/api/v2/debug/**").hasRole("ADMIN")
+      .pathMatchers(HttpMethod.GET, "/gateway/api/v2/debug/**")
+      .access((authentication, context) -> checkAuthorities(authentication, "admin", "user"))
       .anyExchange().authenticated();
   }
 

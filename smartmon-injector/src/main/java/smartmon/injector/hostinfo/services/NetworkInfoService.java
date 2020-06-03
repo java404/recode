@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 import smartmon.core.hosts.NetworkInfo;
 import smartmon.injector.config.SmartMonBatchConfig;
 import smartmon.injector.executors.ExecutorService;
-import smartmon.injector.executors.SmartMonResultParser;
 import smartmon.utilities.misc.JsonConverter;
+import smartmon.utilities.misc.SmartMonResultParser;
 
 @Slf4j
 @Service

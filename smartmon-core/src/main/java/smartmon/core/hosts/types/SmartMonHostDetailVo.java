@@ -47,7 +47,7 @@ public class SmartMonHostDetailVo {
 
   //Network info
   private String networks;
-  private List<String> monitorNetInterfaces;
+  private List<String> monitorInterfaces;
 
   public List<HardwareInfo.MountInfo> getMounts() {
     return JsonConverter.readValueQuietly(mounts, List.class, HardwareInfo.MountInfo.class);

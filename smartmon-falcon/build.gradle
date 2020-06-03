@@ -6,6 +6,7 @@ plugins {
   id 'org.springframework.boot'
   id 'io.spring.dependency-management'
   id 'maven-publish'
+  id "ua.eshepelyuk.ManifestClasspath" version "1.0.0"
 }
 
 final appMainClassName  = 'smartmon.falcon.SmartMonFalcon'
@@ -74,6 +75,7 @@ dependencies {
   compile project(':smartmon-webdata')
   compile project(':smartmon-taskmanager')
   compile project(':smartmon-falcon-provider')
+  compile project(':smartmon-core-provider')
 
   compile('javax.servlet:javax.servlet-api:4.0.1')
   compile('org.springframework.boot:spring-boot-starter-webflux')
@@ -82,4 +84,5 @@ dependencies {
   compile('org.snmp4j:snmp4j:2.8.2')
   compile('javax.mail:javax.mail-api:1.5.6')
   compile('com.sun.mail:javax.mail:1.6.2')
+  compile libs.dubboProvider
 }

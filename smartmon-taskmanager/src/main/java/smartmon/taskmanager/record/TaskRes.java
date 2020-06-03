@@ -14,6 +14,7 @@ public class TaskRes {
   public static final String RES_HOST = "host";
   public static final String RES_AGENT = "agent";
   public static final String RES_INJECTOR = "injector";
+  public static final String RES_SMARTSTOR = "smartstor";
   public static final String RES_NETWORK_INTERFACES = "network_interfaces";
   public static final String RES_MONITOR_INTERFACES = "monitor_interfaces";
 

@@ -6,6 +6,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import smartmon.smartstor.web.dto.StorageHostDto;
@@ -21,4 +22,8 @@ public interface SmartStorFeignClient {
 
   @GetMapping(value = "/hosts")
   SmartMonResponse<List<StorageHostDto>> getStorageHosts();
+
+  @GetMapping(value = "/hosts/{hostGuid}")
+  SmartMonResponse<StorageHostDto> getSingleStorageHost(@PathVariable("hostGuid") String hostGuid);
+
 }

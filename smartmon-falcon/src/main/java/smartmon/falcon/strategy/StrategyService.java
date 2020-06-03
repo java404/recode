@@ -19,6 +19,8 @@ public interface StrategyService {
 
   Strategy getStrategyById(Integer strategyId);
 
+  Strategy getStrategyById(Integer strategyId, List<Strategy> strategies);
+
   Map<String, Strategy> getStrategyMap(String counter);
 
   boolean judgeStrategy(Strategy strategy, Double value);

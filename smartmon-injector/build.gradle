@@ -59,13 +59,22 @@ processResources {
 
 dependencies {
   compile project(':smartmon-utilities')
-  compile project(':smartmon-webtools')
   compile project(':smartmon-webdata')
+  compile project(':smartmon-injector-provider')
   compile project(':smartmon-taskmanager')
   compile project(':smartmon-core-provider')
+  compile project(':smartmon-oracle')
 
   compile('javax.servlet:javax.servlet-api:4.0.1')
-  compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
+  compile("org.springframework.boot:spring-boot-starter-web")
   compile('org.springframework.cloud:spring-cloud-context')
   compile('org.zeroturnaround:zt-exec:1.11')
+
+  compile 'io.springfox:springfox-swagger-ui:2.9.2'
+  compile ('io.springfox:springfox-swagger2:2.9.2') {
+    exclude module: 'swagger-annotations'
+    exclude module: 'swagger-models'
+  }
+  compile 'io.swagger:swagger-annotations:1.5.21'
+  compile 'io.swagger:swagger-models:1.5.21'
 }

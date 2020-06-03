@@ -148,4 +148,16 @@ public class HostRepresentationService {
     }
     return inGroupHostIds;
   }
+
+  public StorageHostDto getHostByGuid(String hostGuid) {
+    StorageHost storageHost = storageHostRepository.findByGuid(hostGuid);
+    StorageHostDto hostDto = BeanConverter.copy(storageHost, StorageHostDto.class);
+    if (hostDto == null) {
+      return null;
+    }
+    hostDto.setSysModeDesc(storageHost.getSysMode() != null ? storageHost.getSysMode().getName() : "");
+    hostDto.setNodeStatusDesc(storageHost.getNodeStatus() != null ? storageHost.getNodeStatus().getName() : "");
+    hostDto.setTransModeDesc(storageHost.getTransMode() != null ? storageHost.getTransMode().getName() : "");
+    return hostDto;
+  }
 }

@@ -5,6 +5,7 @@ import io.swagger.annotations.Api;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,7 +37,7 @@ public class HostController {
   }
 
   @GetMapping
-  public SmartMonResponse getAll(ServerHttpRequest request) {
+  public SmartMonResponse<Page<VheStorageHostDto>> getAll(ServerHttpRequest request) {
     return new SmartMonPageResponseBuilder<VheStorageHostDto>(hostService.listAll(),
       request, "listenIp").build();
   }

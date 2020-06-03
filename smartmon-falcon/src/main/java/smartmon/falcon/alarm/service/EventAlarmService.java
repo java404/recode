@@ -5,12 +5,13 @@ import java.util.Map;
 import smartmon.falcon.alarm.command.EventAlarmFilterCommand;
 import smartmon.falcon.alarm.command.EventNoteCreateCommand;
 import smartmon.falcon.alarm.model.Alarm;
+import smartmon.falcon.alarm.model.AlarmFilterStrategy;
 import smartmon.falcon.alarm.model.Event;
 import smartmon.falcon.alarm.model.EventNote;
 
 
 public interface EventAlarmService {
-  List<Alarm> getAlarms(EventAlarmFilterCommand eventAlarmFilterCommand);
+  List<Alarm> getAlarms(EventAlarmFilterCommand eventAlarmFilterCommand, AlarmFilterStrategy alarmFilterStrategy);
 
   List<Event> getEventsById(String alarmId);
 

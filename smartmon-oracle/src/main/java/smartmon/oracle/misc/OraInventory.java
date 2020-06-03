@@ -6,6 +6,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.Node;
+import smartmon.oracle.exec.Sqlplus;
 import smartmon.oracle.types.OraInventoryHome;
 import smartmon.utilities.misc.XmlParser;
 
@@ -32,7 +33,7 @@ public class OraInventory {
     return loadFromFile(FilenameUtils.concat(oraInstLoc.getInventoryLoc(), DEFAULT_LOCATION));
   }
 
-  private OraInventoryHome parseHomeNode(Node homeNode) {
+  private OraInventoryHome parseHomeNode(Document doc, Node homeNode) {
     final OraInventoryHome inventoryHome = new OraInventoryHome();
     final Element element = (Element)homeNode;
     inventoryHome.setName(element.attributeValue("NAME"));
@@ -42,8 +43,9 @@ public class OraInventory {
     inventoryHome.setCrs(Boolean.parseBoolean(element.attributeValue("CRS")));
     final List<String> nodeNames = new ArrayList<>();
     inventoryHome.setNodeNames(nodeNames);
-    final List<Node> nodes = homeNode.selectNodes("/NODE_LIST//NODE");
+    final List<Node> nodes = doc.selectNodes(homeNode.getUniquePath() + "/NODE_LIST//NODE");
     for (final Node node : nodes) {
+
       final Element nodeElement = (Element)node;
       nodeNames.add(nodeElement.attributeValue("NAME"));
     }
@@ -55,7 +57,7 @@ public class OraInventory {
     final List<Node> homeNodes = doc.selectNodes("/INVENTORY/HOME_LIST//HOME");
     final List<OraInventoryHome> result = new ArrayList<>();
     for (final Node homeNode : homeNodes) {
-      result.add(parseHomeNode(homeNode));
+      result.add(parseHomeNode(doc, homeNode));
     }
     return result;
   }

@@ -28,7 +28,7 @@ export BASE_DIR=`cd $(dirname $0)/..; pwd`
 export DEFAULT_SEARCH_LOCATIONS="classpath:/,classpath:/config/,file:./,file:./config/"
 
 export MALLOC_ARENA_MAX=2
-JAVA_OPT="${JAVA_OPT} -XX:+UseSerialGC -Xms256m -Xmx512m -Xss512k -XX:PermSize=128m -XX:MaxPermSize=128m"
+JAVA_OPT="${JAVA_OPT} -XX:+UseSerialGC -Xms256m -Xmx1024m -Xss512k -XX:PermSize=128m -XX:MaxPermSize=128m"
 JAVA_OPT="${JAVA_OPT} -Dserver.tomcat.max-threads=30"
 JAVA_OPT="${JAVA_OPT} -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${_base_dir}/java_heapdump.hprof"
 

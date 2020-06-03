@@ -20,6 +20,15 @@ smartmon.datasource:
   mysql.password: root
   mysql.db: smartmon_falcon
 
+dubbo:
+  application.name: smartmon-falcon-dubbo
+  registry.address: nacos://127.0.0.1:8848
+  service.version: 1.0.0
+  protocol:
+    name: dubbo
+    port: -1
+    threads: 10
+
 smartmon.falcon:
   address: 127.0.0.1
   requestPort: 8080

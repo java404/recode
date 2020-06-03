@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import smartmon.falcon.remote.client.FalconClient;
 import smartmon.falcon.remote.config.FalconApiComponent;
 import smartmon.falcon.remote.types.FalconResponseData;
+import smartmon.falcon.remote.types.strategy.FalconStrategy;
 import smartmon.falcon.remote.types.template.FalconAction;
 import smartmon.falcon.remote.types.template.FalconActionUpdateParam;
 import smartmon.falcon.remote.types.template.FalconTemplateInfo;
@@ -90,15 +91,7 @@ public class TemplateServiceImpl implements TemplateService {
       .stream()
       .map(s -> {
         Strategy strategy = BeanConverter.copy(s, Strategy.class);
-        try {
-          if (StringUtils.isNotEmpty(s.getFalconStrategyOptions())) {
-            StrategyOptions strategyOptions = mapper.readValue(s
-                .getFalconStrategyOptions(), StrategyOptions.class);
-            strategy.setStrategyOptions(strategyOptions);
-          }
-        } catch (JsonProcessingException e) {
-          log.error(" get strategyOptions error ", e);
-        }
+        strategy.setStrategyOptions(s.getFalconStrategyOptions());
         return strategy;
       })
       .collect(Collectors.toList());
@@ -134,7 +127,8 @@ public class TemplateServiceImpl implements TemplateService {
     if (falconTemplateInfo != null) {
       templateInfo.setAction(BeanConverter.copy(falconTemplateInfo.getAction(), Action.class));
       templateInfo.setParentName(falconTemplateInfo.getParentName());
-      templateInfo.setStrategies(BeanConverter.copy(falconTemplateInfo.getStrategies(), Strategy.class));
+      final List<FalconStrategy> strategies = falconTemplateInfo.getStrategies();
+      templateInfo.setStrategies(FalconStrategy.convertStrategy(strategies));
       templateInfo.setTemplate(BeanConverter.copy(falconTemplateInfo.getTemplate(), Template.class));
     }
     return templateInfo;

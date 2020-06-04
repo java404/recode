@@ -4,7 +4,6 @@ import lombok.Data;
 
 @Data
 public class HostInitDto {
-  private String guid;
   private String hostId;
   private String listenIp;
   private String sysUsername;

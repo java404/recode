@@ -15,6 +15,7 @@ public class ShellSession {
   private static final int MIN_CONN_TIMEOUT_SECONDS = 30 * 1000;
   public static final int DEFAULT_CONNECT_TIMEOUT_SECONDS = 50;
   public static final int DEFAULT_SO_TIMEOUT = MIN_SO_TIMEOUT_SECONDS;
+  public static final int DEFAULT_SSH_PORT = 22;
 
   protected final JSch jsch = new JSch();
 

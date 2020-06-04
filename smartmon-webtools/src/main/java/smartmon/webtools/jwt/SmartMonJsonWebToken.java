@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.crypto.SecretKey;
 import smartmon.utilities.misc.StringItems;
+import smartmon.webtools.general.SmartMonUser;
 
 public class SmartMonJsonWebToken {
   private final SecretKey key;
@@ -25,7 +26,7 @@ public class SmartMonJsonWebToken {
 
   public String generate(SmartMonUser user) {
     final Map<String, Object> claims = new HashMap<>();
-    claims.put("roles", StringItems.join(user.getRoles()));
+    // claims.put("roles", StringItems.join(user.getRoles()));
     final Date createdDate = new Date();
     final Date expirationDate = new Date(createdDate.getTime() + expirationTime * 1000);
     return Jwts.builder().setClaims(claims).setSubject(user.getUsername())

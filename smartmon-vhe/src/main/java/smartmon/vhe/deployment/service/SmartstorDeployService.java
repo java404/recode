@@ -28,11 +28,15 @@ import smartmon.utilities.misc.TargetHost;
 import smartmon.utilities.ssh.ShellExecute;
 import smartmon.utilities.ssh.ShellExecuteEvent;
 import smartmon.vhe.deployment.command.SmartstorDeployCommand;
+import smartmon.vhe.service.HostService;
+import smartmon.vhe.service.dto.HostInitDto;
 
 @Service
 public class SmartstorDeployService extends SmartstorService {
   @Autowired
   private TaskManagerService taskManagerService;
+  @Autowired
+  private HostService hostService;
 
   public TaskGroup deploy(List<SmartstorDeployCommand> commands) {
     List<TaskDescription> tasks = commands.stream().map(this::taskDescription).collect(Collectors.toList());
@@ -57,7 +61,8 @@ public class SmartstorDeployService extends SmartstorService {
       Runnable configOpensm = () -> configOpensm(command.getAddress(), command.getOpensmParameters());
       taskDescriptionBuilder.withStep("CONFIG", "config opensm", configOpensm);
     }
-    taskDescriptionBuilder.withStep("CONFIG", "config node", () -> configNode(command));
+    taskDescriptionBuilder.withStep("REGIST", "regist host", () -> registHost(command))
+      .withStep("INSTALL", "install agent", hostService::installAgent);
     boolean isLocalHost = (new LocalNetworkInterface()).isLocalIp(command.getAddress());
     if (!isLocalHost) {
       taskDescriptionBuilder.withStep("REBOOT", "restart host", () -> restartHost(command));
@@ -76,7 +81,17 @@ public class SmartstorDeployService extends SmartstorService {
     doCommandAndWaitForComplete(serviceIp, "cd ./scripts && python ./opensm_config.py");
   }
 
-  private void configNode(SmartstorDeployCommand smartstorDeployCommand) {
+  private void registHost(SmartstorDeployCommand command) {
+    HostInitDto hostInitDto = new HostInitDto();
+    hostInitDto.setListenIp(command.getAddress());
+    hostInitDto.setSshPort(command.getPort());
+    hostInitDto.setSysUsername(command.getUsername());
+    hostInitDto.setSysPassword(command.getPassword());
+    hostInitDto.setIpmiAddress(command.getIpmiAddress());
+    hostInitDto.setIpmiUsername(command.getIpmiUsername());
+    hostInitDto.setIpmiPassword(command.getIpmiPassword());
+    hostInitDto.setSize(command.getSize());
+    hostService.registHost(hostInitDto);
   }
 
   private void restartHost(RemoteHostCommand remoteHostCommand) {

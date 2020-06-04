@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 import smartmon.core.hosts.types.HostAddCommand;
 import smartmon.core.hosts.types.HostConfigCommand;
 import smartmon.core.hosts.types.MonitorNetInterfaceVo;
-import smartmon.core.hosts.types.SmartMonHost;
 import smartmon.core.hosts.types.SmartMonHostDetailVo;
 import smartmon.core.hosts.types.SmartMonHostVo;
 import smartmon.taskmanager.TaskManagerService;

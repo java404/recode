@@ -5,9 +5,9 @@ import smartmon.core.racks.Constants;
 
 @Getter
 public class RackPosition {
-  private String idcId;
-  private String rackName;
-  private Integer rackIndex;
+  private final String idcId;
+  private final String rackName;
+  private final Integer rackIndex;
   private RackPositionStateEnum rackPositionState;
   private String hostUuid;
   private Integer size;

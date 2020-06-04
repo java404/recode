@@ -59,6 +59,24 @@ public class SmartMonDataSource {
   @Value("${smartmon.datasource.liquibase.debug:false}")
   private boolean liquibaseDebug;
 
+  @Value("${smartmon.datasource.hikari.connectionTimeout:50000}")
+  private long hikariConnectionTimeoutMS;
+
+  @Value("${smartmon.datasource.hikari.idleTimeout:600000}")
+  private long hikariIdleTimeoutMS;
+
+  @Value("${smartmon.datasource.hikari.maxLifetime:1800000}")
+  private long hikariMaxLifetime;
+
+  @Value("${smartmon.datasource.hikari.driverClassName:com.mysql.cj.jdbc.Driver}")
+  private String hikariDriverClassName;
+
+  @Value("${smartmon.datasource.hikari.maxPoolSize:5}")
+  private int hikariMaxPoolSize;
+
+  @Value("${smartmon.datasource.hikari.minimumIdle:2}")
+  private int hikariMinimumIdle;
+
   @ConfigurationProperties(prefix = "spring.datasource")
   @Primary
   @Bean
@@ -114,7 +132,16 @@ public class SmartMonDataSource {
   private DataSource makeMySqlDataSource() {
     log.info("DataSource is server mode. (MySQL)");
     final String url = Strings.isNullOrEmpty(jdbcUrl) ? makeMySqlUrl() : jdbcUrl;
-    return DataSourceBuilder.create().type(HikariDataSource.class)
-      .url(url).username(mysqlUser).password(mysqlPassword).build();
+    final HikariDataSource hikariDataSource = new HikariDataSource();
+    hikariDataSource.setJdbcUrl(url);
+    hikariDataSource.setUsername(mysqlUser);
+    hikariDataSource.setPassword(mysqlPassword);
+    hikariDataSource.setConnectionTimeout(hikariConnectionTimeoutMS);
+    hikariDataSource.setIdleTimeout(hikariIdleTimeoutMS);
+    hikariDataSource.setMaxLifetime(hikariMaxLifetime);
+    hikariDataSource.setMaximumPoolSize(hikariMaxPoolSize);
+    hikariDataSource.setMinimumIdle(hikariMinimumIdle);
+    hikariDataSource.setDriverClassName(hikariDriverClassName);
+    return hikariDataSource;
   }
 }

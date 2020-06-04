@@ -1,0 +1,67 @@
+databaseChangeLog:
+  - changeSet:
+      id: init-users-001
+      author: xiong.jia_le
+      changes:
+        - sql:
+            comment: Table smartmon_user
+            splitStatements: false
+            sql: CREATE TABLE smartmon_user (user_id INT(11) NOT NULL AUTO_INCREMENT,
+              username VARCHAR(100) COLLATE UTF8_BIN NOT NULL,
+              password VARCHAR(100) COLLATE utf8_bin DEFAULT NULL,
+              PRIMARY KEY (user_id),
+              UNIQUE KEY __smartmon_user_uk_username (username));
+        - sql:
+            comment: Table smartmon_role
+            splitStatements: false
+            sql: CREATE TABLE smartmon_role (role_id INT(11) NOT NULL AUTO_INCREMENT,
+              role_name VARCHAR(100) COLLATE UTF8_BIN NOT NULL,
+              PRIMARY KEY (role_id),
+              UNIQUE KEY __smartmon_role_uk_role_name (role_name));
+        - sql:
+            comment: Table smartmon_authority
+            splitStatements: false
+            sql: CREATE TABLE smartmon_authority (authority_id INT(11) NOT NULL AUTO_INCREMENT,
+              name VARCHAR(100) COLLATE UTF8_BIN NOT NULL,
+              PRIMARY KEY (authority_id),
+              UNIQUE KEY __smartmon_authority_uk_name (name));
+        - sql:
+            comment: Table user <-> role
+            splitStatements: false
+            sql: CREATE TABLE smartmon_user_role (role_id INT(11) NOT NULL, user_id INT(11) NOT NULL,
+              PRIMARY KEY (user_id, role_id),
+              KEY __smartmon_user_role_key_user_id (user_id),
+              CONSTRAINT __smartmon_user_role_fk_user_id FOREIGN KEY (user_id) REFERENCES smartmon_user (user_id),
+              CONSTRAINT __smartmon_user_role_fk_role_id FOREIGN KEY (role_id) REFERENCES smartmon_role (role_id));
+        - sql:
+            comment: Table role <-> authority
+            splitStatements: false
+            sql: CREATE TABLE smartmon_role_authority (role_id INT(11) NOT NULL, authority_id INT(11) NOT NULL,
+              PRIMARY KEY (authority_id, role_id),
+              KEY __role_authority_key_role_id (role_id),
+              CONSTRAINT __role_authority_fk_authority_id FOREIGN KEY (authority_id) REFERENCES smartmon_authority (authority_id),
+              CONSTRAINT __role_authority_fk_role_id FOREIGN KEY (role_id) REFERENCES smartmon_role (role_id));
+        - sql:
+            comment: Default authorities
+            splitStatements: false
+            sql: INSERT INTO smartmon_authority ( name ) VALUES ('system'), ('storage'), ('monitor'), ('switch');
+        - sql:
+            comment: Default role
+            splitStatements: false
+            sql: INSERT INTO smartmon_role ( role_name ) VALUES ('ADMIN');
+        - sql:
+            comment: Admin role authorities
+            splitStatements: false
+            sql: INSERT INTO smartmon_role_authority ( role_id, authority_id )
+              SELECT role_id, authority_id FROM smartmon_role
+              CROSS JOIN smartmon_authority WHERE smartmon_role.role_name = 'ADMIN';
+        - sql:
+            comment: Default user
+            splitStatements: false
+            sql: INSERT INTO smartmon_user ( username, password ) VALUES ('admin', md5('admin'));
+        - sql:
+            comment: Default user Role
+            splitStatements: false
+            sql: INSERT INTO smartmon_user_role ( role_id, user_id )
+              SELECT user_id, role_id FROM smartmon_user CROSS JOIN smartmon_role
+              WHERE smartmon_user.username = 'admin' AND smartmon_role.role_name = 'ADMIN';

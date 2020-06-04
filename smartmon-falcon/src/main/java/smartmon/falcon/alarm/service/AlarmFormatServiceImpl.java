@@ -1,17 +1,17 @@
 package smartmon.falcon.alarm.service;
 
 import com.google.common.collect.Maps;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import smartmon.falcon.alarm.model.Alarm;
 import smartmon.falcon.alarm.model.AlarmEvent;
 import smartmon.falcon.alarm.model.AlarmEventStatusEnum;
 import smartmon.falcon.strategy.model.Strategy;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @Service
 public class AlarmFormatServiceImpl implements AlarmFormatService {

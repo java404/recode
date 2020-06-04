@@ -16,6 +16,8 @@ public class SmartMonHostVo {
   private String distribution;
   private String manageIp;
   private String ipmiAddress;
+  private String ipmiUsername;
+  private String ipmiPassword;
   private Date createTime;
   private PowerStateEnum powerState;
   private Date statusTime;

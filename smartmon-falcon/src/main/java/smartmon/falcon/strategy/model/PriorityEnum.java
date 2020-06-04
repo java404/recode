@@ -1,8 +1,12 @@
 package smartmon.falcon.strategy.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Arrays;
 import java.util.Objects;
 
+
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum PriorityEnum {
   DISASTER(0, "Disaster"),
   SERIOUS(1, "Serious"),
@@ -25,6 +29,9 @@ public enum PriorityEnum {
     return name;
   }
 
+  /**
+   * get PriorityEnum by code.
+   */
   public static PriorityEnum getByCode(int code) {
     return Arrays.stream(PriorityEnum.values())
       .filter(enumConstant -> Objects.equals(enumConstant.getCode(), code))

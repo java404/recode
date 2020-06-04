@@ -87,7 +87,8 @@ public abstract class SmartstorService {
       try {
         agentClientService.uploadFile(serviceIp, smartMonBatchConfig.getRemoteWorkFolder() + filepath, filename, file);
       } catch (Exception err) {
-        throw new RuntimeException(err);
+        log.error("upload script failed", err);
+        throw new RuntimeException("upload script failed:" + err.getMessage());
       }
     }
   }

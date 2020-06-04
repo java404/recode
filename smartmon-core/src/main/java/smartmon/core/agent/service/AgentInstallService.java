@@ -20,7 +20,7 @@ import smartmon.core.agent.SmartMonBatchConfig;
 import smartmon.core.config.SmartMonErrno;
 import smartmon.core.hosts.HostsService;
 import smartmon.core.hosts.mapper.SmartMonHostMapper;
-import smartmon.core.hosts.types.SmartMonHost;
+import smartmon.core.hosts.SmartMonHost;
 import smartmon.core.repo.RepoService;
 import smartmon.injector.client.AgentClientService;
 import smartmon.taskmanager.TaskManagerService;

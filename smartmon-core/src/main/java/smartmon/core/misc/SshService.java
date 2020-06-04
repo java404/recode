@@ -9,17 +9,16 @@ import smartmon.webtools.encryption.EncryptionService;
 @Service
 public class SshService {
   private static final int DEFAULT_CONNECT_TIMEOUT = 50;
-  public static final int DEFAULT_SSH_PORT = 22;
 
   @Autowired
   private EncryptionService encryptionService;
 
   public boolean canConnect(String sshHostname, String sshUsername, String sshPassword) {
-    return canConnect(sshHostname, sshUsername, sshPassword, DEFAULT_SSH_PORT);
+    return canConnect(sshHostname, sshUsername, sshPassword, ShellSession.DEFAULT_SSH_PORT);
   }
 
   public boolean canConnect(String sshHostname, String sshUsername, String sshPassword, Integer port) {
-    port = port == null ? DEFAULT_SSH_PORT : port;
+    port = port == null ? ShellSession.DEFAULT_SSH_PORT : port;
     TargetHost host = TargetHost.builder(sshHostname, port).username(sshUsername).password(sshPassword).build();
     ShellSession shellSession = new ShellSession(host, encryptionService.getEncryption());
     try {

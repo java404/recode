@@ -6,9 +6,9 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import smartmon.falcon.alarm.model.AlarmTypeEnum;
 import smartmon.falcon.strategy.model.PauseEnum;
-import smartmon.falcon.strategy.model.PriorityEnum;
 import smartmon.falcon.strategy.model.Strategy;
 import smartmon.falcon.strategy.model.StrategyOptions;
+import smartmon.falcon.strategy.model.StrategyPriorityEnum;
 import smartmon.utilities.misc.BeanConverter;
 import smartmon.utilities.misc.JsonConverter;
 
@@ -43,11 +43,11 @@ public class FalconStrategy {
   private String strategyClass;
 
   public AlarmTypeEnum getStrategyClass() {
-    return StringUtils.isNotEmpty(this.strategyClass) ? AlarmTypeEnum.fromName(this.strategyClass) : null;
+    return StringUtils.isNotEmpty(this.strategyClass) ? AlarmTypeEnum.getByName(this.strategyClass) : null;
   }
 
-  public PriorityEnum getPriority() {
-    return this.priority != null ? PriorityEnum.getByCode(priority) : null;
+  public StrategyPriorityEnum getPriority() {
+    return this.priority != null ? StrategyPriorityEnum.getByIndex(priority) : null;
   }
 
   public StrategyOptions getFalconStrategyOptions() {

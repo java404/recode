@@ -6,12 +6,20 @@ import java.util.List;
 import java.util.concurrent.TimeoutException;
 import lombok.extern.slf4j.Slf4j;
 import org.zeroturnaround.exec.ProcessExecutor;
-import smartmon.oracle.cluster.OracleNode;
+import smartmon.oracle.types.OracleNode;
 import smartmon.utilities.misc.LinesParser;
 
 @Slf4j
 public class Olsnodes {
   private static final String CMD = "olsnodes";
+
+  private static class Holder {
+    static final Olsnodes INSTANCE = new Olsnodes();
+  }
+
+  public static Olsnodes getInstance() {
+    return Holder.INSTANCE;
+  }
 
   // Ouptput example:
   //

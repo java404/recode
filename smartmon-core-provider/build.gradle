@@ -38,5 +38,6 @@ publishing {
 
 dependencies {
   compile project(':smartmon-utilities')
+  compile libs.mybatisProvider
 }
 

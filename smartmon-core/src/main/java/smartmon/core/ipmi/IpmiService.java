@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import smartmon.core.hosts.mapper.SmartMonHostMapper;
-import smartmon.core.hosts.types.SmartMonHost;
+import smartmon.core.hosts.SmartMonHost;
 
 @Slf4j
 @Service

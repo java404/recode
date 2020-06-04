@@ -14,7 +14,7 @@ import smartmon.gateway.security.types.AuthResponse;
 
 import smartmon.utilities.general.SmartMonResponse;
 import smartmon.webtools.jwt.SmartMonJsonWebToken;
-import smartmon.webtools.jwt.SmartMonUser;
+import smartmon.webtools.general.SmartMonUser;
 
 @Api(tags = "passport")
 @RestController
@@ -30,7 +30,7 @@ public class SmartMonPassport {
 
     final SmartMonUser smartMonUser = new SmartMonUser();
     smartMonUser.setUsername("admin");
-    smartMonUser.getRoles().add("USER");
+    // smartMonUser.getRoles().add("USER");
 
     final String token = smartMonJsonWebToken.generate(smartMonUser);
     final AuthResponse authResponse = new AuthResponse();

@@ -1,8 +1,10 @@
 package smartmon.smartstor.domain.service;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import smartmon.smartstor.app.command.HostInitCommand;
@@ -26,15 +28,14 @@ public class HostInitService {
 
   public synchronized void initHost(HostInitCommand command) {
     try {
-      StorageHost storageHostSaved = getStorageHostSaved(command.getHostId(), command.getListenIp());
+      StorageHost storageHost = getStorageHostRemote(command.getListenIp());
+      StorageHost storageHostSaved = getStorageHostSaved(storageHost.getHostId(), command.getListenIp());
       if (storageHostSaved != null && storageHostSaved.isHostConfigured()) {
         return;
       }
-      StorageHost storageHost;
       if (storageHostSaved != null) {
         storageHost = storageHostSaved;
       } else {
-        storageHost = getStorageHostRemote(command.getHostId(), command.getListenIp());
         storageHost.setUuid(UUID.randomUUID().toString());
       }
       storageHost.setGuid(command.getGuid());
@@ -55,7 +56,7 @@ public class HostInitService {
       .orElse(null);
   }
 
-  private StorageHost getStorageHostRemote(String hostId, String listenIp) {
+  private StorageHost getStorageHostRemote(String listenIp) {
     StorageNode storageNode = smartstorApiService.getNodeInfo(listenIp);
     if (storageNode == null) {
       throw new HostInitException("host not exists");

@@ -1,10 +1,9 @@
 package smartmon.falcon.alarm.model;
 
-import org.apache.logging.log4j.util.Strings;
-import smartmon.falcon.strategy.model.Strategy;
-
 import java.util.Arrays;
 import java.util.List;
+import org.apache.logging.log4j.util.Strings;
+import smartmon.falcon.strategy.model.Strategy;
 
 public class FilterAlarm {
   private final Alarm alarm;
@@ -15,6 +14,9 @@ public class FilterAlarm {
     this.strategy = strategy;
   }
 
+  /**
+   * get group values.
+   */
   public List<String> getGroupValues() {
     AlarmTypeEnum alarmTypeEnum = strategy == null ? null : strategy.getStrategyClass();
     String strategyClass = alarmTypeEnum == null ? Strings.EMPTY : alarmTypeEnum.name();

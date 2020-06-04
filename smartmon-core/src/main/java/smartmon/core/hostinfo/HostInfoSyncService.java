@@ -17,7 +17,7 @@ import smartmon.core.hosts.NetworkInfo;
 import smartmon.core.hosts.SmartMonHostInfo;
 import smartmon.core.hosts.SystemInfo;
 import smartmon.core.hosts.mapper.SmartMonHostMapper;
-import smartmon.core.hosts.types.SmartMonHost;
+import smartmon.core.hosts.SmartMonHost;
 import smartmon.injector.client.AgentClientService;
 import smartmon.utilities.misc.JsonConverter;
 

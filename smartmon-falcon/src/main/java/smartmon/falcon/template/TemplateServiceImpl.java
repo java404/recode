@@ -1,6 +1,5 @@
 package smartmon.falcon.template;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -23,7 +22,6 @@ import smartmon.falcon.remote.types.template.FalconAction;
 import smartmon.falcon.remote.types.template.FalconActionUpdateParam;
 import smartmon.falcon.remote.types.template.FalconTemplateInfo;
 import smartmon.falcon.strategy.model.Strategy;
-import smartmon.falcon.strategy.model.StrategyOptions;
 import smartmon.falcon.user.Team;
 import smartmon.utilities.misc.BeanConverter;
 

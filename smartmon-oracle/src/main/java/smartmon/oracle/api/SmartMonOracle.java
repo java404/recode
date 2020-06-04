@@ -1,8 +1,7 @@
 package smartmon.oracle.api;
 
-import java.util.List;
-import smartmon.oracle.types.OraInventoryHome;
+import smartmon.oracle.types.OracleClusterInfo;
 
 public interface SmartMonOracle {
-  List<OraInventoryHome> getClustersInfo();
+  OracleClusterInfo getClusterInfo();
 }

@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import smartmon.core.agent.AgentStateEnum;
 import smartmon.core.hosts.mapper.SmartMonHostMapper;
-import smartmon.core.hosts.types.SmartMonHost;
+import smartmon.core.hosts.SmartMonHost;
 import smartmon.taskmanager.dto.TaskGroupDto;
 import smartmon.taskmanager.mapper.TaskManagerMapper;
 import smartmon.taskmanager.record.TaskStatus;

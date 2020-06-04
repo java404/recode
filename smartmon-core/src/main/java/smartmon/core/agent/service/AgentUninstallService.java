@@ -13,7 +13,7 @@ import smartmon.core.agent.AgentStateEnum;
 import smartmon.core.agent.SmartMonBatchConfig;
 import smartmon.core.config.SmartMonErrno;
 import smartmon.core.hosts.mapper.SmartMonHostMapper;
-import smartmon.core.hosts.types.SmartMonHost;
+import smartmon.core.hosts.SmartMonHost;
 import smartmon.taskmanager.TaskManagerService;
 import smartmon.taskmanager.record.TaskAct;
 import smartmon.taskmanager.record.TaskRes;

@@ -60,8 +60,8 @@ public class EventAlarmController {
     @RequestParam(value = "priority", required = false) String priority,
     @RequestParam(value = "valid-alarms", required = false) Boolean validAlarms,
     ServerHttpRequest request) {
-    AlarmFilterStrategy alarmFilterStrategy = validAlarms != null && validAlarms ?
-      AlarmFilterStrategy.LEVEL_PRIORITY : AlarmFilterStrategy.ALL;
+    final AlarmFilterStrategy alarmFilterStrategy = validAlarms != null && validAlarms
+      ? AlarmFilterStrategy.LEVEL_PRIORITY : AlarmFilterStrategy.ALL;
     final EventAlarmFilterCommand filterCommand = new EventAlarmFilterCommand();
     filterCommand.setStartTime(startTime);
     filterCommand.setEndTime(endTime == null ? System.currentTimeMillis() / 1000 : endTime);

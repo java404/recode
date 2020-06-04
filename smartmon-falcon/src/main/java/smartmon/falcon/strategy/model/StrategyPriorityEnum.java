@@ -1,9 +1,12 @@
 package smartmon.falcon.strategy.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Arrays;
 import java.util.Objects;
 
-//策略报警级别
+
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum StrategyPriorityEnum {
   NOT_CLASSIFIED(5, "未分类", "Not_Classified"),
   INFORMATION(4, "信息", "Information"),

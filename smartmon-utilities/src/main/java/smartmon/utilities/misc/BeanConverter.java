@@ -1,19 +1,18 @@
 package smartmon.utilities.misc;
 
-import ch.qos.logback.core.pattern.ConverterUtil;
 import com.google.common.collect.Maps;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanMap;
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.Converter;
 
 @Slf4j
 public class BeanConverter {
-
   public static <T, R> R copy(T source, Class<R> targetClz) {
     if (source == null) {
       return null;
@@ -51,6 +50,9 @@ public class BeanConverter {
       BeanMap beanMap = new BeanMap(bean);
       for (Object key : beanMap.keySet()) {
         Object value = beanMap.get(key);
+        if (Objects.equals("class", key)) {
+          continue;
+        }
         if (Objects.nonNull(value)) {
           map.put(Objects.toString(key), beanMap.get(key));
         }

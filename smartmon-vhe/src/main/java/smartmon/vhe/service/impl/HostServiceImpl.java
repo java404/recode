@@ -60,11 +60,11 @@ public class HostServiceImpl implements HostService {
     return new TaskDescriptionBuilder()
       .withAction(TaskAct.ACT_INIT).withResource(TaskRes.RES_NODE).withParameters(hostInitDto)
       .withStep("REGIST", "regist host", () -> registHost(hostInitDto))
-      .withStep("INSTALL", "install agent", () -> installAgent(retrieveHostUuidFromTaskContext()))
+      .withStep("INSTALL", "install agent", this::installAgent)
       .build();
   }
 
-  private void registHost(HostInitDto hostInitDto) {
+  public void registHost(HostInitDto hostInitDto) {
     appendLogToTaskContext("regist host");
     SmartMonHost smartMonHost = registHost(hostInitDto.getHostRegistrationDto());
     appendLogToTaskContext(String.format("regist host success[%s]", smartMonHost.getHostUuid()));
@@ -104,7 +104,8 @@ public class HostServiceImpl implements HostService {
     }
   }
 
-  private void installAgent(String hostUuid) {
+  public void installAgent() {
+    String hostUuid = retrieveHostUuidFromTaskContext();
     try {
       TaskGroupVo taskGroupVo = coreFeignClient.installAgent(hostUuid).getContent();
       String taskGroupId = taskGroupVo.getTaskGroupId().toString();
@@ -140,11 +141,11 @@ public class HostServiceImpl implements HostService {
   }
 
   private void saveHostUuidToTaskContext(String hostUuid) {
-    TaskContext.currentTaskContext().getCurrentStep().setDetail(hostUuid);
+    TaskContext.currentTaskContext().setDetail(hostUuid);
   }
 
   private String retrieveHostUuidFromTaskContext() {
-    Object result = TaskContext.currentTaskContext().getSteps().get(0).getDetail();
+    Object result = TaskContext.currentTaskContext().getDetail();
     return Objects.toString(result);
   }
 

@@ -12,6 +12,9 @@ public class AlarmEvent {
   private AlarmEventStatusEnum status;
   private String timestamp;
 
+  /**
+   * format alarm event.
+   */
   public static AlarmEvent fromAlarmEventText(String eventText) {
     String[] eventItems = eventText.split(",");
     if (eventItems.length < 2) {

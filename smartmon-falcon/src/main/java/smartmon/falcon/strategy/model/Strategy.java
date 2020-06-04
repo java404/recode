@@ -9,7 +9,7 @@ public class Strategy {
   private String metric;
   private String tags;
   private Long maxStep;
-  private PriorityEnum priority;
+  private StrategyPriorityEnum priority;
   private String func;
   private String op;
   private String rightValue;

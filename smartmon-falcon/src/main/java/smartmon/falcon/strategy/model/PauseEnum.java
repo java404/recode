@@ -1,8 +1,11 @@
 package smartmon.falcon.strategy.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Arrays;
 import java.util.Objects;
 
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum PauseEnum {
   ENABLED(0, "enabled"), DISABLED(1, "disabled");
 
@@ -22,6 +25,9 @@ public enum PauseEnum {
     return name;
   }
 
+  /**
+   * get PauseEnum by code.
+   */
   public static PauseEnum getByCode(int code) {
     return Arrays.stream(PauseEnum.values())
       .filter(enumConstant -> Objects.equals(enumConstant.getCode(), code))

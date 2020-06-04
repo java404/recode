@@ -1,10 +1,10 @@
 package smartmon.core.racks.vo;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
 public class IdcRackAllocateVo extends RackAllocateVo {
   private String idcName;
 }

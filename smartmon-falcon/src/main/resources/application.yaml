@@ -35,4 +35,3 @@ smartmon.falcon:
   pushPort: 1988
   name: root
   session: default-token-used-in-server-side
-  hostGroup: pbdata

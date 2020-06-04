@@ -14,6 +14,8 @@ public class SmartstorDeployCommand extends SmartstorCommand {
   private String ipmiUsername;
   @ApiModelProperty(value = "ipmi password", position = 7)
   private String ipmiPassword;
+  @ApiModelProperty(value = "size occupy in rack", position = 8)
+  private Integer size;
   @ApiModelProperty(value = "network parameters", position = 102)
   private String networkParameters;
   @ApiModelProperty(value = "opensm parameters", position = 103)

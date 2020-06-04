@@ -16,7 +16,7 @@ import smartmon.core.hosts.mapper.SmartMonHostMapper;
 import smartmon.core.hosts.types.HostAddCommand;
 import smartmon.core.hosts.types.HostConfigCommand;
 import smartmon.core.hosts.types.MonitorNetInterfaceVo;
-import smartmon.core.hosts.types.SmartMonHost;
+import smartmon.core.hosts.SmartMonHost;
 import smartmon.core.misc.SshService;
 import smartmon.injector.client.AgentClientService;
 import smartmon.utilities.general.SmartMonException;

@@ -49,7 +49,7 @@ public class AgentClientServiceImpl implements AgentClientService {
     fileChunkParameter.setPath(targetPath);
     fileChunkParameter.setName(filename);
     long chunks = file.length() / UploadConstants.CHUNK_SIZE;
-    if (file.length() % UploadConstants.CHUNK_SIZE > 0) {
+    if (file.length() % UploadConstants.CHUNK_SIZE > 0 || file.length() == 0) {
       chunks++;
     }
     fileChunkParameter.setChunks(chunks);
@@ -57,14 +57,21 @@ public class AgentClientServiceImpl implements AgentClientService {
     byte[] buffer = new byte[UploadConstants.CHUNK_SIZE];
     int chunk = 0;
     try (FileInputStream fis = new FileInputStream(file)) {
-      while ((bytesRead = fis.read(buffer, 0, UploadConstants.CHUNK_SIZE)) != -1) {
+      while ((bytesRead = fis.read(buffer, 0, UploadConstants.CHUNK_SIZE)) != -1 || file.length() == 0) {
         fileChunkParameter.setChunk(chunk++);
+        if (file.length() == 0) {
+          bytesRead = 0;
+        }
         byte[] newBytes = new byte[bytesRead];
         System.arraycopy(buffer, 0, newBytes, 0, bytesRead);
         fileChunkParameter.setBytes(newBytes);
-        String uploadUrl = String.format("http://%s:%s/injector/api/v2/upload", serviceIp, "1989");
+        String uploadUrl = String.format("http://%s:%s/injector/api/v2/upload",
+          serviceIp, systemConfig.getInjectorPort());
         HttpEntity<FileChunkParameter> httpEntity = new HttpEntity<>(fileChunkParameter);
         restTemplate.exchange(uploadUrl, HttpMethod.POST, httpEntity, String.class);
+        if (file.length() == 0) {
+          break;
+        }
       }
     }
   }

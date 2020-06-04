@@ -38,6 +38,7 @@ public class Alarm {
 
   @JsonIgnore
   private String events;
+  @JsonIgnore
   private Strategy strategy;
   private AlarmTypeEnum alarmTypeEnum;
   private String alarmObject;

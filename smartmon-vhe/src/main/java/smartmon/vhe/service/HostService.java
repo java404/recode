@@ -9,5 +9,9 @@ import smartmon.vhe.service.dto.VheStorageHostDto;
 public interface HostService {
   TaskGroup init(List<HostInitDto> hostParameters);
 
+  void registHost(HostInitDto hostInitDto);
+
+  void installAgent();
+
   List<VheStorageHostDto> listAll();
 }

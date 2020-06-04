@@ -1,12 +1,10 @@
 package smartmon.falcon.alarm.service;
 
+import com.google.common.collect.Lists;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Filter;
 import java.util.stream.Collectors;
-
-import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +51,8 @@ public class EventAlarmServiceImpl implements EventAlarmService {
 
 
   @Override
-  public List<Alarm> getAlarms(EventAlarmFilterCommand eventAlarmFilterCommand, AlarmFilterStrategy alarmFilterStrategy) {
+  public List<Alarm> getAlarms(EventAlarmFilterCommand eventAlarmFilterCommand,
+                               AlarmFilterStrategy alarmFilterStrategy) {
     final FalconClient falconClient = falconApiComponent.getFalconClient();
     final FalconEventCasesQueryParam queryParam = BeanConverter.copy(eventAlarmFilterCommand,
       FalconEventCasesQueryParam.class);
@@ -62,6 +61,7 @@ public class EventAlarmServiceImpl implements EventAlarmService {
     if (CollectionUtils.isNotEmpty(alarms)) {
       setAlarmStrategyRelation(alarms);
       setAlarmHostIp(alarms);
+      // TODO: need cluster info
       alarms = filterValidAlarms(alarms, alarmFilterStrategy);
       alarms = alarmFormatService.format(alarms);
     }

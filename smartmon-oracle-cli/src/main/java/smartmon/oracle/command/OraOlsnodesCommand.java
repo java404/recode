@@ -2,8 +2,8 @@ package smartmon.oracle.command;
 
 import java.util.List;
 import smartmon.oracle.OracleCommand;
-import smartmon.oracle.cluster.OracleNode;
 import smartmon.oracle.exec.Olsnodes;
+import smartmon.oracle.types.OracleNode;
 
 public class OraOlsnodesCommand implements OracleCommand {
   private static final OraOlsnodesCommand INSTANCE = new OraOlsnodesCommand();
@@ -15,9 +15,8 @@ public class OraOlsnodesCommand implements OracleCommand {
 
   @Override
   public void exec() {
-    final Olsnodes olsnodes = new Olsnodes();
     System.out.println("Olsnodes: ");
-    final List<OracleNode> nodes = olsnodes.listNodes();
+    final List<OracleNode> nodes = Olsnodes.getInstance().listNodes();
     for (final OracleNode node : nodes) {
       System.out.println(node);
     }

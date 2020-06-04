@@ -1,5 +1,8 @@
 package smartmon.falcon.alarm.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum AlarmTypeEnum {
   SYSTEM(0, "system", "节点"),
   STORAGE(1, "storage", "存储池"),
@@ -31,7 +34,10 @@ public enum AlarmTypeEnum {
     this.desc = desc;
   }
 
-  public static AlarmTypeEnum fromName(String name) {
+  /**
+   * get AlarmTypeEnum by name.
+   */
+  public static AlarmTypeEnum getByName(String name) {
     for (AlarmTypeEnum alarmTypeEnum : AlarmTypeEnum.values()) {
       if (alarmTypeEnum.getName().equalsIgnoreCase(name)) {
         return alarmTypeEnum;

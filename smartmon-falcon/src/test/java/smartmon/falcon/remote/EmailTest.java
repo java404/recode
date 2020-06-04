@@ -13,11 +13,11 @@ public class EmailTest {
   @Test
   public void sendQqEmail() {
     Properties properties = new Properties();
-    //properties.put("mail.transport.protocol", "smtp");// 连接协议
-    properties.put("mail.smtp.host", "localhost");// 主机名
+    properties.put("mail.transport.protocol", "smtp");// 连接协议
+    properties.put("mail.smtp.host", "smtp.qq.com");// 主机名
     properties.put("mail.smtp.port", 465);// 端口号
-    properties.put("mail.smtp.auth", false);
-    //properties.put("mail.smtp.ssl.enable", "true");// 设置是否使用ssl安全连接 ---一般都使用
+    properties.put("mail.smtp.auth", true);
+    properties.put("mail.smtp.ssl.enable", "true");// 设置是否使用ssl安全连接 ---一般都使用
     properties.put("mail.debug", "true");// 设置是否显示debug信息 true 会在控制台显示相关信息
     // 得到回话对象
     Session session = Session.getInstance(properties);
@@ -25,12 +25,12 @@ public class EmailTest {
     Message message = new MimeMessage(session);
     // 设置发件人邮箱地址
     try {
-      message.setFrom(new InternetAddress("qingwen_wang@phegda.com"));
+      message.setFrom(new InternetAddress("1416412681@qq.com"));
       // 设置收件人邮箱地址
       //如果使用setRecipient只能设置一个收件人，InternetAddress为参数
       //如果使用setRecipients可以设置多个收件人，InternetAddress为参数
       message.setRecipients(Message.RecipientType.TO,
-        new InternetAddress[]{new InternetAddress("qingwen_wang@phegda.com")});
+        new InternetAddress[]{new InternetAddress("1416412681@qq.com")});
       // 设置邮件标题
       message.setSubject(String.format("SmartMon-X 告警恢复通知 - [级别:严重] [2020-05-28 17:23:00] 内存使用率过高"));
       // 设置邮件内容
@@ -44,8 +44,7 @@ public class EmailTest {
       // 得到邮差对象
       Transport transport = session.getTransport();
       // 连接自己的邮箱账户
-      transport.connect();
-      //transport.connect("qingwen_wang@phegda.com", "qingwen4128..");// password为stmp授权码
+      transport.connect("1416412681@qq.com", "skiukqtinujzieag");// password为stmp授权码
       // 发送邮件
       transport.sendMessage(message, message.getAllRecipients());
       transport.close();
